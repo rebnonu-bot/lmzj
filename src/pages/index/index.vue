@@ -182,7 +182,12 @@ const userInfo = ref({
   address: '阳光水岸一期'
 });
 
-const notices = ref<string[]>(['暂无未读消息']);
+const notices = ref<string[]>([
+  '关于2月10日停水通知：上午8:00至12:00',
+  '2026年第一季度物业费收缴已开始',
+  '小区新春游园活动报名截止至本周五',
+  '欢迎新业主入住，请及时办理入住登记'
+]);
 
 interface FundCard {
   title: string;
