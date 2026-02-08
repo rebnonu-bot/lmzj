@@ -34,13 +34,8 @@
 ├── .trae/               # Trae 配置文件及技能库
 │   └── skills/          # ui-ux-pro-max 设计技能库
 ├── src/
-│   ├── api/             # API 请求封装
-│   ├── components/      # 公共组件 (Card, Nav, TabBar 等)
-│   ├── mock/            # Mock 数据及接口模拟
-│   ├── pages/           # 页面目录 (首页、消息、我的等)
-│   ├── static/          # 静态资源 (图片、图标)
+│   ├── pages/           # 页面目录 (目前仅包含 index 首页)
 │   ├── styles/          # 全局样式及变量
-│   ├── utils/           # 工具函数 (事件总线等)
 │   ├── App.vue          # 应用入口
 │   ├── main.ts          # 脚本入口
 │   └── pages.json       # 页面路由配置
