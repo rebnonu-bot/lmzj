@@ -79,6 +79,30 @@
 			}
 		},
 		{
+			"path": "pages/voting/reminder",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/voting/vote-topics",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/voting/vote-detail",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/voting/vote-result",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/patrol/patrol",
 			"style": {
 				"navigationStyle": "custom"
@@ -121,18 +145,6 @@
 			}
 		},
 		{
-			"path": "pages/fund/shared-fund",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/fund/public-income",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
 			"path": "pages/service-news/service-news",
 			"style": {
 				"navigationStyle": "custom"
@@ -140,12 +152,6 @@
 		},
 		{
 			"path": "pages/autonomy/autonomy",
-			"style": {
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/profile/basic-info",
 			"style": {
 				"navigationStyle": "custom"
 			}

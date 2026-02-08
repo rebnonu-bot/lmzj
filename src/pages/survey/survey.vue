@@ -156,7 +156,7 @@ const filteredSurveys = computed(() => {
     align-items: center;
     position: relative;
     z-index: 2;
-    margin-left: -1rem;
+    margin-left: -20rpx;
 
     .back-btn {
       padding: 10rpx 20rpx;
@@ -344,7 +344,7 @@ const filteredSurveys = computed(() => {
 
     .survey-btn {
       padding: 16rpx 48rpx;
-      background: @primary-color;
+      background: @primary-blue;
       color: #FFFFFF;
       font-size: 28rpx;
       font-weight: 500;

@@ -63,11 +63,34 @@
             </view>
           </view>
           <view class="info-item">
+            <text class="label">维修资金可用余额</text>
+            <view class="value-box">
+              <text class="value primary-color">{{ availableBalance }}</text>
+              <text class="unit primary-color">万元</text>
+            </view>
+          </view>
+          <view class="info-item">
             <text class="label">维修资金使用次数</text>
             <view class="value-box">
               <text class="value">{{ fundInfo.times }}</text>
               <text class="unit">次</text>
             </view>
+          </view>
+        </view>
+
+        <!-- Calculation Logic Box -->
+        <view class="calc-info-box">
+          <view class="calc-title">
+            <t-icon name="info-circle" size="28rpx" color="#3B82F6" />
+            <text>数据计算方式</text>
+          </view>
+          <view class="calc-item">
+            <text class="c-label">已用金额 = </text>
+            <text class="c-value">Σ 维修公示列表各项目金额 (共{{ fundInfo.times }}项)</text>
+          </view>
+          <view class="calc-item">
+            <text class="c-label">可用余额 = </text>
+            <text class="c-value">总额 ({{ fundInfo.total }}万) - 已用 ({{ fundInfo.used }}万)</text>
           </view>
         </view>
 
@@ -131,8 +154,24 @@
             </view>
             <view class="allocation-item">
               <text class="a-label">可用余额</text>
-              <text class="a-value primary">¥{{ allocationInfo.balance }}</text>
+              <text class="a-value primary">{{ personalBalance }} 元</text>
             </view>
+          </view>
+        </view>
+        
+        <!-- Calculation Logic Box for Personal -->
+        <view class="calc-info-box">
+          <view class="calc-title">
+            <t-icon name="info-circle" size="28rpx" color="#3B82F6" />
+            <text>个人余额计算方式</text>
+          </view>
+          <view class="calc-item">
+            <text class="c-label">交存标准 = </text>
+            <text class="c-value">{{ depositStandard }} 元/㎡ (根据当地政策)</text>
+          </view>
+          <view class="calc-item">
+            <text class="c-label">可用余额 = </text>
+            <text class="c-value">房屋面积 ({{ allocationInfo.area }}㎡) × 标准 ({{ depositStandard }}元/㎡) = {{ personalBalance }} 元</text>
           </view>
         </view>
         
@@ -150,7 +189,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 
 onShow(() => {
@@ -181,13 +220,7 @@ const goToBindHouse = () => {
   });
 };
 
-// 模拟数据
-const fundInfo = ref({
-  total: '245.82',
-  used: '12.45',
-  times: '8'
-});
-
+// 模拟数据 - 公示列表
 const publicityList = ref([
   {
     title: '1号楼电梯钢丝绳更换工程',
@@ -206,13 +239,60 @@ const publicityList = ref([
     date: '2025-11-05',
     status: '已完成',
     amount: '0.65'
+  },
+  {
+    title: '2号楼外墙脱落维修',
+    date: '2025-10-12',
+    status: '已完成',
+    amount: '1.20'
+  },
+  {
+    title: '小区消防管道渗漏维修',
+    date: '2025-09-28',
+    status: '已完成',
+    amount: '0.85'
+  },
+  {
+    title: '单元门禁系统维护',
+    date: '2025-08-15',
+    status: '已完成',
+    amount: '0.45'
+  },
+  {
+    title: '屋面防水补强工程',
+    date: '2025-07-20',
+    status: '已完成',
+    amount: '1.65'
+  },
+  {
+    title: '生活水泵房变频器更换',
+    date: '2025-06-10',
+    status: '已完成',
+    amount: '0.35'
   }
 ]);
 
+// 维修资金概况 - 由公示列表计算
+const fundInfo = computed(() => {
+  const total = 245.82; // 假设总额固定
+  const used = publicityList.value.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+  return {
+    total: total.toFixed(2),
+    used: used.toFixed(2),
+    times: publicityList.value.length.toString()
+  };
+});
+
+const availableBalance = computed(() => {
+  return (parseFloat(fundInfo.value.total) - parseFloat(fundInfo.value.used)).toFixed(2);
+});
+
+const depositStandard = ref(25);
+const personalBalance = computed(() => (parseFloat(allocationInfo.value.area) * depositStandard.value).toFixed(2));
+
 const allocationInfo = ref({
   houseName: currentHouse.value,
-  area: '124.50',
-  balance: '3112.50'
+  area: '124.50'
 });
 </script>
 
@@ -238,10 +318,10 @@ const allocationInfo = ref({
   .header-top {
     display: flex;
     align-items: center;
-    margin-bottom: 0;
+    margin-bottom: 20rpx;
     position: relative;
     z-index: 2;
-    margin-left: -1rem; // Offset for back button padding
+    margin-left: -20rpx; // Offset for back button padding
 
     .back-btn {
       padding: 10rpx 20rpx;
@@ -456,12 +536,62 @@ const allocationInfo = ref({
           font-weight: bold;
           color: #EF4444;
           margin-right: 8rpx;
+
+          &.primary-color {
+            color: #3B82F6;
+          }
         }
 
         .unit {
           font-size: 26rpx;
           color: #EF4444;
+
+          &.primary-color {
+            color: #3B82F6;
+          }
         }
+      }
+    }
+  }
+
+  .calc-info-box {
+    background: #EFF6FF;
+    border: 1rpx solid #DBEAFE;
+    border-radius: 16rpx;
+    padding: 24rpx;
+    margin-bottom: 30rpx;
+
+    .calc-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16rpx;
+      
+      text {
+        margin-left: 8rpx;
+        font-size: 26rpx;
+        font-weight: 500;
+        color: #1E40AF;
+      }
+    }
+
+    .calc-item {
+      display: flex;
+      margin-bottom: 8rpx;
+      font-size: 24rpx;
+      line-height: 1.5;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .c-label {
+        color: #64748B;
+        white-space: nowrap;
+      }
+
+      .c-value {
+        color: #1E40AF;
+        font-weight: 400;
       }
     }
   }
@@ -656,7 +786,7 @@ const allocationInfo = ref({
         color: #1E293B;
 
         &.primary {
-          color: #3B82F6;
+          color: #EF4444;
         }
       }
     }

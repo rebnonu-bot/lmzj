@@ -278,7 +278,7 @@ const handleAddVoice = () => {
     margin-top: 0;
     position: relative;
     z-index: 5;
-    margin-left: -1rem;
+    margin-left: -20rpx;
 
     .back-btn {
       padding: 10rpx 20rpx;
@@ -368,7 +368,7 @@ const handleAddVoice = () => {
 
       .illust-badge {
         position: absolute;
-        left: 3rem;
+        left: 3.5rem;
         top: 40rpx;
         background: #fff;
         border-radius: 50%;

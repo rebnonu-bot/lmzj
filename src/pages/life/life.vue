@@ -185,7 +185,7 @@ const filteredItems = computed(() => {
     align-items: center;
     position: relative;
     z-index: 2;
-    margin-left: -1rem;
+    margin-left: -20rpx;
 
     .back-btn {
       padding: 10rpx 20rpx;
@@ -414,7 +414,7 @@ const filteredItems = computed(() => {
 
       .action-btn {
         padding: 12rpx 32rpx;
-        background: @primary-color;
+        background: @primary-blue;
         color: #FFFFFF;
         font-size: 26rpx;
         font-weight: 600;
@@ -430,7 +430,7 @@ const filteredItems = computed(() => {
   bottom: 180rpx;
   width: 100rpx;
   height: 100rpx;
-  background: @primary-color;
+  background: @primary-blue;
   border-radius: 50%;
   display: flex;
   align-items: center;

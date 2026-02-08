@@ -173,7 +173,7 @@ const facilities = ref([
     align-items: center;
     position: relative;
     z-index: 2;
-    margin-left: -1rem;
+    margin-left: -20rpx;
 
     .back-btn {
       padding: 10rpx 20rpx;

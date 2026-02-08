@@ -1,38 +1,41 @@
 <template>
-  <view class="container">
-    <!-- 顶部背景 -->
-    <view class="header-bg"></view>
-    
-    <!-- 自定义导航栏 -->
-    <view class="nav-header">
-      <view class="back-btn" @click="goBack">
-        <t-icon name="chevron-left" size="48rpx" color="#fff" />
+  <view class="page-container">
+    <!-- 1. Custom Header -->
+    <view class="header-section">
+      <view class="header-top">
+        <view class="back-btn" @click="goBack">
+          <t-icon name="chevron-left" size="48rpx" color="#fff" />
+        </view>
+        <text class="page-title">业主自治</text>
       </view>
-      <text class="title">业主自治</text>
-      <view class="placeholder"></view>
+      <view class="decor-circle"></view>
     </view>
 
-    <!-- 自治概览卡片 -->
-    <view class="summary-card">
-      <view class="stats-grid">
-        <view class="stats-item">
-          <text class="value">9</text>
-          <text class="label">业委会成员</text>
-        </view>
-        <view class="stats-item">
-          <text class="value">24</text>
-          <text class="label">年度会议</text>
-        </view>
-        <view class="stats-item">
-          <text class="value highlight">15</text>
-          <text class="label">生效决议</text>
+    <!-- 2. Summary Card -->
+    <view class="info-card-container">
+      <view class="info-card">
+        <view class="stat-box">
+          <view class="stat-item">
+            <text class="num">9</text>
+            <text class="label">业委会成员</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="num">24</text>
+            <text class="label">年度会议</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="num highlight">15</text>
+            <text class="label">生效决议</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 筛选标签 -->
-    <view class="tabs-scroll-box">
-      <scroll-view scroll-x class="tabs-container" show-scrollbar="false">
+    <!-- 3. Tabs -->
+    <view class="tabs-container">
+      <scroll-view scroll-x class="tabs-scroll" show-scrollbar="false">
         <view 
           v-for="(tab, index) in tabs" 
           :key="index"
@@ -46,53 +49,62 @@
       </scroll-view>
     </view>
 
-    <!-- 内容列表 -->
-    <scroll-view scroll-y class="list-container">
-      <!-- 业委会成员 -->
-      <view v-if="activeTab === 1" class="members-grid">
-        <view class="member-card" v-for="(member, index) in members" :key="index">
-          <view class="member-avatar">
-            <t-icon name="user-circle" size="80rpx" color="#CBD5E1" />
-          </view>
-          <view class="member-info">
-            <text class="name">{{ member.name }}</text>
-            <text class="role">{{ member.role }}</text>
-          </view>
-        </view>
-      </view>
-
-      <!-- 议事/规约列表 -->
-      <view v-else class="items-list">
-        <view class="item-card" v-for="(item, index) in filteredItems" :key="index">
-          <view class="item-header">
-            <view class="item-tag" :class="item.typeCode">{{ item.type }}</view>
-            <text class="item-date">{{ item.date }}</text>
-          </view>
-          <view class="item-title">{{ item.title }}</view>
-          <view class="item-desc">{{ item.desc }}</view>
-          <view class="item-footer">
-            <view class="item-status" :class="item.statusCode">{{ item.status }}</view>
-            <view class="item-action">
-              <text>查看全文</text>
-              <t-icon name="chevron-right" size="24rpx" color="#2563EB" />
+    <!-- 4. Content Area -->
+    <scroll-view scroll-y class="content-scroll">
+      <view class="tab-content">
+        <!-- 业委会成员 -->
+        <view v-if="activeTab === 1" class="members-grid">
+          <view class="member-card" v-for="(member, index) in members" :key="index">
+            <view class="member-avatar">
+              <t-icon name="user-circle" size="80rpx" color="#CBD5E1" />
+            </view>
+            <view class="member-info">
+              <text class="name">{{ member.name }}</text>
+              <text class="role">{{ member.role }}</text>
             </view>
           </view>
         </view>
-      </view>
-      
-      <!-- 加载更多 -->
-      <view class="load-more">
-        <text>已显示全部内容</text>
+
+        <!-- 议事/规约列表 -->
+        <view v-else class="items-list">
+          <view class="item-card" v-for="(item, index) in filteredItems" :key="index">
+            <view class="item-header">
+              <view class="item-tag" :class="item.typeCode">{{ item.type }}</view>
+              <text class="item-date">{{ item.date }}</text>
+            </view>
+            <view class="item-title">{{ item.title }}</view>
+            <view class="item-desc">{{ item.desc }}</view>
+            <view class="item-footer">
+              <view class="item-status" :class="item.statusCode">{{ item.status }}</view>
+              <view class="item-action">
+                <text>查看全文</text>
+                <t-icon name="chevron-right" size="24rpx" color="#3B82F6" />
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 加载更多 -->
+        <view class="load-more" v-if="filteredItems.length > 0 || activeTab === 1">
+          <text>已显示全部内容</text>
+        </view>
+        <view class="empty-state" v-else>
+          <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
+          <text>暂无相关内容</text>
+        </view>
       </view>
     </scroll-view>
+
+    <!-- 5. Footer -->
+    <app-footer />
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
+import { onShow } from '@dcloudio/uni-app';
 
-// 隐藏原生tabbar
-onMounted(() => {
+onShow(() => {
   uni.hideTabBar();
 });
 
@@ -157,69 +169,82 @@ const filteredItems = computed(() => {
 });
 </script>
 
-<style lang="scss" scoped>
-.container {
+<style lang="less" scoped>
+@import '@/styles/variable.less';
+
+.page-container {
   min-height: 100vh;
   background-color: #F8FAFC;
-  position: relative;
-}
-
-.header-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 400rpx;
-  background: linear-gradient(180deg, #2563EB 0%, #3B82F6 100%);
-  border-radius: 0 0 40rpx 40rpx;
-}
-
-.nav-header {
-  position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 100rpx 32rpx 40rpx;
-  z-index: 10;
+  flex-direction: column;
+}
 
-  .back-btn {
-    width: 80rpx;
-    height: 80rpx;
+.header-section {
+  height: 9.6rem;
+  background: @header-gradient;
+  padding: 10rpx @page-padding 0;
+  position: relative;
+  overflow: hidden;
+  color: @text-white;
+
+  .header-top {
     display: flex;
     align-items: center;
-    justify-content: center;
+    position: relative;
+    z-index: 2;
+    margin-left: -20rpx;
+
+    .back-btn {
+      padding: 10rpx 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-title {
+      font-size: 36rpx;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-left: 10rpx;
+    }
   }
 
-  .title {
-    font-size: 36rpx;
-    font-weight: 600;
-    color: #FFFFFF;
-  }
-
-  .placeholder {
-    width: 80rpx;
+  .decor-circle {
+    position: absolute;
+    top: -50rpx;
+    right: -50rpx;
+    width: 200rpx;
+    height: 200rpx;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    z-index: 1;
   }
 }
 
-.summary-card {
+.info-card-container {
+  padding: 0 @page-padding;
+  margin-top: -5rem;
   position: relative;
-  margin: 0 32rpx 32rpx;
-  padding: 40rpx;
+  z-index: 3;
+}
+
+.info-card {
   background: #FFFFFF;
   border-radius: 24rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
-  z-index: 10;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.05);
 
-  .stats-grid {
+  .stat-box {
     display: flex;
     justify-content: space-around;
-    
-    .stats-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    align-items: center;
+
+    .stat-item {
+      text-align: center;
+      flex: 1;
       
-      .value {
+      .num {
+        display: block;
         font-size: 40rpx;
         font-weight: 700;
         color: #1E293B;
@@ -227,173 +252,179 @@ const filteredItems = computed(() => {
         font-family: 'DIN Alternate', sans-serif;
 
         &.highlight {
-          color: #2563EB;
+          color: @primary-blue;
         }
       }
-
       .label {
         font-size: 24rpx;
         color: #94A3B8;
       }
     }
+
+    .stat-divider {
+      width: 1rpx;
+      height: 40rpx;
+      background: #F1F5F9;
+    }
   }
 }
 
-.tabs-scroll-box {
-  background: #FFFFFF;
-  padding: 0 32rpx;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  margin-bottom: 20rpx;
-}
-
 .tabs-container {
-  white-space: nowrap;
-  width: 100%;
+  padding: 40rpx @page-padding 20rpx;
+  background: transparent;
+
+  .tabs-scroll {
+    white-space: nowrap;
+    width: 100%;
+  }
 
   .tab-item {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0 32rpx;
-    height: 88rpx;
+    display: inline-block;
     position: relative;
-
-    text {
-      font-size: 28rpx;
-      color: #64748B;
-      transition: all 0.3s;
-    }
+    padding: 10rpx 0;
+    margin-right: 48rpx;
+    font-size: 30rpx;
+    color: #64748B;
 
     &.active {
-      text {
-        color: #2563EB;
-        font-weight: 600;
-      }
+      color: #1E293B;
+      font-weight: 600;
     }
 
     .active-bar {
       position: absolute;
-      bottom: 0;
-      width: 40rpx;
+      bottom: -4rpx;
+      left: 0;
+      width: 100%;
       height: 6rpx;
-      background: #2563EB;
-      border-radius: 3rpx;
+      background: @primary-blue;
+      border-radius: 4rpx;
     }
   }
 }
 
-.list-container {
-  padding: 0 32rpx 40rpx;
-  box-sizing: border-box;
+.content-scroll {
+  flex: 1;
+  height: 0;
+}
+
+.tab-content {
+  padding: 0 @page-padding 40rpx;
 }
 
 .members-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 24rpx;
-  margin-top: 8rpx;
+}
 
-  .member-card {
-    background: #FFFFFF;
-    border-radius: 20rpx;
-    padding: 32rpx;
-    display: flex;
-    align-items: center;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+.member-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
 
-    .member-avatar {
-      margin-right: 20rpx;
+  .member-avatar {
+    margin-bottom: 20rpx;
+  }
+
+  .member-info {
+    text-align: center;
+    .name {
+      display: block;
+      font-size: 30rpx;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 4rpx;
     }
-
-    .member-info {
-      display: flex;
-      flex-direction: column;
-
-      .name {
-        font-size: 28rpx;
-        font-weight: 600;
-        color: #1E293B;
-        margin-bottom: 4rpx;
-      }
-
-      .role {
-        font-size: 22rpx;
-        color: #94A3B8;
-      }
+    .role {
+      font-size: 24rpx;
+      color: #64748B;
     }
   }
 }
 
-.item-card {
-  background: #FFFFFF;
-  border-radius: 24rpx;
-  padding: 32rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
-
-  .item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20rpx;
-
-    .item-tag {
-      padding: 4rpx 16rpx;
-      border-radius: 6rpx;
-      font-size: 22rpx;
-      font-weight: 500;
-
-      &.meeting { background: rgba(37, 99, 235, 0.1); color: #2563EB; }
-      &.rule { background: rgba(16, 185, 129, 0.1); color: #10B981; }
-    }
-
-    .item-date {
-      font-size: 24rpx;
-      color: #94A3B8;
-    }
-  }
-
-  .item-title {
-    font-size: 30rpx;
-    font-weight: 600;
-    color: #1E293B;
-    margin-bottom: 16rpx;
-  }
-
-  .item-desc {
-    font-size: 26rpx;
-    color: #64748B;
-    line-height: 1.6;
+.items-list {
+  .item-card {
+    background: #FFFFFF;
+    border-radius: 20rpx;
+    padding: 32rpx;
     margin-bottom: 24rpx;
-  }
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
 
-  .item-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 24rpx;
-    border-top: 2rpx solid #F1F5F9;
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20rpx;
 
-    .item-status {
-      font-size: 24rpx;
-      font-weight: 500;
+      .item-tag {
+        font-size: 22rpx;
+        padding: 4rpx 16rpx;
+        border-radius: 8rpx;
 
-      &.published { color: #F59E0B; }
-      &.active { color: #10B981; }
+        &.meeting {
+          background: #E0F2FE;
+          color: #0284C7;
+        }
+        &.rule {
+          background: #F0FDF4;
+          color: #16A34A;
+        }
+      }
+
+      .item-date {
+        font-size: 24rpx;
+        color: #94A3B8;
+      }
     }
 
-    .item-action {
+    .item-title {
+      font-size: 30rpx;
+      font-weight: 600;
+      color: #1E293B;
+      margin-bottom: 12rpx;
+      line-height: 1.4;
+    }
+
+    .item-desc {
+      font-size: 26rpx;
+      color: #64748B;
+      line-height: 1.5;
+      margin-bottom: 24rpx;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    .item-footer {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      
-      text {
+      padding-top: 24rpx;
+      border-top: 1rpx solid #F1F5F9;
+
+      .item-status {
         font-size: 24rpx;
-        color: #2563EB;
         font-weight: 500;
-        margin-right: 4rpx;
+
+        &.published { color: #0284C7; }
+        &.active { color: #16A34A; }
+      }
+
+      .item-action {
+        display: flex;
+        align-items: center;
+        font-size: 24rpx;
+        color: @primary-blue;
+        
+        text {
+          margin-right: 4rpx;
+        }
       }
     }
   }
@@ -404,6 +435,18 @@ const filteredItems = computed(() => {
   padding: 40rpx 0;
   text {
     font-size: 24rpx;
+    color: #94A3B8;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100rpx;
+  text {
+    margin-top: 20rpx;
+    font-size: 28rpx;
     color: #94A3B8;
   }
 }

@@ -192,7 +192,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 
 onShow(() => {
@@ -223,82 +223,133 @@ const goToBindHouse = () => {
   });
 };
 
-// 模拟数据
-const trendData = ref([
-  { month: '9月', income: 1.2, expense: 0.8 },
-  { month: '10月', income: 1.5, expense: 0.9 },
-  { month: '11月', income: 1.1, expense: 0.75 },
-  { month: '12月', income: 1.8, expense: 1.2 },
-  { month: '1月', income: 2.2, expense: 1.4 },
-  { month: '2月', income: 1.6, expense: 0.95 }
-]);
-
-const maxTrendValue = Math.max(...trendData.value.flatMap(d => [d.income, d.expense]));
-
+// 模拟数据 - 银行信息
 const bankInfo = ref({
   name: '阳光水岸一期业主委员会',
   account: '6222 **** **** 8892',
   bank: '中国建设银行赣州分行'
 });
 
+// 模拟数据 - 收支记录
 const recordList = ref([
   {
     title: '电梯广告位租金收入',
     date: '2026-02-01',
-    amount: '3500.00',
+    amount: '16000.00',
     type: 'in',
     typeText: '收入'
   },
   {
+    title: '电梯维保支出',
+    date: '2026-02-05',
+    amount: '9500.00',
+    type: 'out',
+    typeText: '支出'
+  },
+  {
     title: '小区停车位租赁收入',
     date: '2026-01-20',
-    amount: '12000.00',
+    amount: '22000.00',
     type: 'in',
     typeText: '收入'
   },
   {
     title: '春节氛围装饰采购',
     date: '2026-01-10',
-    amount: '2400.00',
+    amount: '14000.00',
     type: 'out',
     typeText: '支出'
   },
   {
     title: '外墙广告位收益',
     date: '2025-12-15',
-    amount: '8000.00',
+    amount: '18000.00',
     type: 'in',
     typeText: '收入'
+  },
+  {
+    title: '公共区域照明维修',
+    date: '2025-12-05',
+    amount: '12000.00',
+    type: 'out',
+    typeText: '支出'
   },
   {
     title: '快递柜场地租赁费',
     date: '2025-11-30',
-    amount: '2500.00',
+    amount: '11000.00',
     type: 'in',
     typeText: '收入'
   },
   {
-    title: '共有用房出租收益',
-    date: '2025-11-15',
-    amount: '4200.00',
-    type: 'in',
-    typeText: '收入'
+    title: '垃圾分类宣传费',
+    date: '2025-11-10',
+    amount: '7500.00',
+    type: 'out',
+    typeText: '支出'
   },
   {
     title: '路面停车位收益',
     date: '2025-10-25',
-    amount: '6800.00',
+    amount: '15000.00',
     type: 'in',
     typeText: '收入'
   },
   {
     title: '小区绿化补植支出',
     date: '2025-10-10',
-    amount: '1500.00',
+    amount: '9000.00',
+    type: 'out',
+    typeText: '支出'
+  },
+  {
+    title: '共有用房出租收益',
+    date: '2025-09-15',
+    amount: '12000.00',
+    type: 'in',
+    typeText: '收入'
+  },
+  {
+    title: '中秋节物业慰问支出',
+    date: '2025-09-05',
+    amount: '8000.00',
     type: 'out',
     typeText: '支出'
   }
 ]);
+
+// 趋势图数据 - 动态获取最近6个月
+const trendData = computed(() => {
+  const data = [];
+  const now = new Date();
+  
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const monthStr = `${d.getMonth() + 1}月`;
+    const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    
+    const monthlyRecords = recordList.value.filter(r => r.date.startsWith(yearMonth));
+    const income = monthlyRecords
+      .filter(r => r.type === 'in')
+      .reduce((sum, r) => sum + parseFloat(r.amount), 0) / 10000;
+    const expense = monthlyRecords
+      .filter(r => r.type === 'out')
+      .reduce((sum, r) => sum + parseFloat(r.amount), 0) / 10000;
+      
+    data.push({
+      month: monthStr,
+      income: parseFloat(income.toFixed(2)),
+      expense: parseFloat(expense.toFixed(2))
+    });
+  }
+  return data;
+});
+
+const maxTrendValue = computed(() => {
+  const values = trendData.value.flatMap(d => [d.income, d.expense]);
+  const max = Math.max(...values);
+  return max > 0 ? max * 1.2 : 1; // 增加20%余量，避免触顶
+});
 
 const contractList = ref([
   {
@@ -349,7 +400,7 @@ const contractList = ref([
     margin-bottom: 0;
     position: relative;
     z-index: 2;
-    margin-left: -1rem;
+    margin-left: -20rpx;
 
     .back-btn {
       padding: 10rpx 20rpx;
@@ -729,7 +780,7 @@ const contractList = ref([
           display: flex;
           justify-content: space-around;
           align-items: flex-end;
-          padding-bottom: 40rpx;
+          padding-bottom: 40rpx; // 这里的 padding 留给轴标签
           z-index: 1;
 
           .bar-group {
@@ -737,7 +788,9 @@ const contractList = ref([
             flex-direction: column;
             align-items: center;
             flex: 1;
-            position: relative; // 确保 label 定位正确
+            height: 100%;
+            justify-content: flex-end;
+            position: relative;
 
             .bars {
               height: 240rpx;
@@ -746,6 +799,7 @@ const contractList = ref([
               gap: 4rpx;
               width: 100%;
               justify-content: center;
+              margin-bottom: 12rpx; // 与标签的间距
 
               .bar {
                 width: 16rpx;
@@ -763,22 +817,21 @@ const contractList = ref([
 
                 .bar-value {
                   position: absolute;
-                  top: -30rpx;
+                  top: -32rpx;
                   left: 50%;
                   transform: translateX(-50%);
-                  font-size: 16rpx;
-                  color: #94a3b8;
+                  font-size: 18rpx;
+                  color: #64748b;
                   white-space: nowrap;
+                  font-weight: 500;
                 }
               }
             }
 
             .bar-label {
-              margin-top: 16rpx;
-              font-size: 20rpx;
+              font-size: 22rpx;
               color: #64748b;
-              position: absolute;
-              bottom: 0;
+              line-height: 1;
             }
           }
         }

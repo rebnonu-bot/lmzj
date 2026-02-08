@@ -157,7 +157,7 @@ const filteredRepairs = computed(() => {
     align-items: center;
     position: relative;
     z-index: 2;
-    margin-left: -1rem;
+    margin-left: -20rpx;
 
     .back-btn {
       padding: 10rpx 20rpx;
@@ -364,7 +364,7 @@ const filteredRepairs = computed(() => {
 
   .submit-btn {
     height: 88rpx;
-    background: @primary-color;
+    background: @primary-blue;
     border-radius: 44rpx;
     display: flex;
     align-items: center;

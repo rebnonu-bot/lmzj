@@ -202,17 +202,17 @@ interface FundCard {
 const fundCards = ref<FundCard[]>([
   { 
     title: '住维资金余额', 
-    amount: '20334', 
+    amount: '233.37', 
     displayAmount: '0',
-    unit: '元', 
-    type: 'balance',
+    unit: '万元', 
+    type: 'balance', 
     bgIcon: 'tools'
   },
   { 
     title: '小区数字基金', 
-    amount: '32231', 
+    amount: '12.85', 
     displayAmount: '0',
-    unit: '元', 
+    unit: '万元', 
     type: 'balance',
     bgIcon: 'money'
   }
@@ -239,9 +239,10 @@ const handleSwitchHouse = () => {
 
 // 数字滚动动画函数
 const animateNumbers = () => {
-  fundCards.value.forEach((card, index) => {
+  fundCards.value.forEach((card) => {
     if (card.type === 'balance') {
-      const target = parseInt(card.amount);
+      const target = parseFloat(card.amount);
+      const hasDecimal = card.amount.includes('.');
       const duration = 1500; // 动画时长 1.5s
       const startTime = Date.now();
       
@@ -254,8 +255,13 @@ const animateNumbers = () => {
           return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
         };
         
-        const current = Math.floor(target * easeOutExpo(progress));
-        card.displayAmount = current.toString();
+        const current = target * easeOutExpo(progress);
+        
+        if (hasDecimal) {
+          card.displayAmount = current.toFixed(2);
+        } else {
+          card.displayAmount = Math.floor(current).toString();
+        }
         
         if (progress < 1) {
           requestAnimationFrame(update);
@@ -294,12 +300,10 @@ const subMenus = ref<MenuItem[]>([
   { label: '小区报修', icon: 'tools', color: '#FB923C' },
   { label: '小区招采', icon: 'cart', color: '#2DD4BF' },
   { label: '小区生活', icon: 'shop', color: '#4ADE80' },
-  { label: '共有资金', icon: 'wallet', color: '#60A5FA' },
+  { label: '数字基金', icon: 'wallet', color: '#60A5FA' },
   { label: '维修资金', icon: 'money', color: '#F87171' },
-  { label: '公共收益', icon: 'chart-bar', color: '#60A5FA' },
   { label: '服务动态', icon: 'root-list', color: '#F87171' },
-  { label: '业主自治', icon: 'user-talk', color: '#FB923C' },
-  { label: '基本信息', icon: 'personal-information', color: '#34D399' }
+  { label: '业主自治', icon: 'user-talk', color: '#FB923C' }
 ]);
 
 const quickServices = ref<MenuItem[]>([
@@ -344,12 +348,6 @@ const menuPages = computed(() => {
 });
 
 const handleMenuClick = (item: MenuItem) => {
-  if (item.label === '公共收益') {
-    uni.navigateTo({
-      url: '/pages/fund/public-income'
-    });
-    return;
-  }
   if (item.label === '维修资金') {
     uni.navigateTo({
       url: '/pages/fund/fund'
@@ -428,9 +426,9 @@ const handleMenuClick = (item: MenuItem) => {
     });
     return;
   }
-  if (item.label === '共有资金') {
+  if (item.label === '数字基金') {
     uni.navigateTo({
-      url: '/pages/fund/shared-fund'
+      url: '/pages/fund/income'
     });
     return;
   }
@@ -443,12 +441,6 @@ const handleMenuClick = (item: MenuItem) => {
   if (item.label === '业主自治') {
     uni.navigateTo({
       url: '/pages/autonomy/autonomy'
-    });
-    return;
-  }
-  if (item.label === '基本信息') {
-    uni.navigateTo({
-      url: '/pages/profile/basic-info'
     });
     return;
   }
