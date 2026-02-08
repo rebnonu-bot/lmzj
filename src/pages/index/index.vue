@@ -13,7 +13,7 @@
         <view class="user-row">
           <view class="greeting-box">
             <text class="greeting-text">您好，{{ userInfo.name }}</text>
-            <view class="switch-house">
+            <view class="switch-house" @click="handleSwitchHouse">
               <text>切换房屋</text>
               <t-icon name="refresh" size="20rpx" color="#fff" />
             </view>
@@ -66,7 +66,7 @@
         <text class="header-title">小区资金</text>
       </view>
       <view class="funds-grid">
-          <view class="fund-card" v-for="(card, index) in fundCards" :key="index">
+          <view class="fund-card" v-for="(card, index) in fundCards" :key="index" @click="handleFundClick(card)">
             <view class="fund-decor-circle"></view>
             <t-icon :name="card.bgIcon" class="fund-bg-icon" />
             <view class="fund-content">
@@ -93,7 +93,7 @@
 
     <!-- 4. 业主有话说 Banner Section -->
     <view class="section-container">
-      <view class="voice-banner">
+      <view class="voice-banner" @click="handleVoiceClick">
         <view class="banner-content">
           <text class="banner-title">业主有话说</text>
           <text class="banner-subtitle">业主诉求高效处置</text>
@@ -179,7 +179,7 @@ onShow(() => {
 const userInfo = ref({
   name: '刘泽辉',
   slogan: '共建和谐小区,共享温馨生活',
-  address: '阳光水岸一期'
+  address: '阳光水岸一期 1-1-802'
 });
 
 const notices = ref<string[]>([
@@ -217,6 +217,25 @@ const fundCards = ref<FundCard[]>([
     bgIcon: 'money'
   }
 ]);
+
+const handleFundClick = (card: FundCard) => {
+  if (card.title === '住维资金余额') {
+    uni.navigateTo({
+      url: '/pages/fund/fund'
+    });
+  } else if (card.title === '小区数字基金') {
+    uni.navigateTo({
+      url: '/pages/fund/income'
+    });
+  }
+};
+
+const handleSwitchHouse = () => {
+  uni.showToast({
+    title: '切换房屋功能开发中',
+    icon: 'none'
+  });
+};
 
 // 数字滚动动画函数
 const animateNumbers = () => {
@@ -325,6 +344,115 @@ const menuPages = computed(() => {
 });
 
 const handleMenuClick = (item: MenuItem) => {
+  if (item.label === '公共收益') {
+    uni.navigateTo({
+      url: '/pages/fund/public-income'
+    });
+    return;
+  }
+  if (item.label === '维修资金') {
+    uni.navigateTo({
+      url: '/pages/fund/fund'
+    });
+    return;
+  }
+  if (item.label === '电梯维保') {
+    uni.navigateTo({
+      url: '/pages/elevator/elevator-maintenance'
+    });
+    return;
+  }
+  if (item.label === '消防维保') {
+    uni.navigateTo({
+      url: '/pages/fire/fire-maintenance'
+    });
+    return;
+  }
+  if (item.label === '小区信息') {
+    uni.navigateTo({
+      url: '/pages/community/community-info'
+    });
+    return;
+  }
+  if (item.label === '物业企业') {
+    uni.navigateTo({
+      url: '/pages/property/property-enterprise'
+    });
+    return;
+  }
+  if (item.label === '电子投票') {
+    uni.navigateTo({
+      url: '/pages/voting/voting'
+    });
+    return;
+  }
+  if (item.label === '日常巡查') {
+    uni.navigateTo({
+      url: '/pages/patrol/patrol'
+    });
+    return;
+  }
+  if (item.label === '民意调查') {
+    uni.navigateTo({
+      url: '/pages/survey/survey'
+    });
+    return;
+  }
+  if (item.label === '学习园地') {
+    uni.navigateTo({
+      url: '/pages/learning/learning'
+    });
+    return;
+  }
+  if (item.label === '公示公告') {
+    uni.navigateTo({
+      url: '/pages/notice/notice'
+    });
+    return;
+  }
+  if (item.label === '小区报修') {
+    uni.navigateTo({
+      url: '/pages/repair/repair'
+    });
+    return;
+  }
+  if (item.label === '小区招采') {
+    uni.navigateTo({
+      url: '/pages/bidding/bidding'
+    });
+    return;
+  }
+  if (item.label === '小区生活') {
+    uni.navigateTo({
+      url: '/pages/life/life'
+    });
+    return;
+  }
+  if (item.label === '共有资金') {
+    uni.navigateTo({
+      url: '/pages/fund/shared-fund'
+    });
+    return;
+  }
+  if (item.label === '服务动态') {
+    uni.navigateTo({
+      url: '/pages/service-news/service-news'
+    });
+    return;
+  }
+  if (item.label === '业主自治') {
+    uni.navigateTo({
+      url: '/pages/autonomy/autonomy'
+    });
+    return;
+  }
+  if (item.label === '基本信息') {
+    uni.navigateTo({
+      url: '/pages/profile/basic-info'
+    });
+    return;
+  }
+  
   if (item.url) {
     uni.navigateTo({
       url: item.url
@@ -336,6 +464,11 @@ const handleMenuClick = (item: MenuItem) => {
       duration: 2000
     });
   }
+};
+const handleVoiceClick = () => {
+  uni.navigateTo({
+    url: '/pages/voice/voice'
+  });
 };
 </script>
 

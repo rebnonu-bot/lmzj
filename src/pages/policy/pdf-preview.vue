@@ -44,7 +44,15 @@ onLoad((options: any) => {
 });
 
 const goBack = () => {
-  uni.navigateBack();
+  const pages = getCurrentPages();
+  if (pages.length > 1) {
+    uni.navigateBack();
+  } else {
+    // 如果没有历史记录（比如直接刷新页面），则回到首页
+    uni.reLaunch({
+      url: '/pages/index/index'
+    });
+  }
 };
 </script>
 
