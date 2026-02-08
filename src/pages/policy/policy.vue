@@ -11,6 +11,7 @@
         <text class="tips">政策内容正在整理中...</text>
       </view>
     </view>
+    <app-footer />
     <app-tab-bar activePath="pages/policy/policy" />
   </view>
 </template>

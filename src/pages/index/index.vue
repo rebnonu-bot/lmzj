@@ -51,7 +51,11 @@
     <view class="notice-bar">
       <view class="notice-content">
         <t-icon name="notification" size="36rpx" color="#FB923C" class="notice-icon" />
-        <text class="notice-text">暂无未读消息</text>
+        <swiper class="notice-swiper" :vertical="true" :autoplay="notices.length > 1" :circular="true" :interval="3000" :duration="300" :indicator-dots="false">
+          <swiper-item v-for="(msg, idx) in notices" :key="idx">
+            <text class="notice-text">{{ msg }}</text>
+          </swiper-item>
+        </swiper>
       </view>
     </view>
 
@@ -156,6 +160,9 @@
       </view>
     </view>
 
+    <!-- Footer Section -->
+    <app-footer />
+
     <!-- App Tab Bar -->
     <app-tab-bar activePath="pages/index/index" />
   </view>
@@ -174,6 +181,8 @@ const userInfo = ref({
   slogan: '共建和谐小区,共享温馨生活',
   address: '阳光水岸一期'
 });
+
+const notices = ref<string[]>(['暂无未读消息']);
 
 interface FundCard {
   title: string;
@@ -558,6 +567,16 @@ const handleMenuClick = (item: MenuItem) => {
     .notice-icon {
       animation: swing 2s ease-in-out infinite;
       transform-origin: top center;
+    }
+    .notice-swiper {
+      flex: 1;
+      height: 32rpx;
+      margin-left: 16rpx;
+      overflow: hidden;
+      :deep(.uni-swiper-item) {
+        display: flex;
+        align-items: center;
+      }
     }
     .notice-text {
       margin-left: 16rpx;
@@ -984,48 +1003,48 @@ const handleMenuClick = (item: MenuItem) => {
 }
 
 .services-swiper {
-  height: 360rpx;
+    height: 360rpx;
 
-  :deep(.uni-swiper-dots) {
-    bottom: 5px;
-  }
-  
-  .services-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 30rpx 0;
-    padding: 20rpx 10rpx;
-    position: relative;
-    z-index: 2;
-
-    .service-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    :deep(.uni-swiper-dots) {
+      bottom: 5px;
+    }
+    
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 30rpx 0;
+      padding: 20rpx 10rpx;
       position: relative;
       z-index: 2;
 
-      .service-icon {
-        width: 90rpx;
-        height: 90rpx;
+      .service-item {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        margin-bottom: 8rpx;
-      }
+        position: relative;
+        z-index: 2;
 
-      .service-label {
-        font-size: 22rpx;
-        color: @text-primary;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
-        padding: 0 4rpx;
+        .service-icon {
+          width: 90rpx;
+          height: 90rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 8rpx;
+        }
+
+        .service-label {
+          font-size: 22rpx;
+          color: @text-primary;
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+          padding: 0 4rpx;
+        }
       }
-    }
   }
 }
 </style>

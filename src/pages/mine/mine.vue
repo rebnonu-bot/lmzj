@@ -18,6 +18,7 @@
         <t-icon name="chevron-right" size="40rpx" color="#BBBBBB" />
       </view>
     </view>
+    <app-footer />
     <app-tab-bar activePath="pages/mine/mine" />
   </view>
 </template>
