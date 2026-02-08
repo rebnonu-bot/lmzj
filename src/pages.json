@@ -13,6 +13,12 @@
 			}
 		},
 		{
+			"path": "pages/policy/pdf-preview",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/mine/mine",
 			"style": {
 				"navigationStyle": "custom"

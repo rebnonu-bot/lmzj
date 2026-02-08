@@ -380,7 +380,7 @@ const handleMenuClick = (item: MenuItem) => {
       align-items: center;
       margin-bottom: 32rpx;
       .slogan-text {
-        font-size: 28rpx;
+        font-size: 24rpx;
         font-weight: 400;
         letter-spacing: 2rpx;
         color: rgba(255, 255, 255, 0.95);
@@ -569,24 +569,37 @@ const handleMenuClick = (item: MenuItem) => {
   .notice-content {
     display: flex;
     align-items: center;
+    width: 100%;
+    
     .notice-icon {
+      flex-shrink: 0;
+      height: 48rpx; /* 与 swiper 高度保持一致 */
+      display: flex;
+      align-items: center;
       animation: swing 2s ease-in-out infinite;
-      transform-origin: top center;
+      transform-origin: center;
     }
     .notice-swiper {
       flex: 1;
-      height: 32rpx;
+      width: 0;
+      height: 48rpx;
       margin-left: 16rpx;
-      overflow: hidden;
+      
       :deep(.uni-swiper-item) {
         display: flex;
         align-items: center;
       }
     }
     .notice-text {
-      margin-left: 16rpx;
+      flex: 1;
       font-size: 26rpx;
       color: @text-primary;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 48rpx;
+      display: flex;
+      align-items: center;
     }
   }
 }
