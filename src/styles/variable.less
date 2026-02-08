@@ -1,23 +1,50 @@
-/* common */
+/* UI Design System Variables (Minimalist Tech Blue) */
+
+// 1. Color Palette
+@primary-blue: #3B82F6;
+@secondary-blue: #60A5FA;
+@bg-light-blue: #F4F9FF;
+@card-gradient-start: rgba(255, 255, 255, 0.7);
+@card-gradient-end: rgba(255, 255, 255, 0.4);
+@promo-gradient-start: #E0F2FE;
+@promo-gradient-end: #F0F9FF;
+
+@text-primary: #334155;
+@text-secondary: #64748B;
+@text-white: #FFFFFF;
+@border-glass: rgba(255, 255, 255, 0.5);
+
+// 2. Gradients
+@header-gradient: linear-gradient(180deg, @primary-blue 0%, @secondary-blue 70%, @bg-light-blue 100%);
+@card-reverse-gradient: linear-gradient(0deg, @card-gradient-start 0%, @card-gradient-end 100%);
+@promo-gradient: linear-gradient(90deg, @promo-gradient-start 0%, @promo-gradient-end 100%);
+
+// 3. Effects
+@glass-blur: blur(20px) saturate(180%);
+@glass-shadow: 
+  0 8rpx 32rpx rgba(31, 38, 135, 0.1),
+  0 1px 2px rgba(255, 255, 255, 0.3) inset;
+
+// 4. Spacing & Layout
+@page-padding: 32rpx;
+@card-margin: 32rpx;
+@header-height: 440rpx;
+
+// 5. Radius & Shadows
+@radius-large: 32rpx;
+@radius-medium: 24rpx;
+@shadow-blue: 0 16rpx 40rpx rgba(59, 130, 246, 0.12);
+
+// 6. Typography
+@font-h1: 40rpx;
+@font-h2: 32rpx;
+@font-body: 26rpx;
+@font-caption: 24rpx;
+
+/* Legacy Variables (Compatibility) */
 @navbar-padding-top: 20px;
 @nav-bar-height: 60px;
 @tab-bar-height: 112rpx;
-
-/* font-size */
-@font-size-default: 16px;
-@font-size-small: 14px;
-@font-size-mini: 12px;
-
-/* color */
-@bg-color: #f3f3f3;
+@bg-color: @bg-light-blue;
 @bg-color-white: #ffffff;
-
-@brand7-normal: #0052d9;
-@gy1: #000000e6;
-@gy2: #00000099;
-@gy3: #00000066;
-@gray3: #e7e7e7;
-
-@headline-medium: 28px;
-@body-large: 16px;
-@body-small: 12px;
+@brand-color: @primary-blue;

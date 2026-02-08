@@ -5,8 +5,40 @@
 			"style": {
 				"navigationStyle": "custom"
 			}
+		},
+		{
+			"path": "pages/policy/policy",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/mine/mine",
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}
 	],
+	"tabBar": {
+		"color": "#64748B",
+		"selectedColor": "#3B82F6",
+		"borderStyle": "white",
+		"backgroundColor": "#ffffff",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/policy/policy",
+				"text": "政策"
+			},
+			{
+				"pagePath": "pages/mine/mine",
+				"text": "我的"
+			}
+		]
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "智慧物业管理平台",
@@ -14,6 +46,7 @@
 		"backgroundColor": "#f3f3f3"
 	},
 	"easycom": {
+		"autoscan": true,
 		"custom": {
 			"^t-(.*)": "@tdesign/uniapp/$1/$1.vue"
 		}
