@@ -9,16 +9,16 @@ function delay(ms = 500): Promise<void> {
 const mockData = [
   {
     userId: 1,
-    name: 'Sean',
+    name: '物业管家-小李',
     avatar: '/static/chat/avatar-Sean.png',
     messages: [
-      { messageId: 1, from: 1, content: '那明天准时见哦😊', time: 1690646400000, read: true },
-      { messageId: 2, from: 0, content: '好的，我会记得的', time: 1690646400000, read: true },
+      { messageId: 1, from: 1, content: '您好，关于您反映的2号楼电梯报修，维修人员已在处理中。', time: 1690646400000, read: true },
+      { messageId: 2, from: 0, content: '好的，麻烦尽快修复，谢谢。', time: 1690646400000, read: true },
       { messageId: 3, from: 1, content: '在吗？', time: Date.now() - 3600000, read: false },
       {
         messageId: 4,
         from: 1,
-        content: '有个问题想咨询一下，关于TDesign组件库如何更好地使用',
+        content: '维修已完成，您可以前往现场确认。',
         time: Date.now() - 3600000,
         read: false,
       },
@@ -26,28 +26,28 @@ const mockData = [
   },
   {
     userId: 2,
-    name: 'Mollymolly',
+    name: '业委会助手',
     avatar: '/static/chat/avatar-Mollymolly.png',
-    messages: [{ messageId: 5, from: 1, content: '好久不见，最近咋样？', time: 1692100800000, read: true }],
+    messages: [{ messageId: 5, from: 1, content: '关于本次充电桩增设的投票结果已公示，请查收。', time: 1692100800000, read: true }],
   },
   {
     userId: 3,
-    name: 'Andrew',
+    name: '维修资金中心',
     avatar: '/static/chat/avatar-Andrew.png',
-    messages: [{ messageId: 6, from: 0, content: '现在没空，晚点再联系你哈', time: 1690084800000, read: true }],
+    messages: [{ messageId: 6, from: 0, content: '我想查询一下我名下的维修资金余额。', time: 1690084800000, read: true }],
   },
   {
     userId: 4,
-    name: 'Kingdom',
+    name: '社区公告通知',
     avatar: '/static/chat/avatar-Kingdom.png',
-    messages: [{ messageId: 7, from: 1, content: '真的吗？', time: 1656880200000, read: true }],
+    messages: [{ messageId: 7, from: 1, content: '温馨提示：本周末将进行供水管道清洗。', time: 1656880200000, read: true }],
   },
   {
     userId: 5,
-    name: 'Paige',
+    name: '房屋安全鉴定处',
     avatar: '/static/chat/avatar-Paige.png',
     messages: [
-      { messageId: 8, from: 1, content: '此次要评审的首页和专区页改版的交互方案', time: 1652963880000, read: true },
+      { messageId: 8, from: 1, content: '您提交的房屋安全鉴定申请已通过初审。', time: 1652963880000, read: true },
     ],
   },
 ];
@@ -55,7 +55,9 @@ const mockData = [
 // 模拟新增一条消息
 function addNewMessage(userId: number, from: number, content: string) {
   const index = mockData.map((item) => item.userId).indexOf(userId);
+  if (index === -1) return null;
   const user = mockData.splice(index, 1)[0];
+  if (!user) return null;
   mockData.unshift(user);
   let messageId = 0;
   mockData.forEach((item) => {
@@ -106,8 +108,11 @@ class MockSocketTask {
       // 模拟3秒后对方回复消息
       delay(3000).then(() => {
         const replies = ['收到', '好的', '知道了', '👌 OK'];
-        const message = addNewMessage(userId, 1, replies[Math.floor(Math.random() * 4)]);
-        this.onmessage(JSON.stringify({ type: 'message', data: { userId, message } }));
+        const reply = replies[Math.floor(Math.random() * 4)] || '收到';
+        const message = addNewMessage(userId, 1, reply);
+        if (message) {
+          this.onmessage(JSON.stringify({ type: 'message', data: { userId, message } }));
+        }
       });
     }
   }
@@ -137,7 +142,7 @@ export function markMessagesRead(userId: number) {
   let index = 0;
   while (index < mockData.length) {
     const user = mockData[index];
-    if (user.userId === userId) {
+    if (user && user.userId === userId) {
       user.messages.forEach((message) => {
         message.read = true;
       });

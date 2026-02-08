@@ -1,5 +1,5 @@
 <template>
-  <t-navbar title="发布动态" left-arrow placeholder/>
+  <t-navbar title="业务上报" left-arrow placeholder/>
   <view class="page">
     <view class="release-container">
       <view class="upload box">
@@ -13,16 +13,16 @@
         />
       </view>
       <view class="desc box">
-        <view class="desc-label">添加描述</view>
+        <view class="desc-label">详情描述</view>
         <t-textarea
-          placeholder="分享你此刻的想法"
+          placeholder="请详细描述您需要上报的问题或业务需求..."
           :maxlength="500"
           :disable-default-padding="true"
           indicator
         />
       </view>
       <view class="taggroup box">
-        <t-cell title="添加标签">
+        <t-cell title="业务类型">
           <template #note>
             <t-check-tag
               v-for="(tag, index) in tags"
@@ -31,7 +31,7 @@
               size="medium"
               :default-checked="index === 0"
               variant="dark"
-              :content="`#${tag}`"
+              :content="tag"
             />
           </template>
         </t-cell>
@@ -40,8 +40,8 @@
         <t-cell title="所在位置" hover arrow left-icon="location" @click="gotoMap" />
       </view>
       <view class="btngroup box">
-        <t-button class="btn-class" theme="light" icon="file-copy" content="存草稿" size="large" @click="saveDraft" />
-        <t-button class="btn-class" theme="primary" icon="upload" content="发布" size="large" @click="release" />
+        <t-button class="btn-class" theme="light" icon="file-copy" content="保存草稿" size="large" @click="saveDraft" />
+        <t-button class="btn-class" theme="primary" icon="upload" content="立即提交" size="large" @click="release" />
       </view>
     </view>
   </view>
@@ -52,14 +52,12 @@ import { ref } from 'vue';
 
 interface FileItem {
   url: string;
-  name: string;
-  type: string;
+  name?: string;
+  type?: 'image' | 'video';
+  status: 'loading' | 'done' | 'failed' | 'reload';
 }
 
-const originFiles = ref<FileItem[]>([
-  { url: '/static/image1.png', name: 'uploaded1.png', type: 'image' },
-  { url: '/static/image2.png', name: 'uploaded2.png', type: 'image' },
-]);
+const originFiles = ref<FileItem[]>([]);
 
 const gridConfig = ref({
   column: 4,
@@ -67,7 +65,7 @@ const gridConfig = ref({
   height: 160,
 });
 
-const tags = ref(['AI绘画', '版权素材', '原创', '风格灵动']);
+const tags = ref(['报事报修', '投诉建议', '维修资金', '房屋安全', '其他']);
 
 const handleSuccess = (e: any) => {
   const { files } = e;

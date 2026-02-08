@@ -10,42 +10,42 @@ export function initMock() {
     data: [
       {
         url: '/static/home/card0.png',
-        desc: '少年,星空与梦想',
+        desc: '关于2025年第一季度维修资金公示',
         tags: [
-          { text: 'AI绘画', theme: 'primary' },
-          { text: '版权素材', theme: 'success' },
+          { text: '维修资金', theme: 'primary' },
+          { text: '公示', theme: 'success' },
         ],
       },
       {
         url: '/static/home/card1.png',
-        desc: '仰望星空的少女',
+        desc: '2号楼电梯维修进度实时更新',
         tags: [
-          { text: 'AI绘画', theme: 'primary' },
-          { text: '版权素材', theme: 'success' },
+          { text: '物业服务', theme: 'primary' },
+          { text: '进行中', theme: 'warning' },
         ],
       },
       {
         url: '/static/home/card3.png',
-        desc: '仰望星空的少年',
+        desc: '社区民主投票：关于增加充电桩的决议',
         tags: [
-          { text: 'AI绘画', theme: 'primary' },
-          { text: '版权素材', theme: 'success' },
+          { text: '民主投票', theme: 'primary' },
+          { text: '热门', theme: 'danger' },
         ],
       },
       {
         url: '/static/home/card2.png',
-        desc: '少年,星空与梦想',
+        desc: '春季社区环境美化活动通知',
         tags: [
-          { text: 'AI绘画', theme: 'primary' },
-          { text: '版权素材', theme: 'success' },
+          { text: '社区治理', theme: 'primary' },
+          { text: '通知', theme: 'success' },
         ],
       },
       {
         url: '/static/home/card4.png',
-        desc: '多彩的天空',
+        desc: '房屋安全鉴定温馨提示',
         tags: [
-          { text: 'AI绘画', theme: 'primary' },
-          { text: '版权素材', theme: 'success' },
+          { text: '房屋安全', theme: 'primary' },
+          { text: '提示', theme: 'success' },
         ],
       },
     ],
@@ -65,14 +65,14 @@ export function initMock() {
   mockStore['/api/searchHistory'] = {
     code: 200,
     data: {
-      historyWords: ['TDesign', '组件库', 'AI绘画', 'Vue3', 'uni-app'],
+      historyWords: ['维修资金', '物业备案', '报修进度', '投票结果', '安全鉴定'],
     },
   };
 
   mockStore['/api/searchPopular'] = {
     code: 200,
     data: {
-      popularWords: ['TDesign 组件', 'Vue3 教程', '小程序开发', 'AI绘画', '跨端开发'],
+      popularWords: ['维修资金缴纳', '电梯报修', '业委会选举', '房屋加固', '物业费查询'],
     },
   };
 
@@ -97,10 +97,10 @@ export function initMock() {
     code: 200,
     data: {
       service: [
-        { name: '帮助中心', image: '/static/icon_doc.png', url: '' },
-        { name: '官方地图', image: '/static/icon_map.png', url: '' },
-        { name: 'QQ群', image: '/static/icon_qq.png', url: '' },
-        { name: 'TDesign', image: '/static/icon_td.png', url: '' },
+        { name: '报事报修', image: '/static/icon_doc.png', url: '' },
+        { name: '我的投票', image: '/static/icon_map.png', url: '' },
+        { name: '业主交流', image: '/static/icon_qq.png', url: '' },
+        { name: '官方公告', image: '/static/icon_td.png', url: '' },
       ],
     },
   };
@@ -108,14 +108,14 @@ export function initMock() {
   mockStore['/api/genPersonalInfo'] = {
     code: 200,
     data: {
-      name: 'TDesign',
+      name: '张先生',
       image: '/static/avatar1.png',
-      star: 'Lv.5',
+      star: '金牌业主',
       city: '深圳',
-      gender: 0,
-      birth: '2020-01-01',
+      gender: 1,
+      birth: '1985-05-20',
       address: ['440000', '440300'],
-      introduction: 'TDesign 是腾讯各业务团队在服务业务过程中沉淀的一套企业级设计体系。',
+      introduction: '致力于打造和谐美好的社区环境。',
       photos: [
         { url: '/static/image1.png', name: 'image1.png', type: 'image' },
         { url: '/static/image2.png', name: 'image2.png', type: 'image' },
@@ -131,9 +131,9 @@ export function initMock() {
         succ: {
           data: {
             list: [
-              { name: '内容曝光', number: 8420 },
-              { name: '阅读人数', number: 2560 },
-              { name: '互动量', number: 980 },
+              { name: '累计缴纳(万元)', number: 1250 },
+              { name: '已使用(万元)', number: 340 },
+              { name: '结余(万元)', number: 910 },
             ],
           },
         },
@@ -148,10 +148,10 @@ export function initMock() {
         succ: {
           data: {
             list: [
-              { name: '评论', number: 320 },
-              { name: '点赞', number: 580 },
-              { name: '收藏', number: 240 },
-              { name: '转发', number: 120 },
+              { name: '报修总量', number: 850 },
+              { name: '已完成', number: 720 },
+              { name: '好评率', number: 95 },
+              { name: '投诉量', number: 12 },
             ],
           },
         },
@@ -166,10 +166,10 @@ export function initMock() {
         succ: {
           data: {
             list: [
-              { time: '0-25%', percentage: 30 },
-              { time: '25-50%', percentage: 55 },
-              { time: '50-75%', percentage: 42 },
-              { time: '75-100%', percentage: 28 },
+              { time: '维修资金申报', percentage: 92 },
+              { time: '报事报修响应', percentage: 98 },
+              { time: '安全鉴定执行', percentage: 85 },
+              { time: '投票决策参与', percentage: 76 },
             ],
           },
         },

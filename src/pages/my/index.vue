@@ -120,9 +120,9 @@ const personalInfo = ref<PersonalInfo>({
 });
 
 const gridList = ref<GridItem[]>([
-  { name: '全部发布', icon: 'root-list', type: 'all', url: '' },
-  { name: '审核中', icon: 'search', type: 'progress', url: '' },
-  { name: '已发布', icon: 'upload', type: 'published', url: '' },
+  { name: '全部上报', icon: 'root-list', type: 'all', url: '' },
+  { name: '处理中', icon: 'search', type: 'progress', url: '' },
+  { name: '已办结', icon: 'upload', type: 'published', url: '' },
   { name: '草稿箱', icon: 'file-copy', type: 'draft', url: '' },
 ]);
 
