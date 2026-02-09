@@ -2,7 +2,7 @@
   <view class="page-container">
     <!-- 1. Header with Background Wave -->
     <view class="header-section">
-      <view class="user-info-card">
+      <view class="user-info-card" @click="handleToProfile">
         <view class="avatar-box">
           <t-avatar 
             size="120rpx" 
@@ -37,7 +37,7 @@
     <!-- 2. Function Grid -->
     <view class="function-section">
       <view class="function-card">
-        <view class="function-item" @click="handleAction('我的房屋')">
+        <view class="function-item" @click="handleToHouse">
           <view class="icon-box house">
             <t-icon name="home" size="48rpx" color="#3B82F6" />
           </view>
@@ -50,7 +50,7 @@
         
         <view class="divider-v"></view>
 
-        <view class="function-item" @click="handleAction('我的消息')">
+        <view class="function-item" @click="handleToMessage">
           <view class="icon-box message">
             <t-icon name="chat" size="48rpx" color="#10B981" />
             <view class="badge">3</view>
@@ -67,14 +67,14 @@
     <!-- 3. Menu List -->
     <view class="menu-section">
       <view class="menu-group">
-        <view class="menu-item" @click="handleAction('实名认证')">
+        <view class="menu-item" @click="handleToAuth">
           <view class="menu-left">
             <t-icon name="user-checked" size="44rpx" color="#3B82F6" class="menu-icon" />
             <text class="menu-label">实名认证</text>
           </view>
           <t-icon name="chevron-right" size="40rpx" color="#CBD5E1" />
         </view>
-        <view class="menu-item" @click="handleAction('房屋绑定')">
+        <view class="menu-item" @click="handleToHouse">
           <view class="menu-left">
             <t-icon name="assignment" size="44rpx" color="#3B82F6" class="menu-icon" />
             <text class="menu-label">房屋绑定</text>
@@ -93,7 +93,7 @@
           </view>
           <t-icon name="chevron-right" size="40rpx" color="#CBD5E1" />
         </view>
-        <view class="menu-item" @click="handleAction('安全日志')">
+        <view class="menu-item" @click="handleToSecurityLog">
           <view class="menu-left">
             <t-icon name="secured" size="44rpx" color="#3B82F6" class="menu-icon" />
             <text class="menu-label">安全日志</text>
@@ -105,7 +105,7 @@
 
     <!-- 4. Action Buttons -->
     <view class="action-section">
-      <view class="action-item switch" @click="handleAction('切换账号')">
+      <view class="action-item switch" @click="handleToSwitchAccount">
         <text>切换账号</text>
       </view>
       <view class="action-item logout" @click="handleAction('退出登录')">
@@ -122,8 +122,44 @@
 import { onShow } from '@dcloudio/uni-app';
 
 onShow(() => {
-  uni.hideTabBar();
+  uni.hideTabBar().catch(() => {});
 });
+
+const handleToProfile = () => {
+  uni.navigateTo({
+    url: '/pages/mine/profile'
+  });
+};
+
+const handleToHouse = () => {
+  uni.navigateTo({
+    url: '/pages/mine/house'
+  });
+};
+
+const handleToMessage = () => {
+  uni.navigateTo({
+    url: '/pages/mine/message'
+  });
+};
+
+const handleToAuth = () => {
+  uni.navigateTo({
+    url: '/pages/mine/auth'
+  });
+};
+
+const handleToSecurityLog = () => {
+  uni.navigateTo({
+    url: '/pages/mine/security-log'
+  });
+};
+
+const handleToSwitchAccount = () => {
+  uni.navigateTo({
+    url: '/pages/mine/switch-account'
+  });
+};
 
 const handleAction = (name: string) => {
   uni.showToast({
@@ -154,6 +190,11 @@ const handleAction = (name: string) => {
     align-items: center;
     position: relative;
     z-index: 2;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.8;
+    }
 
     .avatar-box {
       border: 4rpx solid #FFFFFF;

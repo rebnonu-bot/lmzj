@@ -98,7 +98,7 @@
         <view class="usage-section">
           <view class="section-title">维修资金使用情况</view>
           <view class="usage-list">
-            <view class="usage-item" v-for="(item, index) in publicityList.slice(0, 2)" :key="index">
+            <view class="usage-item" v-for="(item, index) in displayedPublicityList" :key="index">
               <view class="usage-dot"></view>
               <view class="usage-info">
                 <text class="usage-name">{{ item.title }}</text>
@@ -107,7 +107,11 @@
               <text class="usage-amount">-{{ item.amount }}万</text>
             </view>
           </view>
-          <view class="view-more" v-if="publicityList.length > 0">
+          <view 
+            class="view-more" 
+            v-if="publicityList.length > 5" 
+            @click="handleToUsageList"
+          >
             <text>查看更多明细</text>
             <t-icon name="chevron-right" size="24rpx" color="#3B82F6" />
           </view>
@@ -120,7 +124,7 @@
 
       <!-- 维修公示 Tab -->
       <view class="tab-content" v-else-if="activeTab === 1">
-        <view class="publicity-card" v-for="(item, index) in publicityList" :key="index">
+        <view class="publicity-card" v-for="(item, index) in publicityList.slice(0, 5)" :key="index">
           <view class="publicity-header">
             <text class="publicity-title">{{ item.title }}</text>
             <view class="status-tag" :class="item.status === '进行中' ? 'ongoing' : 'completed'">
@@ -137,6 +141,10 @@
               <text class="p-value highlight">¥{{ item.amount }} 万元</text>
             </view>
           </view>
+        </view>
+        <view class="view-more-btn" v-if="publicityList.length > 5" @click="handleToPublicityList">
+          <text>查看更多公示</text>
+          <t-icon name="chevron-right" size="32rpx" />
         </view>
       </view>
 
@@ -190,16 +198,28 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
 
-onShow(() => {
-  uni.hideTabBar();
-});
+
+
 
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
 
 const currentHouse = ref('阳光水岸一期 1-1-802');
+
+const isExpanded = ref(false);
+
+const handleToUsageList = () => {
+  uni.navigateTo({
+    url: '/pages/fund/fund-usage-list'
+  });
+};
+
+const handleToPublicityList = () => {
+  uni.navigateTo({
+    url: '/pages/fund/fund-publicity-list'
+  });
+};
 
 const goBack = () => {
   const pages = getCurrentPages();
@@ -285,6 +305,13 @@ const fundInfo = computed(() => {
 
 const availableBalance = computed(() => {
   return (parseFloat(fundInfo.value.total) - parseFloat(fundInfo.value.used)).toFixed(2);
+});
+
+const displayedPublicityList = computed(() => {
+  if (isExpanded.value) {
+    return publicityList.value;
+  }
+  return publicityList.value.slice(0, 5);
 });
 
 const depositStandard = ref(25);
@@ -741,6 +768,31 @@ const allocationInfo = ref({
         }
       }
     }
+  }
+}
+
+.view-more-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  margin-top: 10rpx;
+
+  text {
+    font-size: 28rpx;
+    color: #3B82F6;
+    font-weight: 500;
+  }
+
+  /deep/ .t-icon {
+    color: #3B82F6;
+  }
+
+  &:active {
+    opacity: 0.7;
   }
 }
 

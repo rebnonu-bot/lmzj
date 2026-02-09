@@ -173,7 +173,7 @@ import { ref, onMounted, computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 
 onShow(() => {
-  uni.hideTabBar();
+  uni.hideTabBar().catch(() => {});
 });
 
 const userInfo = ref({
@@ -239,40 +239,46 @@ const handleSwitchHouse = () => {
 
 // 数字滚动动画函数
 const animateNumbers = () => {
-  fundCards.value.forEach((card) => {
-    if (card.type === 'balance') {
-      const target = parseFloat(card.amount);
-      const hasDecimal = card.amount.includes('.');
-      const duration = 1500; // 动画时长 1.5s
-      const startTime = Date.now();
-      
-      const update = () => {
-        const now = Date.now();
-        const progress = Math.min((now - startTime) / duration, 1);
+  try {
+    fundCards.value.forEach((card) => {
+      if (card.type === 'balance') {
+        const target = parseFloat(card.amount);
+        if (isNaN(target)) return;
         
-        // 使用 easeOutExpo 缓动函数使效果更自然
-        const easeOutExpo = (x: number): number => {
-          return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+        const hasDecimal = card.amount.includes('.');
+        const duration = 1500; // 动画时长 1.5s
+        const startTime = Date.now();
+        
+        const update = () => {
+          const now = Date.now();
+          const progress = Math.min((now - startTime) / duration, 1);
+          
+          // 使用 easeOutExpo 缓动函数使效果更自然
+          const easeOutExpo = (x: number): number => {
+            return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+          };
+          
+          const current = target * easeOutExpo(progress);
+          
+          if (hasDecimal) {
+            card.displayAmount = current.toFixed(2);
+          } else {
+            card.displayAmount = Math.floor(current).toString();
+          }
+          
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            card.displayAmount = card.amount; // 确保最终数值准确
+          }
         };
         
-        const current = target * easeOutExpo(progress);
-        
-        if (hasDecimal) {
-          card.displayAmount = current.toFixed(2);
-        } else {
-          card.displayAmount = Math.floor(current).toString();
-        }
-        
-        if (progress < 1) {
-          requestAnimationFrame(update);
-        } else {
-          card.displayAmount = card.amount; // 确保最终数值准确
-        }
-      };
-      
-      requestAnimationFrame(update);
-    }
-  });
+        requestAnimationFrame(update);
+      }
+    });
+  } catch (error) {
+    console.error('animateNumbers error:', error);
+  }
 };
 
 onMounted(() => {
@@ -864,6 +870,7 @@ const handleVoiceClick = () => {
       font-size: 80rpx !important;
       background: linear-gradient(135deg, @primary-blue 0%, @secondary-blue 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       opacity: 0.12;
       transform: rotate(-15deg);
@@ -1133,6 +1140,7 @@ const handleVoiceClick = () => {
           display: -webkit-box;
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
+          line-clamp: 2;
           overflow: hidden;
         }
       }

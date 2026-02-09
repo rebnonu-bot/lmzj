@@ -92,11 +92,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
 
-onShow(() => {
-  uni.hideTabBar();
-});
+
+
 
 const goBack = () => {
   uni.navigateBack();
@@ -349,6 +347,7 @@ const filteredNews = computed(() => {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       overflow: hidden;
     }
 

@@ -194,7 +194,8 @@ const goBack = () => {
 };
 
 const handleCommunityChange = (e: any) => {
-  formData.community = communities[e.detail.value];
+  const index = e.detail.value;
+  formData.community = communities[index] || '';
 };
 
 const handleUpload = () => {

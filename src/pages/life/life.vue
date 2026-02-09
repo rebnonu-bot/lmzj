@@ -95,11 +95,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
 
-onShow(() => {
-  uni.hideTabBar();
-});
+
+
 
 const activeTab = ref(0);
 const tabs = ['全部', '社区活动', '邻里互助', '跳蚤市场'];

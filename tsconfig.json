@@ -3,7 +3,7 @@
   "compilerOptions": {
     "sourceMap": true,
     "baseUrl": ".",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "paths": {
       "@/*": [
         "./src/*"

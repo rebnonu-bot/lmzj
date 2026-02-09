@@ -47,10 +47,17 @@
 
     <!-- 3. Content Area -->
     <scroll-view scroll-y class="content-scroll">
+      <!-- Loading Skeleton -->
+      <view class="tab-content" v-if="isLoading">
+        <view class="skeleton-card balance-skeleton"></view>
+        <view class="skeleton-card info-skeleton"></view>
+        <view class="skeleton-card chart-skeleton"></view>
+      </view>
+
       <!-- 基本情况 Tab -->
-      <view class="tab-content" v-if="activeTab === 0">
+      <view class="tab-content" v-else-if="activeTab === 0">
         <!-- Balance Card -->
-        <view class="balance-card">
+        <view class="balance-card animate-fade-in">
           <view class="balance-info">
             <view class="balance-header">
               <text class="label">小区数字基金余额</text>
@@ -67,7 +74,7 @@
         </view>
 
         <!-- Bank Info Card -->
-        <view class="info-list-card">
+        <view class="info-list-card animate-fade-in" style="animation-delay: 0.1s">
           <view class="info-row">
             <text class="i-label">银行账户</text>
             <text class="i-value">{{ bankInfo.name }}</text>
@@ -83,7 +90,7 @@
         </view>
 
         <!-- Trend Chart Card -->
-        <view class="chart-card">
+        <view class="chart-card animate-fade-in" style="animation-delay: 0.2s">
           <view class="chart-header">
             <text class="chart-title">收支趋势量</text>
             <view class="chart-legend">
@@ -114,14 +121,20 @@
                 <view class="bar-group" v-for="(item, index) in trendData" :key="index">
                   <view class="bars">
                     <view 
-                      class="bar income" 
-                      :style="{ height: (item.income / maxTrendValue * 100) + '%' }"
+                      class="bar income animate-grow-up" 
+                      :style="{ 
+                        height: (item.income / maxTrendValue * 100) + '%',
+                        animationDelay: (0.3 + index * 0.1) + 's'
+                      }"
                     >
                       <text class="bar-value" v-if="item.income > 0.5">{{ item.income }}</text>
                     </view>
                     <view 
-                      class="bar expense" 
-                      :style="{ height: (item.expense / maxTrendValue * 100) + '%' }"
+                      class="bar expense animate-grow-up" 
+                      :style="{ 
+                        height: (item.expense / maxTrendValue * 100) + '%',
+                        animationDelay: (0.4 + index * 0.1) + 's'
+                      }"
                     >
                       <text class="bar-value" v-if="item.expense > 0.5">{{ item.expense }}</text>
                     </view>
@@ -139,7 +152,12 @@
 
       <!-- 收支记录 Tab -->
       <view class="tab-content" v-else-if="activeTab === 1">
-        <view class="record-item" v-for="(item, index) in recordList" :key="index">
+        <view 
+          class="record-item" 
+          v-for="(item, index) in recordList.slice(0, 5)" 
+          :key="index"
+          @click="handleDetail(item)"
+        >
           <view class="record-left">
             <view class="record-type" :class="item.type">{{ item.typeText }}</view>
             <view class="record-info">
@@ -147,9 +165,16 @@
               <text class="record-date">{{ item.date }}</text>
             </view>
           </view>
-          <text class="record-amount" :class="item.type">
-            {{ item.type === 'in' ? '+' : '-' }}{{ item.amount }}
-          </text>
+          <view class="record-right">
+            <text class="record-amount" :class="item.type">
+              {{ item.type === 'in' ? '+' : '-' }}{{ item.amount }}
+            </text>
+            <t-icon name="chevron-right" size="32rpx" color="#CBD5E1" />
+          </view>
+        </view>
+        <view class="view-more-btn" v-if="recordList.length > 5" @click="goToRecordList">
+          <text>查看更多明细</text>
+          <t-icon name="chevron-right" size="32rpx" />
         </view>
         <view class="empty-state" v-if="recordList.length === 0">
           <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
@@ -192,14 +217,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { onShow } from '@dcloudio/uni-app';
+import { ref, computed, onMounted } from 'vue';
 
-onShow(() => {
-  uni.hideTabBar();
+const isLoading = ref(true);
+const activeTab = ref(0);
+
+onMounted(() => {
+  // Simulate data loading
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 800);
 });
 
-const activeTab = ref(0);
 const tabs = ['基本情况', '收支记录', '合同'];
 
 const currentHouse = ref('阳光水岸一期 1-1-802');
@@ -220,6 +249,18 @@ const goToBindHouse = () => {
   uni.showToast({
     title: '房屋绑定功能开发中',
     icon: 'none'
+  });
+};
+
+const goToRecordList = () => {
+  uni.navigateTo({
+    url: '/pages/fund/income-record-list'
+  });
+};
+
+const handleDetail = (item: any) => {
+  uni.navigateTo({
+    url: `/pages/fund/income-record-detail?data=${encodeURIComponent(JSON.stringify(item))}`
   });
 };
 
@@ -320,24 +361,33 @@ const recordList = ref([
 
 // 趋势图数据 - 动态获取最近6个月
 const trendData = computed(() => {
-  const data = [];
+  interface TrendItem {
+    month: string;
+    income: number;
+    expense: number;
+  }
+  const data: TrendItem[] = [];
   const now = new Date();
-  
+  if (!recordList.value || !Array.isArray(recordList.value)) return data;
+
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    const monthStr = `${d.getMonth() + 1}月`;
     const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    
-    const monthlyRecords = recordList.value.filter(r => r.date.startsWith(yearMonth));
+    const monthlyRecords = recordList.value.filter(r => r.date && typeof r.date === 'string' && r.date.startsWith(yearMonth));
     const income = monthlyRecords
       .filter(r => r.type === 'in')
-      .reduce((sum, r) => sum + parseFloat(r.amount), 0) / 10000;
+      .reduce((sum, r) => {
+        const amt = parseFloat(r.amount);
+        return sum + (isNaN(amt) ? 0 : amt);
+      }, 0) / 10000;
     const expense = monthlyRecords
       .filter(r => r.type === 'out')
-      .reduce((sum, r) => sum + parseFloat(r.amount), 0) / 10000;
-      
+      .reduce((sum, r) => {
+        const amt = parseFloat(r.amount);
+        return sum + (isNaN(amt) ? 0 : amt);
+      }, 0) / 10000;
     data.push({
-      month: monthStr,
+      month: `${d.getMonth() + 1}月`,
       income: parseFloat(income.toFixed(2)),
       expense: parseFloat(expense.toFixed(2))
     });
@@ -652,7 +702,23 @@ const contractList = ref([
         font-size: 32rpx;
         font-weight: bold;
         box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
+        animation: breathe 2s ease-in-out infinite;
       }
+    }
+  }
+
+  @keyframes breathe {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.6);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
     }
   }
 
@@ -884,13 +950,12 @@ const contractList = ref([
       }
 
       .record-info {
-        display: flex;
-        flex-direction: column;
-
         .record-title {
           font-size: 28rpx;
           color: #1E293B;
+          font-weight: 500;
           margin-bottom: 4rpx;
+          display: block;
         }
         .record-date {
           font-size: 24rpx;
@@ -899,16 +964,36 @@ const contractList = ref([
       }
     }
 
-    .record-amount {
-      font-size: 32rpx;
-      font-weight: bold;
+    .record-right {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
 
-      &.in {
-        color: #10B981;
+      .record-amount {
+        font-size: 30rpx;
+        font-weight: 600;
+
+        &.in {
+          color: #10B981;
+        }
+        &.out {
+          color: #1E293B;
+        }
       }
-      &.out {
-        color: #EF4444;
-      }
+    }
+  }
+
+  .view-more-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8rpx;
+    padding: 30rpx 0;
+    color: #64748B;
+    font-size: 26rpx;
+    
+    &:active {
+      opacity: 0.7;
     }
   }
 
@@ -978,6 +1063,54 @@ const contractList = ref([
     text {
       margin-top: 20rpx;
     }
+  }
+
+  // --- Animations & Skeletons ---
+  .skeleton-card {
+    background: #fff;
+    border-radius: 24rpx;
+    margin-bottom: 30rpx;
+    position: relative;
+    overflow: hidden;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+      animation: skeleton-loading 1.5s infinite;
+    }
+  }
+
+  .balance-skeleton { height: 220rpx; }
+  .info-skeleton { height: 380rpx; }
+  .chart-skeleton { height: 450rpx; }
+
+  @keyframes skeleton-loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out both;
+  }
+
+  .animate-grow-up {
+    transform-origin: bottom;
+    animation: growUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20rpx); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes growUp {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
   }
 }
 </style>

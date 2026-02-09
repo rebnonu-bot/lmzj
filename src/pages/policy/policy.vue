@@ -65,7 +65,7 @@ import { onShow } from '@dcloudio/uni-app';
 const loading = ref(true);
 
 onShow(() => {
-  uni.hideTabBar();
+  uni.hideTabBar().catch(() => {});
   // 模拟加载过程
   loading.value = true;
   setTimeout(() => {
@@ -159,7 +159,6 @@ const handlePolicyClick = (item: Policy) => {
     success: (res) => {
       if (res.statusCode === 200) {
         const filePath = res.tempFilePath;
-        // 打开文档
         uni.openDocument({
           filePath: filePath,
           showMenu: true,
@@ -167,11 +166,15 @@ const handlePolicyClick = (item: Policy) => {
             console.log('打开文档成功');
           },
           fail: (err) => {
+            console.error('openDocument fail:', {
+              errMsg: err.errMsg,
+              errCode: err.errCode,
+              originalError: err
+            });
             uni.showToast({
-              title: '打开文档失败',
+              title: '打开文件失败',
               icon: 'none'
             });
-            console.error('openDocument fail', err);
           },
           complete: () => {
             uni.hideLoading();
@@ -179,6 +182,7 @@ const handlePolicyClick = (item: Policy) => {
         });
       } else {
         uni.hideLoading();
+        console.error('Download status code:', res.statusCode);
         uni.showToast({
           title: '下载失败',
           icon: 'none'
@@ -187,11 +191,15 @@ const handlePolicyClick = (item: Policy) => {
     },
     fail: (err) => {
       uni.hideLoading();
+      console.error('downloadFile fail:', {
+        errMsg: err.errMsg,
+        errCode: err.errCode,
+        originalError: err
+      });
       uni.showToast({
-        title: '下载失败，请重试',
+        title: '下载文件失败',
         icon: 'none'
       });
-      console.error('downloadFile fail', err);
     }
   });
   // #endif

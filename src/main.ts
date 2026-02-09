@@ -25,9 +25,26 @@ export function createApp() {
   const app = createSSRApp(App);
   app.config.errorHandler = (err, instance, info) => {
     console.error('Vue Global Error:', err);
+    try {
+      console.error('Vue Global Error (JSON):', JSON.stringify(err, null, 2));
+    } catch (e) {
+      // ignore circular reference errors
+    }
+    if (err instanceof Error) {
+      console.error('Error Stack:', err.stack);
+    }
     console.log('Error Instance:', instance);
     console.log('Error Info:', info);
   };
+  
+  // Handle unhandled promise rejections
+  if (typeof window !== 'undefined') {
+    window.addEventListener('unhandledrejection', (event) => {
+      console.error('Unhandled Rejection:', event.reason);
+      event.preventDefault();
+    });
+  }
+
   return {
     app,
   };
