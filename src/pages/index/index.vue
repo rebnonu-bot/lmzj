@@ -168,7 +168,7 @@
 
     <!-- 切换房屋选择器 -->
     <t-action-sheet
-      v-model="showHousePicker"
+      v-model:visible="showHousePicker"
       :items="houseOptions"
       @selected="onHouseSelect"
       @cancel="showHousePicker = false"
@@ -201,7 +201,8 @@ const handleSwitchHouse = () => {
   showHousePicker.value = true;
 };
 
-const onHouseSelect = (item: any) => {
+const onHouseSelect = (detail: any) => {
+  const item = detail.selected;
   const selectedAddress = item.label || item.value;
   userInfo.value.address = selectedAddress;
   uni.setStorageSync('selectedHouse', selectedAddress);

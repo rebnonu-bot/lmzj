@@ -196,7 +196,7 @@
 
     <!-- 切换房屋选择器 -->
     <t-action-sheet
-      v-model="showHousePicker"
+      v-model:visible="showHousePicker"
       :items="houseOptions"
       @selected="onHouseSelect"
       @cancel="showHousePicker = false"
@@ -207,9 +207,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-
-
-
 
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
@@ -252,7 +249,8 @@ const goToBindHouse = () => {
   showHousePicker.value = true;
 };
 
-const onHouseSelect = (item: any) => {
+const onHouseSelect = (detail: any) => {
+  const item = detail.selected;
   const selectedAddress = item.label || item.value;
   currentHouse.value = selectedAddress;
   uni.setStorageSync('selectedHouse', selectedAddress);
@@ -340,10 +338,10 @@ const displayedPublicityList = computed(() => {
 const depositStandard = ref(25);
 const personalBalance = computed(() => (parseFloat(allocationInfo.value.area) * depositStandard.value).toFixed(2));
 
-const allocationInfo = ref({
+const allocationInfo = computed(() => ({
   houseName: currentHouse.value,
   area: '124.50'
-});
+}));
 </script>
 
 <style lang="less" scoped>
