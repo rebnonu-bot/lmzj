@@ -108,6 +108,15 @@ const houseList = ref([
     status: '已认证',
     statusType: 'verified',
     isDefault: false
+  },
+  {
+    name: '翡翠江景 3-2-1501',
+    address: '江西省赣州市章贡区章江北大道88号',
+    area: '138.2',
+    role: '业主',
+    status: '已认证',
+    statusType: 'verified',
+    isDefault: false
   }
 ]);
 

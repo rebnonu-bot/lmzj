@@ -43,7 +43,7 @@
           </view>
           <view class="info">
             <text class="title">我的房屋</text>
-            <text class="desc">2套房屋</text>
+            <text class="desc">3套房屋</text>
           </view>
           <t-icon name="chevron-right" size="32rpx" color="#CBD5E1" />
         </view>

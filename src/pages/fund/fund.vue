@@ -236,7 +236,8 @@ const isExpanded = ref(false);
 const showHousePicker = ref(false);
 const houseOptions = [
   { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802' },
-  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202' }
+  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202' },
+  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501' }
 ];
 
 const handleToUsageList = () => {
