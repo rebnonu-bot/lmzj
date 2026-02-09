@@ -206,17 +206,17 @@ const mockVotes = ref([
   },
   {
     id: 3,
-    title: '赣州市南康区《锦绣花园》电梯更新改造维修资金使用投票',
+    title: '赣州市章贡区《阳光水岸》1-1单元电梯更新改造维修资金使用投票',
     startTime: '2026-02-01 00:00',
     endTime: '02-20 23:59',
     statusText: '进行中',
     statusType: 'ongoing',
     type: '维修资金使用投票',
-    participants: 89
+    participants: 45
   },
   {
     id: 4,
-    title: '赣州市赣县区《御景江山》2025年公共收益分配方案投票',
+    title: '赣州市章贡区《阳光水岸》2025年公共收益分配方案投票',
     startTime: '2026-01-10 00:00',
     endTime: '01-30 23:59',
     statusText: '已结束',

@@ -97,20 +97,20 @@ import { ref } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 
 const resultInfo = ref({
-  id: 1,
-  title: '赣州市章贡区《阳光水岸》2025年度物业服务续聘表决',
-  date: '2025-12-31',
+  id: 4,
+  title: '赣州市章贡区《阳光水岸》2025年公共收益分配方案投票',
+  date: '2026-01-30',
   status: 'closed',
   statusName: '已结束',
-  totalVoters: 1156,
-  participationRate: 88.5,
-  areaRate: 91.3
+  totalVoters: 560,
+  participationRate: 92.5,
+  areaRate: 94.8
 });
 
 const statistics = [
-  { label: '赞成', count: 924, percent: 79.9, color: '#22C55E' },
-  { label: '反对', count: 182, percent: 15.7, color: '#DC2626' },
-  { label: '弃权', count: 50, percent: 4.3, color: '#94A3B8' }
+  { label: '赞成', count: 512, percent: 91.4, color: '#22C55E' },
+  { label: '反对', count: 32, percent: 5.7, color: '#DC2626' },
+  { label: '弃权', count: 16, percent: 2.9, color: '#94A3B8' }
 ];
 
 onLoad((options) => {

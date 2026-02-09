@@ -94,58 +94,36 @@ const activeTab = ref('all');
 const messages = ref<Message[]>([
   {
     id: '1',
-    title: '关于2024年物业费调整的投票邀请',
-    desc: '尊敬的业主，您的房屋关联了新的电子投票，请及时参与。',
+    title: '关于2026年度物业服务续聘表决的投票邀请',
+    desc: '尊敬的业主刘泽辉，您的房屋阳光水岸一期 1-1-802 关联了新的电子投票，请及时参与。',
     time: '10:30',
     category: '电子投票',
-    categoryCode: 'voting',
-    icon: 'bulletpoint',
+    categoryCode: 'vote',
+    icon: 'check-rectangle',
     isRead: false,
     type: 'vote'
   },
   {
     id: '2',
-    title: '您的报修单已受理',
-    desc: '3号楼2单元电梯故障报修已由维保人员受理，预计1小时内到达。',
-    time: '09:15',
-    category: '小区报修',
-    categoryCode: 'repair',
-    icon: 'tools',
+    title: '1月物业费账单已出',
+    desc: '您好，阳光水岸一期 1-1-802 的1月物业费账单已生成，请及时缴纳。',
+    time: '昨天',
+    category: '费用账单',
+    categoryCode: 'bill',
+    icon: 'bill',
     isRead: false,
-    type: 'repair'
+    type: 'bill'
   },
   {
     id: '3',
-    title: '3月社区环境整治公告',
-    desc: '本周末将进行全区消杀和绿化修整，请各位业主关好门窗。',
-    time: '昨天',
-    category: '公示公告',
-    categoryCode: 'notice',
-    icon: 'notification',
+    title: '报修处理进度更新',
+    desc: '您提交的“客厅灯泡不亮”报修申请，维修师傅已接单，预计今日14:00上门。',
+    time: '02-08',
+    category: '报修服务',
+    categoryCode: 'repair',
+    icon: 'tools',
     isRead: true,
-    type: 'notice'
-  },
-  {
-    id: '4',
-    title: '投诉受理反馈',
-    desc: '关于“高空抛物”的投诉建议已收到，我们已加强巡逻和监控。',
-    time: '03-18',
-    category: '投诉建议',
-    categoryCode: 'complaint',
-    icon: 'chat',
-    isRead: true,
-    type: 'voice'
-  },
-  {
-    id: '5',
-    title: '新一轮业主委员会选举通知',
-    desc: '请符合条件的业主积极报名参与新一届业委会选举。',
-    time: '03-15',
-    category: '电子投票',
-    categoryCode: 'voting',
-    icon: 'bulletpoint',
-    isRead: true,
-    type: 'vote'
+    type: 'repair'
   }
 ]);
 

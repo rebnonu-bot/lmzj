@@ -88,7 +88,7 @@ const logs = ref<SecurityLog[]>([
     id: '1',
     type: 'login',
     title: '账号登录成功',
-    time: '2024-03-20 10:45:22',
+    time: '2026-02-09 10:45:22',
     status: 'success',
     statusText: '成功',
     ip: '192.168.1.105',
@@ -98,44 +98,46 @@ const logs = ref<SecurityLog[]>([
   {
     id: '2',
     type: 'vote',
-    title: '参与“物业费调整”投票',
-    time: '2024-03-19 15:30:10',
+    title: '参与“物业服务续聘”投票',
+    time: '2026-02-08 15:30:10',
     status: 'success',
     statusText: '成功',
     ip: '192.168.1.105',
-    device: 'iPhone 15 Pro (App)'
+    device: 'iPhone 15 Pro (App)',
+    location: '赣州市 章贡区'
   },
   {
     id: '3',
     type: 'bind',
     title: '房屋绑定申请',
-    time: '2024-03-18 09:20:45',
+    time: '2026-01-20 09:20:45',
     status: 'success',
     statusText: '成功',
     ip: '223.104.41.12',
     device: 'Chrome 122.0.0 (H5)',
-    location: '赣州市 南康区'
+    location: '赣州市 章贡区'
   },
   {
     id: '4',
     type: 'login',
     title: '账号登录失败',
-    time: '2024-03-17 22:15:05',
+    time: '2026-01-15 22:15:05',
     status: 'fail',
     statusText: '密码错误',
     ip: '114.242.25.18',
     device: 'Unknown Device',
-    location: '赣州市 赣县区'
+    location: '赣州市 章贡区'
   },
   {
     id: '5',
     type: 'bind',
-    title: '解除房屋绑定',
-    time: '2024-03-15 14:00:33',
+    title: '房屋实名认证',
+    time: '2026-01-10 14:00:33',
     status: 'success',
     statusText: '成功',
     ip: '192.168.1.105',
-    device: 'iPhone 15 Pro (App)'
+    device: 'iPhone 15 Pro (App)',
+    location: '赣州市 章贡区'
   }
 ]);
 

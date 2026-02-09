@@ -94,27 +94,19 @@ const mockVotes = ref([
     status: 0 // 0: 当前, 1: 1历史
   },
   {
-    id: 2,
-    title: '赣州市南康区《锦绣花园》电梯更新改造维修资金使用申请',
-    date: '2026-02-05',
-    typeName: '维修资金',
-    typeCode: 'repair',
-    status: 0
-  },
-  {
     id: 3,
     title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
-    date: '2025-12-20',
+    date: '2025-12-15',
     typeName: '业委会选举',
     typeCode: 'election',
     status: 1
   },
   {
     id: 4,
-    title: '赣州市赣县区《御景江山》2025年公共收益分配方案投票',
-    date: '2025-11-15',
+    title: '赣州市章贡区《阳光水岸》2025年公共收益分配方案投票',
+    date: '2026-01-10',
     typeName: '公共收益',
-    typeCode: 'income',
+    typeCode: 'benefit',
     status: 1
   }
 ]);
