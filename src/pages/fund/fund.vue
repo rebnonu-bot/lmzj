@@ -205,7 +205,7 @@ import { ref, computed } from 'vue';
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
 
-const currentHouse = ref('赣州市章贡区阳光水岸一期 1-1-802');
+const currentHouse = ref('阳光水岸一期 1-1-802');
 
 const isExpanded = ref(false);
 

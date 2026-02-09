@@ -179,7 +179,7 @@ onShow(() => {
 const userInfo = ref({
   name: '刘泽辉',
   slogan: '共建和谐小区,共享温馨生活',
-  address: '赣州市章贡区阳光水岸一期 1-1-802'
+  address: '阳光水岸一期 1-1-802'
 });
 
 const notices = ref<string[]>([
