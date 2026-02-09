@@ -224,7 +224,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
@@ -235,10 +235,29 @@ const isExpanded = ref(false);
 
 const showHousePicker = ref(false);
 const houseOptions = [
-  { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802' },
-  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202' },
-  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501' }
+  { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802', community: '阳光水岸', area: '124.50' },
+  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202', community: '阳光水岸', area: '98.50' },
+  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501', community: '翡翠江景', area: '138.20' }
 ];
+
+const communityFundDetailMap: Record<string, { total: number, list: any[] }> = {
+  '阳光水岸': {
+    total: 245.82,
+    list: [
+      { title: '1号楼电梯钢丝绳更换工程', date: '2026-01-15', status: '进行中', amount: '4.50' },
+      { title: '小区监控系统升级改造', date: '2025-12-20', status: '已公示', amount: '2.80' },
+      { title: '地库排水泵检修', date: '2025-11-05', status: '已完成', amount: '0.65' }
+    ]
+  },
+  '翡翠江景': {
+    total: 485.50,
+    list: [
+      { title: '翡翠江景中庭喷泉维修', date: '2026-02-01', status: '进行中', amount: '12.50' },
+      { title: '地下车库地坪漆翻新', date: '2025-12-10', status: '已完成', amount: '25.30' },
+      { title: '3号楼屋顶防水工程', date: '2025-11-15', status: '已完成', amount: '8.40' }
+    ]
+  }
+};
 
 const handleToUsageList = () => {
   uni.navigateTo({
@@ -273,6 +292,14 @@ const onHouseSelect = (item: any) => {
   currentHouse.value = selectedAddress;
   uni.setStorageSync('selectedHouse', selectedAddress);
   showHousePicker.value = false;
+
+  // 更新公示列表
+  const community = item.community || (selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景');
+  const detail = communityFundDetailMap[community];
+  if (detail) {
+    publicityList.value = detail.list;
+  }
+
   uni.showToast({
     title: `已切换至 ${selectedAddress}`,
     icon: 'none'
@@ -280,60 +307,26 @@ const onHouseSelect = (item: any) => {
 };
 
 // 模拟数据 - 公示列表
-const publicityList = ref([
-  {
-    title: '1号楼电梯钢丝绳更换工程',
-    date: '2026-01-15',
-    status: '进行中',
-    amount: '4.50'
-  },
-  {
-    title: '小区监控系统升级改造',
-    date: '2025-12-20',
-    status: '已公示',
-    amount: '2.80'
-  },
-  {
-    title: '地库排水泵检修',
-    date: '2025-11-05',
-    status: '已完成',
-    amount: '0.65'
-  },
-  {
-    title: '2号楼外墙脱落维修',
-    date: '2025-10-12',
-    status: '已完成',
-    amount: '1.20'
-  },
-  {
-    title: '小区消防管道渗漏维修',
-    date: '2025-09-28',
-    status: '已完成',
-    amount: '0.85'
-  },
-  {
-    title: '单元门禁系统维护',
-    date: '2025-08-15',
-    status: '已完成',
-    amount: '0.45'
-  },
-  {
-    title: '屋面防水补强工程',
-    date: '2025-07-20',
-    status: '已完成',
-    amount: '1.65'
-  },
-  {
-    title: '生活水泵房变频器更换',
-    date: '2025-06-10',
-    status: '已完成',
-    amount: '0.35'
+const publicityList = ref(communityFundDetailMap['阳光水岸']?.list || []);
+
+onMounted(() => {
+  const selectedAddress = currentHouse.value;
+  const house = houseOptions.find(h => h.value === selectedAddress);
+  if (house) {
+    const community = house.community || (selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景');
+    const detail = communityFundDetailMap[community];
+    if (detail) {
+      publicityList.value = detail.list;
+    }
   }
-]);
+});
 
 // 维修资金概况 - 由公示列表计算
 const fundInfo = computed(() => {
-  const total = 245.82; // 假设总额固定
+  const selectedAddress = currentHouse.value;
+  const community = selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景';
+  const detail = communityFundDetailMap[community];
+  const total = detail ? detail.total : 245.82;
   const used = publicityList.value.reduce((sum, item) => sum + parseFloat(item.amount), 0);
   return {
     total: total.toFixed(2),
@@ -356,10 +349,14 @@ const displayedPublicityList = computed(() => {
 const depositStandard = ref(25);
 const personalBalance = computed(() => (parseFloat(allocationInfo.value.area) * depositStandard.value).toFixed(2));
 
-const allocationInfo = computed(() => ({
-  houseName: currentHouse.value,
-  area: '124.50'
-}));
+const allocationInfo = computed(() => {
+  const selectedAddress = currentHouse.value;
+  const house = houseOptions.find(h => h.value === selectedAddress);
+  return {
+    houseName: selectedAddress,
+    area: house ? house.area : '124.50'
+  };
+});
 </script>
 
 <style lang="less" scoped>

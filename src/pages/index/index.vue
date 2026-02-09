@@ -209,12 +209,18 @@ const userInfo = ref({
   address: uni.getStorageSync('selectedHouse') || '阳光水岸一期 1-1-802'
 });
 
-const showHousePicker = ref(false);
 const houseOptions = [
-  { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802' },
-  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202' },
-  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501' }
+  { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802', community: '阳光水岸' },
+  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202', community: '阳光水岸' },
+  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501', community: '翡翠江景' }
 ];
+
+const communityFundsMap: Record<string, { main: string, digital: string }> = {
+  '阳光水岸': { main: '233.37', digital: '12.85' },
+  '翡翠江景': { main: '456.12', digital: '25.60' }
+};
+
+const showHousePicker = ref(false);
 
 const handleSwitchHouse = () => {
   showHousePicker.value = true;
@@ -225,6 +231,17 @@ const onHouseSelect = (item: any) => {
   userInfo.value.address = selectedAddress;
   uni.setStorageSync('selectedHouse', selectedAddress);
   showHousePicker.value = false;
+  
+  // 更新资金数据
+  const community = item.community || (selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景');
+  const funds = communityFundsMap[community];
+  if (funds && fundCards.value[0] && fundCards.value[1]) {
+    fundCards.value[0].amount = funds.main;
+    fundCards.value[1].amount = funds.digital;
+    // 重新触发动画
+    animateNumbers();
+  }
+
   uni.showToast({
     title: `已切换至 ${selectedAddress}`,
     icon: 'none'
@@ -324,6 +341,16 @@ const animateNumbers = () => {
 };
 
 onMounted(() => {
+  // 初始化资金数据
+  const selectedAddress = userInfo.value.address;
+  const house = houseOptions.find(h => h.value === selectedAddress);
+  const community = house?.community || (selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景');
+  const funds = communityFundsMap[community];
+  if (funds && fundCards.value[0] && fundCards.value[1]) {
+    fundCards.value[0].amount = funds.main;
+    fundCards.value[1].amount = funds.digital;
+  }
+  
   animateNumbers();
 });
 
