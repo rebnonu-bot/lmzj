@@ -1,6 +1,6 @@
 {
   "name": "tdesign-uniapp-starter",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "scripts": {
     "dev:custom": "uni -p",
     "dev": "npm run dev:h5",

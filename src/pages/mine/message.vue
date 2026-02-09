@@ -11,7 +11,7 @@
 
     <!-- 1. Tabs Section -->
     <view class="tabs-wrapper">
-      <t-tabs :value="activeTab" @change="handleTabChange" :bottom-line="true">
+      <t-tabs :value="activeTab" @click="handleTabChange" :bottom-line="true">
         <t-tab-panel label="全部" value="all" />
         <t-tab-panel label="未读" value="unread" />
         <t-tab-panel label="已读" value="read" />
@@ -161,14 +161,22 @@ const handleBack = () => {
 };
 
 const handleTabChange = (e: any) => {
-  activeTab.value = e.detail.value;
+  if (e && typeof e === 'object') {
+    if (e.value !== undefined) {
+      activeTab.value = String(e.value);
+    } else if (e.detail && e.detail.value !== undefined) {
+      activeTab.value = String(e.detail.value);
+    }
+  } else if (e !== undefined) {
+    activeTab.value = String(e);
+  }
 };
 
 const filteredMessages = computed(() => {
-  if (activeTab.value === 'unread') {
+  const currentTab = String(activeTab.value);
+  if (currentTab === 'unread') {
     return messages.value.filter(m => !m.isRead);
-  }
-  if (activeTab.value === 'read') {
+  } else if (currentTab === 'read') {
     return messages.value.filter(m => m.isRead);
   }
   return messages.value;

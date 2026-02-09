@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onLaunch } from "@dcloudio/uni-app";
+import '@tdesign/uniapp/icon/icon.css';
 
 onLaunch(() => {
   console.log("App Launch");
 });
 </script>
 
-<style>
+<style lang="less">
 /* 每个页面的公共css */
 @import '@tdesign/uniapp/common/style/theme/index.less';
 

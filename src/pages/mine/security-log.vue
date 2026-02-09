@@ -10,7 +10,7 @@
     />
 
     <view class="filter-tabs">
-      <t-tabs :value="activeTab" @change="handleTabChange" :bottom-line="true">
+      <t-tabs :value="activeTab" @click="handleTabChange" :bottom-line="true">
         <t-tab-panel label="全部" value="all" />
         <t-tab-panel label="登录" value="login" />
         <t-tab-panel label="绑定" value="bind" />
@@ -151,12 +151,21 @@ const handleBack = () => {
 };
 
 const handleTabChange = (e: any) => {
-  activeTab.value = e.detail.value;
+  if (e && typeof e === 'object') {
+    if (e.value !== undefined) {
+      activeTab.value = String(e.value);
+    } else if (e.detail && e.detail.value !== undefined) {
+      activeTab.value = String(e.detail.value);
+    }
+  } else if (e !== undefined) {
+    activeTab.value = String(e);
+  }
 };
 
 const filteredLogs = computed(() => {
-  if (activeTab.value === 'all') return logs.value;
-  return logs.value.filter(log => log.type === activeTab.value);
+  const currentTab = String(activeTab.value);
+  if (currentTab === 'all') return logs.value;
+  return logs.value.filter(log => String(log.type) === currentTab);
 });
 
 const getIcon = (type: string) => {
