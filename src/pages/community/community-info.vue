@@ -21,23 +21,23 @@
             <t-icon name="city" size="64rpx" color="#3B82F6" />
           </view>
           <view class="community-title-box">
-            <text class="community-name">阳光水岸一期</text>
-            <text class="community-address">苏州市工业园区湖东街道阳光大道88号</text>
+            <text class="community-name">{{ communityData.name }}</text>
+            <text class="community-address">{{ communityData.address }}</text>
           </view>
         </view>
         <view class="info-divider"></view>
         <view class="info-grid">
           <view class="info-grid-item">
             <text class="label">建筑面积</text>
-            <text class="value">24.5万㎡</text>
+            <text class="value">{{ communityData.area }}</text>
           </view>
           <view class="info-grid-item">
             <text class="label">住户总数</text>
-            <text class="value">1280户</text>
+            <text class="value">{{ communityData.households }}</text>
           </view>
           <view class="info-grid-item">
             <text class="label">绿化率</text>
-            <text class="value">35.8%</text>
+            <text class="value">{{ communityData.greenRate }}</text>
           </view>
         </view>
       </view>
@@ -65,23 +65,23 @@
           <view class="section-title">楼盘详情</view>
           <view class="detail-row">
             <text class="d-label">建成时间</text>
-            <text class="d-value">2020年</text>
+            <text class="d-value">{{ communityData.buildTime }}</text>
           </view>
           <view class="detail-row">
             <text class="d-label">开发商</text>
-            <text class="d-value">赣州阳光房地产开发有限公司</text>
+            <text class="d-value">{{ communityData.developer }}</text>
           </view>
           <view class="detail-row">
             <text class="d-label">物业类型</text>
-            <text class="d-value">普通住宅</text>
+            <text class="d-value">{{ communityData.type }}</text>
           </view>
           <view class="detail-row">
             <text class="d-label">容积率</text>
-            <text class="d-value">2.2</text>
+            <text class="d-value">{{ communityData.plotRatio }}</text>
           </view>
           <view class="detail-row">
             <text class="d-label">停车位</text>
-            <text class="d-value">地上150个 / 地下1200个</text>
+            <text class="d-value">{{ communityData.parking }}</text>
           </view>
         </view>
 
@@ -126,10 +126,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
+const communityInfoMap: Record<string, any> = {
+  '阳光水岸': {
+    name: '阳光水岸',
+    address: '江西省赣州市章贡区阳光大道1号',
+    area: '24.5万㎡',
+    households: '1280户',
+    greenRate: '35.8%',
+    buildTime: '2020年',
+    developer: '赣州阳光房地产开发有限公司',
+    type: '普通住宅',
+    plotRatio: '2.2',
+    parking: '地上150个 / 地下1200个'
+  },
+  '翡翠江景': {
+    name: '翡翠江景',
+    address: '江西省赣州市章贡区章江北大道88号',
+    area: '18.2万㎡',
+    households: '860户',
+    greenRate: '42.5%',
+    buildTime: '2022年',
+    developer: '赣州锦绣地产有限公司',
+    type: '高层住宅',
+    plotRatio: '2.0',
+    parking: '地上50个 / 地下900个'
+  }
+};
 
+const currentHouse = ref(uni.getStorageSync('selectedHouse') || '阳光水岸一期 1-1-802');
 
+const communityData = computed(() => {
+  const selectedAddress = currentHouse.value;
+  const community = selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景';
+  return communityInfoMap[community];
+});
 
 const activeTab = ref(0);
 const tabs = ['基本信息', '设施设备', '小区相册'];
