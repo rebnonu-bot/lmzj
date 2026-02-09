@@ -244,7 +244,7 @@ const fundCards = ref<FundCard[]>([
     displayAmount: '0',
     unit: '万元', 
     type: 'balance',
-    bgIcon: 'money'
+    bgIcon: 'wallet'
   }
 ]);
 
@@ -317,7 +317,7 @@ interface MenuItem {
 }
 
 const subMenus = ref<MenuItem[]>([
-  { label: '电子投票', icon: 'check-rectangle', color: '#2DD4BF' },
+  { label: '电子投票', icon: 'assignment', color: '#2DD4BF' },
   { label: '小区信息', icon: 'info-circle', color: '#34D399' },
   { label: '物业企业', icon: 'city', color: '#60A5FA' },
   { label: '电梯维保', icon: 'service', color: '#818CF8' },

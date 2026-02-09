@@ -99,7 +99,7 @@ const messages = ref<Message[]>([
     time: '10:30',
     category: '电子投票',
     categoryCode: 'vote',
-    icon: 'check-rectangle',
+    icon: 'assignment',
     isRead: false,
     type: 'vote'
   },
@@ -110,7 +110,7 @@ const messages = ref<Message[]>([
     time: '昨天',
     category: '费用账单',
     categoryCode: 'bill',
-    icon: 'bill',
+    icon: 'creditcard',
     isRead: false,
     type: 'bill'
   },

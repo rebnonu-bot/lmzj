@@ -46,7 +46,7 @@
     <!-- 2.5 Action Buttons -->
     <view class="action-buttons-section">
       <view class="action-btn-item primary" @click="handleVote">
-        <t-icon name="check-rectangle" size="40rpx" color="#fff" />
+        <t-icon name="assignment" size="40rpx" color="#fff" />
         <text>业主投票</text>
       </view>
       <view class="action-btn-item secondary" @click="handleResults">

@@ -59,7 +59,7 @@
       </view>
 
       <view class="empty-state" v-else>
-        <t-icon name="Secure-checked" size="120rpx" color="#E2E8F0" />
+        <t-icon name="secured" size="120rpx" color="#E2E8F0" />
         <text class="empty-text">暂无相关日志记录</text>
       </view>
     </scroll-view>
