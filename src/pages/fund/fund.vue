@@ -194,14 +194,32 @@
     <app-footer />
     <app-tab-bar activePath="pages/index/index" />
 
-    <!-- 切换房屋选择器 -->
-    <t-action-sheet
+    <!-- 切换房屋选择器 (Dialog形式) -->
+    <t-dialog
       v-model:visible="showHousePicker"
-      :items="houseOptions"
-      @selected="onHouseSelect"
-      @cancel="showHousePicker = false"
       title="选择房屋"
-    />
+      :confirm-btn="null"
+      :cancel-btn="null"
+    >
+      <template #content>
+        <view class="house-list">
+          <view 
+            v-for="(item, index) in houseOptions" 
+            :key="index"
+            class="house-item"
+            :class="{ active: currentHouse === item.value }"
+            @click="onHouseSelect(item)"
+          >
+            <view class="house-item-content">
+              <t-icon :name="currentHouse === item.value ? 'check-circle-filled' : 'circle'" 
+                      :color="currentHouse === item.value ? '#3B82F6' : '#CBD5E1'" 
+                      size="40rpx" />
+              <text class="house-label">{{ item.label }}</text>
+            </view>
+          </view>
+        </view>
+      </template>
+    </t-dialog>
   </view>
 </template>
 
@@ -249,8 +267,7 @@ const goToBindHouse = () => {
   showHousePicker.value = true;
 };
 
-const onHouseSelect = (detail: any) => {
-  const item = detail.selected;
+const onHouseSelect = (item: any) => {
   const selectedAddress = item.label || item.value;
   currentHouse.value = selectedAddress;
   uni.setStorageSync('selectedHouse', selectedAddress);
@@ -346,6 +363,38 @@ const allocationInfo = computed(() => ({
 
 <style lang="less" scoped>
 @import '@/styles/variable.less';
+
+.house-list {
+  padding: 20rpx 0;
+  
+  .house-item {
+    padding: 30rpx 0;
+    border-bottom: 1rpx solid #F1F5F9;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &.active {
+      .house-label {
+        color: #3B82F6;
+        font-weight: 600;
+      }
+    }
+    
+    .house-item-content {
+      display: flex;
+      align-items: center;
+      gap: 20rpx;
+    }
+    
+    .house-label {
+      font-size: 30rpx;
+      color: #1E293B;
+      transition: all 0.2s;
+    }
+  }
+}
 
 .page-container {
   min-height: 100vh;
