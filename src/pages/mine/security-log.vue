@@ -93,7 +93,7 @@ const logs = ref<SecurityLog[]>([
     statusText: '成功',
     ip: '192.168.1.105',
     device: 'iPhone 15 Pro (App)',
-    location: '北京市 朝阳区'
+    location: '赣州市 章贡区'
   },
   {
     id: '2',
@@ -114,7 +114,7 @@ const logs = ref<SecurityLog[]>([
     statusText: '成功',
     ip: '223.104.41.12',
     device: 'Chrome 122.0.0 (H5)',
-    location: '北京市 海淀区'
+    location: '赣州市 南康区'
   },
   {
     id: '4',
@@ -125,7 +125,7 @@ const logs = ref<SecurityLog[]>([
     statusText: '密码错误',
     ip: '114.242.25.18',
     device: 'Unknown Device',
-    location: '上海市 浦东新区'
+    location: '赣州市 赣县区'
   },
   {
     id: '5',

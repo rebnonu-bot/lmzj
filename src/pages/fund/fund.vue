@@ -185,7 +185,7 @@
         
         <view class="tips-box">
           <t-icon name="info-circle" size="32rpx" color="#64748B" />
-          <text>维修资金由当地住建局代管，公开透明。</text>
+          <text>维修资金由赣州市住建局代管，公开透明。</text>
         </view>
       </view>
     </scroll-view>
@@ -205,7 +205,7 @@ import { ref, computed } from 'vue';
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
 
-const currentHouse = ref('阳光水岸一期 1-1-802');
+const currentHouse = ref('赣州市章贡区阳光水岸一期 1-1-802');
 
 const isExpanded = ref(false);
 
