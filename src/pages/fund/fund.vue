@@ -13,7 +13,7 @@
           <text class="main-title">住宅专项维修资金</text>
           <text class="sub-title">公开透明可监督</text>
           <view class="house-info" @click="goToBindHouse">
-            <t-icon name="swap" size="28rpx" color="#fff" class="swap-icon" />
+            <t-icon name="refresh" size="28rpx" color="#fff" class="swap-icon" />
             <text>{{ currentHouse }}</text>
           </view>
         </view>
