@@ -184,7 +184,7 @@ const handleResults = () => {
 const mockVotes = ref([
   {
     id: 1,
-    title: '《硕丰大成》小区业主委员会选举投票',
+    title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
     startTime: '2026-01-15 00:00',
     endTime: '01-25 23:59',
     statusText: '已结束',
@@ -194,33 +194,33 @@ const mockVotes = ref([
   },
   {
     id: 2,
-    title: '《凤凰香域中央》小区业主委员会选举投票',
+    title: '赣州市章贡区《阳光水岸》2026年度物业服务续聘表决',
     startTime: '2025-12-01 00:00',
     endTime: '02-28 23:59',
     statusText: '进行中',
     statusType: 'ongoing',
-    type: '业委会选举',
-    participants: 890
+    type: '重大事项',
+    participants: 128
   },
   {
     id: 3,
-    title: '《金莎世纪城》小区业主委员会选举投票',
-    startTime: '2025-11-26 00:00',
-    endTime: '12-10 23:59',
-    statusText: '已结束',
-    statusType: 'ended',
-    type: '业委会选举',
-    participants: 1100
-  },
-  {
-    id: 4,
-    title: '关于修缮小区2号喷泉池的维修资金使用表决',
-    startTime: '2026-01-10 00:00',
-    endTime: '02-10 23:59',
+    title: '赣州市南康区《锦绣花园》电梯更新改造维修资金使用投票',
+    startTime: '2026-02-01 00:00',
+    endTime: '02-20 23:59',
     statusText: '进行中',
     statusType: 'ongoing',
     type: '维修资金使用投票',
-    participants: 670
+    participants: 89
+  },
+  {
+    id: 4,
+    title: '赣州市赣县区《御景江山》2025年公共收益分配方案投票',
+    startTime: '2026-01-10 00:00',
+    endTime: '01-30 23:59',
+    statusText: '已结束',
+    statusType: 'ended',
+    type: '公共收益',
+    participants: 560
   }
 ]);
 

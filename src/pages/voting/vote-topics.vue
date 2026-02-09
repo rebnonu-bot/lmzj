@@ -87,15 +87,15 @@ const tabs = [
 const mockVotes = ref([
   {
     id: 1,
-    title: '关于2026年度物业管理服务费调整的表决议案',
+    title: '赣州市章贡区《阳光水岸》2026年度物业服务续聘表决',
     date: '2026-02-01',
     typeName: '重大事项',
     typeCode: 'major',
-    status: 0 // 0: 当前, 1: 历史
+    status: 0 // 0: 当前, 1: 1历史
   },
   {
     id: 2,
-    title: '关于小区西门道闸设备更换维修资金使用的申请',
+    title: '赣州市南康区《锦绣花园》电梯更新改造维修资金使用申请',
     date: '2026-02-05',
     typeName: '维修资金',
     typeCode: 'repair',
@@ -103,7 +103,7 @@ const mockVotes = ref([
   },
   {
     id: 3,
-    title: '第三届业主委员会委员差额选举投票',
+    title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
     date: '2025-12-20',
     typeName: '业委会选举',
     typeCode: 'election',
@@ -111,7 +111,7 @@ const mockVotes = ref([
   },
   {
     id: 4,
-    title: '关于小区公共区域广告收益分配方案的公示表决',
+    title: '赣州市赣县区《御景江山》2025年公共收益分配方案投票',
     date: '2025-11-15',
     typeName: '公共收益',
     typeCode: 'income',

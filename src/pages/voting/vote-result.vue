@@ -98,19 +98,19 @@ import { onLoad } from '@dcloudio/uni-app';
 
 const resultInfo = ref({
   id: 1,
-  title: '关于2026年度物业管理服务费调整的表决议案',
-  date: '2026-02-01',
+  title: '赣州市章贡区《阳光水岸》2025年度物业服务续聘表决',
+  date: '2025-12-31',
   status: 'closed',
   statusName: '已结束',
-  totalVoters: 856,
-  participationRate: 78.5,
-  areaRate: 82.3
+  totalVoters: 1156,
+  participationRate: 88.5,
+  areaRate: 91.3
 });
 
 const statistics = [
-  { label: '赞成', count: 624, percent: 72.9, color: '#22C55E' },
-  { label: '反对', count: 182, percent: 21.3, color: '#DC2626' },
-  { label: '弃权', count: 50, percent: 5.8, color: '#94A3B8' }
+  { label: '赞成', count: 924, percent: 79.9, color: '#22C55E' },
+  { label: '反对', count: 182, percent: 15.7, color: '#DC2626' },
+  { label: '弃权', count: 50, percent: 4.3, color: '#94A3B8' }
 ];
 
 onLoad((options) => {

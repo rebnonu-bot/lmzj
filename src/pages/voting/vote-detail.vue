@@ -37,20 +37,20 @@
           <view class="section-title">请选择您的表决意愿</view>
           <view class="options-list">
             <view 
-              v-for="(option, index) in options" 
+              v-for="(option, index) in voteOptions" 
               :key="index"
               class="option-item"
-              :class="{ active: selectedOption === option.value }"
-              @click="selectedOption = option.value"
+              :class="{ active: isSelected(option.value) }"
+              @click="handleOptionClick(option.value)"
             >
               <view class="option-left">
-                <view class="radio-circle">
-                  <view class="inner-circle" v-if="selectedOption === option.value"></view>
+                <view class="radio-circle" :class="{ checkbox: isMultiple }">
+                  <view class="inner-circle" v-if="isSelected(option.value)"></view>
                 </view>
                 <text class="option-label">{{ option.label }}</text>
               </view>
               <t-icon 
-                v-if="selectedOption === option.value" 
+                v-if="isSelected(option.value)" 
                 name="check-circle-filled" 
                 size="40rpx" 
                 color="#3B82F6" 
@@ -83,8 +83,8 @@
     <view class="footer-section">
       <button 
         class="submit-btn" 
-        :disabled="!selectedOption"
-        :class="{ disabled: !selectedOption }"
+        :disabled="isMultiple ? selectedValues.length === 0 : !selectedOption"
+        :class="{ disabled: isMultiple ? selectedValues.length === 0 : !selectedOption }"
         @click="handleSubmit"
       >
         确认提交
@@ -109,11 +109,11 @@ import { onLoad } from '@dcloudio/uni-app';
 
 const voteInfo = ref({
   id: 1,
-  title: '关于2026年度物业管理服务费调整的表决议案',
-  date: '2026-02-01',
+  title: '赣州市章贡区《阳光水岸》2026年度物业服务续聘表决',
+  date: '2026-02-28',
   typeName: '重大事项',
   typeCode: 'major',
-  description: '为了进一步提升小区物业服务质量，拟对物业服务费进行适度调整，主要用于增加安保人员巡逻频次及绿化养护投入。请各位业主根据实际情况行使表决权。'
+  description: '根据《民法典》及相关物业管理条例，现就本小区2026年度物业管理服务续聘事项进行业主大会表决。表决内容包括：1. 续聘现有物业服务企业；2. 维持现有物业服务费标准；3. 优化安保巡逻及绿化维护方案。请各位业主行使表决权。'
 });
 
 const options = [
@@ -128,10 +128,73 @@ const showSuccess = ref(false);
 
 onLoad((options) => {
   if (options && options.id) {
-    // 实际开发中根据ID获取详情
-    console.log('Vote ID:', options.id);
+    const id = parseInt(options.id as string);
+    if (id === 3) {
+      voteInfo.value = {
+        id: 3,
+        title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
+        date: '2025-12-25',
+        typeName: '业委会选举',
+        typeCode: 'election',
+        description: '本小区第二届业主委员会任期届满，现依法进行换届选举。请从以下候选人名单中选出您支持的5位委员。'
+      };
+      
+      // 选举类选项
+      voteOptions.value = [
+        { label: '张三 (候选人)', value: 'candidate1' },
+        { label: '李四 (候选人)', value: 'candidate2' },
+        { label: '王五 (候选人)', value: 'candidate3' },
+        { label: '赵六 (候选人)', value: 'candidate4' },
+        { label: '孙七 (候选人)', value: 'candidate5' },
+        { label: '周八 (候选人)', value: 'candidate6' },
+        { label: '以上皆不支持', value: 'none' }
+      ];
+      isMultiple.value = true;
+    } else {
+      // 默认重大事项类
+      voteOptions.value = [
+        { label: '赞成', value: 'agree' },
+        { label: '反对', value: 'disagree' },
+        { label: '弃权', value: 'abstain' }
+      ];
+      isMultiple.value = false;
+    }
   }
 });
+
+const voteOptions = ref<{ label: string; value: string }[]>([]);
+const isMultiple = ref(false);
+const selectedValues = ref<string[]>([]);
+
+const handleOptionClick = (val: string) => {
+  if (isMultiple.value) {
+    const idx = selectedValues.value.indexOf(val);
+    if (idx > -1) {
+      selectedValues.value.splice(idx, 1);
+    } else {
+      if (val === 'none') {
+        selectedValues.value = ['none'];
+      } else {
+        const noneIdx = selectedValues.value.indexOf('none');
+        if (noneIdx > -1) selectedValues.value.splice(noneIdx, 1);
+        if (selectedValues.value.length < 5) {
+          selectedValues.value.push(val);
+        } else {
+          uni.showToast({ title: '最多只能选5位', icon: 'none' });
+        }
+      }
+    }
+  } else {
+    selectedOption.value = val;
+  }
+};
+
+const isSelected = (val: string) => {
+  if (isMultiple.value) {
+    return selectedValues.value.includes(val);
+  }
+  return selectedOption.value === val;
+};
 
 const goBack = () => {
   uni.navigateBack();
@@ -311,6 +374,10 @@ const handleSuccessConfirm = () => {
 
         .radio-circle {
           border-color: @primary-blue;
+
+          &.checkbox .inner-circle {
+            border-radius: 4rpx;
+          }
         }
       }
 
@@ -328,6 +395,11 @@ const handleSuccessConfirm = () => {
           align-items: center;
           justify-content: center;
           transition: all 0.2s;
+          flex-shrink: 0;
+
+          &.checkbox {
+            border-radius: 8rpx;
+          }
 
           .inner-circle {
             width: 20rpx;
