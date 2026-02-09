@@ -160,11 +160,22 @@
 
     <!-- 5. List Content Area -->
     <scroll-view scroll-y class="content-scroll">
-      <view class="vote-list" v-if="displayVotes.length > 0">
+      <!-- Loading Skeleton -->
+      <view class="vote-list skeleton-list" v-if="isLoading">
+        <view v-for="i in 3" :key="i" class="skeleton-card">
+          <view class="skeleton-item header-skel"></view>
+          <view class="skeleton-item content-skel"></view>
+          <view class="skeleton-item footer-skel"></view>
+        </view>
+      </view>
+
+      <view class="vote-list animate-fade-in" v-else-if="displayVotes.length > 0">
         <vote-card 
-          v-for="item in displayVotes" 
+          v-for="(item, index) in displayVotes" 
           :key="item.id"
           :vote="item"
+          class="animate-slide-up"
+          :style="{ animationDelay: (index * 0.1) + 's' }"
           @click="item.statusType === 'ongoing' ? handleVote(item) : handleResults(item)"
         />
         
@@ -193,18 +204,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import VoteCard from '@/components/business/VoteCard.vue';
-
-
-
 
 const searchKey = ref('');
 const activeMainTab = ref(0);
 const activeSubTab = ref(0);
 const statusFilter = ref('all'); // all, ongoing, ended
 const isRulesExpanded = ref(false);
+const isLoading = ref(true);
+
+onMounted(() => {
+  // 模拟加载
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 800);
+});
 
 onLoad((options) => {
   if (options && options.status) {
@@ -907,6 +923,83 @@ const handleShowMore = () => {
       color: #94A3B8;
     }
   }
+}
+
+// Animations & Skeleton
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skeleton-list {
+  .skeleton-card {
+    background: #fff;
+    border-radius: 24rpx;
+    padding: 30rpx;
+    margin-bottom: 30rpx;
+    overflow: hidden;
+    position: relative;
+
+    .skeleton-item {
+      background: #F1F5F9;
+      border-radius: 4rpx;
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        animation: skeleton-loading 1.5s infinite;
+      }
+    }
+
+    .header-skel {
+      width: 40%;
+      height: 32rpx;
+      margin-bottom: 24rpx;
+    }
+
+    .content-skel {
+      width: 100%;
+      height: 40rpx;
+      margin-bottom: 24rpx;
+    }
+
+    .footer-skel {
+      width: 60%;
+      height: 24rpx;
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @keyframes float {

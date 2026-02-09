@@ -48,16 +48,32 @@
     <!-- 3. Content Area -->
     <scroll-view scroll-y class="content-scroll">
       <!-- Loading Skeleton -->
-      <view class="tab-content" v-if="isLoading">
-        <view class="skeleton-card balance-skeleton"></view>
-        <view class="skeleton-card info-skeleton"></view>
-        <view class="skeleton-card chart-skeleton"></view>
+      <view class="tab-content skeleton-list" v-if="isLoading">
+        <view class="skeleton-card balance-skel">
+          <view class="skeleton-item title-skel"></view>
+          <view class="skeleton-item amount-skel"></view>
+        </view>
+        <view class="skeleton-card summary-skel">
+          <view class="skeleton-item title-skel"></view>
+          <view class="skeleton-item value-skel"></view>
+        </view>
+        <view class="skeleton-card chart-skel">
+          <view class="skeleton-item title-skel"></view>
+          <view class="skeleton-item bars-skel"></view>
+        </view>
+        <view class="skeleton-card ranking-skel">
+          <view class="skeleton-item title-skel"></view>
+          <view v-for="i in 3" :key="i" class="rank-item-skel">
+            <view class="skeleton-item avatar-skel"></view>
+            <view class="skeleton-item info-skel"></view>
+          </view>
+        </view>
       </view>
 
       <!-- 基本情况 Tab -->
       <view class="tab-content" v-else-if="activeTab === 0">
         <!-- Balance Card -->
-        <view class="balance-card animate-fade-in">
+        <view class="balance-card animate-slide-up" style="animation-delay: 0.1s">
           <view class="balance-info">
             <view class="balance-header">
               <text class="label">小区数字基金</text>
@@ -74,7 +90,7 @@
         </view>
 
         <!-- 我的贡献 Card -->
-        <view class="contribution-summary-card animate-fade-in" style="animation-delay: 0.05s" @click="activeTab = 2">
+        <view class="contribution-summary-card animate-slide-up" style="animation-delay: 0.15s" @click="activeTab = 2">
           <view class="card-bg-decoration">
             <view class="circle-1"></view>
             <view class="circle-2"></view>
@@ -101,7 +117,7 @@
         </view>
 
         <!-- Trend Chart Card -->
-        <view class="chart-card animate-fade-in" style="animation-delay: 0.1s">
+        <view class="chart-card animate-slide-up" style="animation-delay: 0.2s">
           <view class="chart-header">
             <text class="chart-title">小区基金收支趋势量</text>
             <view class="chart-legend">
@@ -135,7 +151,7 @@
                       class="bar income animate-grow-up" 
                       :style="{ 
                         height: (item.income / maxTrendValue * 100) + '%',
-                        animationDelay: (0.3 + index * 0.1) + 's'
+                        animationDelay: (0.4 + index * 0.1) + 's'
                       }"
                     >
                       <text class="bar-value" v-if="item.income > 0.5">{{ item.income }}</text>
@@ -144,7 +160,7 @@
                       class="bar expense animate-grow-up" 
                       :style="{ 
                         height: (item.expense / maxTrendValue * 100) + '%',
-                        animationDelay: (0.4 + index * 0.1) + 's'
+                        animationDelay: (0.5 + index * 0.1) + 's'
                       }"
                     >
                       <text class="bar-value" v-if="item.expense > 0.5">{{ item.expense }}</text>
@@ -161,7 +177,7 @@
         </view>
 
         <!-- Ranking List Card -->
-        <view class="ranking-card animate-fade-in" style="animation-delay: 0.15s">
+        <view class="ranking-card animate-slide-up" style="animation-delay: 0.25s">
           <view class="ranking-header">
             <view class="title-group">
               <t-icon name="chart-bar" size="36rpx" color="#F59E0B" />
@@ -172,9 +188,10 @@
           
           <view class="ranking-list">
             <view 
-              class="ranking-item" 
+              class="ranking-item animate-fade-in" 
               v-for="(item, index) in rankingList" 
               :key="index"
+              :style="{ animationDelay: (0.3 + index * 0.05) + 's' }"
             >
               <view class="rank-num" :class="'rank-' + item.rank">
                 <text v-if="item.rank > 3">{{ item.rank }}</text>
@@ -196,9 +213,10 @@
       <!-- 贡献列表 Tab -->
       <view class="tab-content" v-else-if="activeTab === 1">
         <view 
-          class="record-item" 
+          class="record-item animate-slide-up" 
           v-for="(item, index) in recordList.slice(0, 5)" 
           :key="index"
+          :style="{ animationDelay: (index * 0.1) + 's' }"
           @click="handleDetail(item)"
         >
           <view class="record-left">
@@ -218,11 +236,11 @@
             </text>
           </view>
         </view>
-        <view class="view-more-btn" v-if="recordList.length > 5" @click="goToRecordList('all')">
+        <view class="view-more-btn animate-fade-in" v-if="recordList.length > 5" style="animation-delay: 0.6s" @click="goToRecordList('all')">
           <text>查看更多明细</text>
           <t-icon name="chevron-right" size="32rpx" />
         </view>
-        <view class="empty-state" v-if="recordList.length === 0">
+        <view class="empty-state animate-fade-in" v-if="recordList.length === 0">
           <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
           <text>暂无贡献记录</text>
         </view>
@@ -231,9 +249,10 @@
       <!-- 我的贡献 Tab -->
       <view class="tab-content" v-else-if="activeTab === 2">
         <view 
-          class="record-item" 
+          class="record-item animate-slide-up" 
           v-for="(item, index) in myContributionList.slice(0, 5)" 
           :key="index"
+          :style="{ animationDelay: (index * 0.1) + 's' }"
           @click="handleDetail(item)"
         >
           <view class="record-left">
@@ -254,11 +273,11 @@
             </text>
           </view>
         </view>
-        <view class="view-more-btn" v-if="myContributionList.length > 5" @click="goToRecordList('mine')">
+        <view class="view-more-btn animate-fade-in" v-if="myContributionList.length > 5" style="animation-delay: 0.6s" @click="goToRecordList('mine')">
           <text>查看更多明细</text>
           <t-icon name="chevron-right" size="32rpx" />
         </view>
-        <view class="empty-state" v-if="myContributionList.length === 0">
+        <view class="empty-state animate-fade-in" v-if="myContributionList.length === 0">
           <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
           <text>暂无贡献记录</text>
         </view>
@@ -1163,7 +1182,13 @@ const maxTrendValue = computed(() => {
 }
 
 .animate-fade-in {
-  animation: fade-in 0.5s ease-out forwards;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: slideUp 0.5s ease-out forwards;
 }
 
 .animate-grow-up {
@@ -1171,8 +1196,13 @@ const maxTrendValue = computed(() => {
   animation: grow-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(20rpx); }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30rpx); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -1181,20 +1211,66 @@ const maxTrendValue = computed(() => {
   to { transform: scaleY(1); }
 }
 
-.skeleton-card {
-  background: #fff;
-  border-radius: 20rpx;
-  margin-bottom: 30rpx;
-  animation: skeleton-pulse 1.5s infinite ease-in-out;
+// Skeleton Styles
+.skeleton-list {
+  .skeleton-card {
+    background: #fff;
+    border-radius: 24rpx;
+    padding: 30rpx;
+    margin-bottom: 30rpx;
+    overflow: hidden;
+    position: relative;
+
+    .skeleton-item {
+      background: #f1f5f9;
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        animation: skeleton-loading 1.5s infinite;
+      }
+    }
+  }
+
+  .balance-skel {
+    height: 200rpx;
+    .title-skel { width: 200rpx; height: 32rpx; margin-bottom: 24rpx; border-radius: 4rpx; }
+    .amount-skel { width: 300rpx; height: 60rpx; border-radius: 4rpx; }
+  }
+
+  .summary-skel {
+    height: 160rpx;
+    .title-skel { width: 160rpx; height: 28rpx; margin-bottom: 20rpx; border-radius: 4rpx; }
+    .value-skel { width: 240rpx; height: 48rpx; border-radius: 4rpx; }
+  }
+
+  .chart-skel {
+    height: 400rpx;
+    .title-skel { width: 280rpx; height: 32rpx; margin-bottom: 40rpx; border-radius: 4rpx; }
+    .bars-skel { width: 100%; height: 240rpx; border-radius: 4rpx; }
+  }
+
+  .ranking-skel {
+    .title-skel { width: 240rpx; height: 32rpx; margin-bottom: 30rpx; border-radius: 4rpx; }
+    .rank-item-skel {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24rpx;
+      .avatar-skel { width: 80rpx; height: 80rpx; border-radius: 50%; margin-right: 20rpx; }
+      .info-skel { flex: 1; height: 32rpx; border-radius: 4rpx; }
+    }
+  }
 }
 
-.balance-skeleton { height: 200rpx; }
-.info-skeleton { height: 300rpx; }
-.chart-skeleton { height: 400rpx; }
-
-@keyframes skeleton-pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 0.3; }
-  100% { opacity: 0.6; }
+@keyframes skeleton-loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 </style>

@@ -45,9 +45,31 @@
 
     <!-- 3. Content Area -->
     <scroll-view scroll-y class="content-scroll">
-      <view class="tab-content" v-if="activeTab === 0">
+      <!-- Loading Skeleton -->
+      <view class="tab-content skeleton-list" v-if="isLoading">
+        <view class="skeleton-card info-skel">
+          <view v-for="i in 4" :key="i" class="info-item-skel">
+            <view class="skeleton-item label-skel"></view>
+            <view class="skeleton-item value-skel"></view>
+          </view>
+        </view>
+        <view class="skeleton-card calc-skel">
+          <view class="skeleton-item title-skel"></view>
+          <view class="skeleton-item line-skel"></view>
+          <view class="skeleton-item line-skel"></view>
+        </view>
+        <view class="skeleton-card list-skel">
+          <view class="skeleton-item title-skel"></view>
+          <view v-for="i in 3" :key="i" class="list-item-skel">
+            <view class="skeleton-item dot-skel"></view>
+            <view class="skeleton-item content-skel"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="tab-content" v-else-if="activeTab === 0">
         <!-- Info Card -->
-        <view class="info-card">
+        <view class="info-card animate-slide-up" style="animation-delay: 0.1s">
           <view class="info-item">
             <text class="label">小区维修资金总额</text>
             <view class="value-box">
@@ -79,7 +101,7 @@
         </view>
 
         <!-- Calculation Logic Box -->
-        <view class="calc-info-box">
+        <view class="calc-info-box animate-slide-up" style="animation-delay: 0.2s">
           <view class="calc-title">
             <t-icon name="info-circle" size="28rpx" color="#3B82F6" />
             <text>数据计算方式</text>
@@ -95,10 +117,15 @@
         </view>
 
         <!-- Usage Section -->
-        <view class="usage-section">
+        <view class="usage-section animate-slide-up" style="animation-delay: 0.3s">
           <view class="section-title">维修资金使用情况</view>
           <view class="usage-list">
-            <view class="usage-item" v-for="(item, index) in displayedPublicityList" :key="index">
+            <view 
+              class="usage-item animate-fade-in" 
+              v-for="(item, index) in displayedPublicityList" 
+              :key="index"
+              :style="{ animationDelay: (0.4 + index * 0.05) + 's' }"
+            >
               <view class="usage-dot"></view>
               <view class="usage-info">
                 <text class="usage-name">{{ item.title }}</text>
@@ -108,14 +135,15 @@
             </view>
           </view>
           <view 
-            class="view-more" 
+            class="view-more animate-fade-in" 
             v-if="publicityList.length > 5" 
+            style="animation-delay: 0.7s"
             @click="handleToUsageList"
           >
             <text>查看更多明细</text>
             <t-icon name="chevron-right" size="24rpx" color="#3B82F6" />
           </view>
-          <view class="empty-state" v-else>
+          <view class="empty-state animate-fade-in" v-else>
             <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
             <text>暂无详细使用记录</text>
           </view>
@@ -124,7 +152,12 @@
 
       <!-- 维修公示 Tab -->
       <view class="tab-content" v-else-if="activeTab === 1">
-        <view class="publicity-card" v-for="(item, index) in publicityList.slice(0, 5)" :key="index">
+        <view 
+          class="publicity-card animate-slide-up" 
+          v-for="(item, index) in publicityList.slice(0, 5)" 
+          :key="index"
+          :style="{ animationDelay: (index * 0.1) + 's' }"
+        >
           <view class="publicity-header">
             <text class="publicity-title">{{ item.title }}</text>
             <view class="status-tag" :class="item.status === '进行中' ? 'ongoing' : 'completed'">
@@ -142,7 +175,7 @@
             </view>
           </view>
         </view>
-        <view class="view-more-btn" v-if="publicityList.length > 5" @click="handleToPublicityList">
+        <view class="view-more-btn animate-fade-in" v-if="publicityList.length > 5" style="animation-delay: 0.6s" @click="handleToPublicityList">
           <text>查看更多公示</text>
           <t-icon name="chevron-right" size="32rpx" />
         </view>
@@ -150,7 +183,7 @@
 
       <!-- 房屋分摊 Tab -->
       <view class="tab-content" v-else-if="activeTab === 2">
-        <view class="allocation-card">
+        <view class="allocation-card animate-slide-up" style="animation-delay: 0.1s">
           <view class="allocation-header">
             <t-icon name="home" size="40rpx" color="#3B82F6" />
             <text class="house-name">{{ allocationInfo.houseName }}</text>
@@ -168,7 +201,7 @@
         </view>
         
         <!-- Calculation Logic Box for Personal -->
-        <view class="calc-info-box">
+        <view class="calc-info-box animate-slide-up" style="animation-delay: 0.2s">
           <view class="calc-title">
             <t-icon name="info-circle" size="28rpx" color="#3B82F6" />
             <text>个人余额计算方式</text>
@@ -183,7 +216,7 @@
           </view>
         </view>
         
-        <view class="tips-box">
+        <view class="tips-box animate-fade-in" style="animation-delay: 0.4s">
           <t-icon name="info-circle" size="32rpx" color="#64748B" />
           <text>维修资金由赣州市住建局代管，公开透明。</text>
         </view>
@@ -228,6 +261,7 @@ import { ref, computed, onMounted } from 'vue';
 
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
+const isLoading = ref(true);
 
 const currentHouse = ref(uni.getStorageSync('selectedHouse') || '阳光水岸一期 1-1-802');
 
@@ -321,6 +355,11 @@ const onHouseSelect = (item: any) => {
 const publicityList = ref(communityFundDetailMap['阳光水岸']?.list || []);
 
 onMounted(() => {
+  // Simulate data loading
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 800);
+
   const selectedAddress = currentHouse.value;
   const house = houseOptions.find(h => h.value === selectedAddress);
   if (house) {
@@ -557,15 +596,99 @@ const allocationInfo = computed(() => {
     animation: float 6s ease-in-out infinite;
   }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20rpx); }
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Skeleton Styles
+.skeleton-list {
+  .skeleton-card {
+    background: #fff;
+    border-radius: 24rpx;
+    padding: 30rpx;
+    margin-bottom: 30rpx;
+    overflow: hidden;
+    position: relative;
+
+    .skeleton-item {
+      background: #f1f5f9;
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        animation: skeleton-loading 1.5s infinite;
+      }
+    }
   }
 
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10rpx); }
+  .info-skel {
+    .info-item-skel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 100rpx;
+      border-bottom: 1rpx solid #F1F5F9;
+      &:last-child { border-bottom: none; }
+      .label-skel { width: 240rpx; height: 32rpx; border-radius: 4rpx; }
+      .value-skel { width: 160rpx; height: 40rpx; border-radius: 4rpx; }
+    }
   }
+
+  .calc-skel {
+    background: #EFF6FF;
+    .title-skel { width: 200rpx; height: 32rpx; margin-bottom: 24rpx; border-radius: 4rpx; }
+    .line-skel { width: 100%; height: 28rpx; margin-bottom: 16rpx; border-radius: 4rpx; }
+  }
+
+  .list-skel {
+    .title-skel { width: 240rpx; height: 32rpx; margin-bottom: 40rpx; border-radius: 4rpx; }
+    .list-item-skel {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30rpx;
+      .dot-skel { width: 12rpx; height: 12rpx; border-radius: 50%; margin-right: 20rpx; }
+      .content-skel { flex: 1; height: 32rpx; border-radius: 4rpx; }
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20rpx); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10rpx); }
+}
 }
 
 .tabs-container {

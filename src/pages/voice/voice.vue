@@ -72,11 +72,21 @@
 
     <!-- 5. List Content Area -->
     <scroll-view scroll-y class="content-scroll">
-      <view class="voice-list" v-if="filteredVoices.length > 0">
+      <!-- Loading Skeleton -->
+      <view class="voice-list skeleton-list" v-if="isLoading">
+        <view v-for="i in 3" :key="i" class="voice-card skeleton-card">
+          <view class="skeleton-item header-skel"></view>
+          <view class="skeleton-item content-skel"></view>
+          <view class="skeleton-item footer-skel"></view>
+        </view>
+      </view>
+
+      <view class="voice-list animate-fade-in" v-else-if="filteredVoices.length > 0">
         <view 
-          v-for="item in filteredVoices" 
+          v-for="(item, index) in filteredVoices" 
           :key="item.id"
-          class="voice-card"
+          class="voice-card animate-slide-up"
+          :style="{ animationDelay: (index * 0.1) + 's' }"
         >
           <view class="card-header">
             <view class="type-tag" :style="{ color: getTypeColor(item.type), backgroundColor: getTypeColor(item.type) + '15' }">
@@ -146,11 +156,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const searchKey = ref('');
 const activeTab = ref(0);
 const tabs = ['全部', '处理中', '已办结', '已评价'];
+const isLoading = ref(true);
+
+onMounted(() => {
+  // 模拟数据加载
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 800);
+});
 
 // 模拟数据
 const mockVoices = ref([
@@ -711,6 +729,80 @@ const handleAddVoice = () => {
       color: #94A3B8;
     }
   }
+}
+
+// Animations & Skeleton
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  opacity: 0;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skeleton-list {
+  .skeleton-card {
+    background: #fff;
+    overflow: hidden;
+    position: relative;
+
+    .skeleton-item {
+      background: #F1F5F9;
+      border-radius: 4rpx;
+      position: relative;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        animation: skeleton-loading 1.5s infinite;
+      }
+    }
+
+    .header-skel {
+      width: 60%;
+      height: 36rpx;
+      margin-bottom: 24rpx;
+    }
+
+    .content-skel {
+      width: 100%;
+      height: 100rpx;
+      margin-bottom: 24rpx;
+    }
+
+    .footer-skel {
+      width: 40%;
+      height: 28rpx;
+    }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @keyframes float {
