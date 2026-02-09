@@ -193,6 +193,15 @@
     <!-- Global Footer -->
     <app-footer />
     <app-tab-bar activePath="pages/index/index" />
+
+    <!-- 切换房屋选择器 -->
+    <t-action-sheet
+      v-model="showHousePicker"
+      :items="houseOptions"
+      @selected="onHouseSelect"
+      @cancel="showHousePicker = false"
+      title="选择房屋"
+    />
   </view>
 </template>
 
@@ -205,9 +214,15 @@ import { ref, computed } from 'vue';
 const activeTab = ref(0);
 const tabs = ['基本情况', '维修公示', '房屋分摊'];
 
-const currentHouse = ref('阳光水岸一期 1-1-802');
+const currentHouse = ref(uni.getStorageSync('selectedHouse') || '阳光水岸一期 1-1-802');
 
 const isExpanded = ref(false);
+
+const showHousePicker = ref(false);
+const houseOptions = [
+  { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802' },
+  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202' }
+];
 
 const handleToUsageList = () => {
   uni.navigateTo({
@@ -234,8 +249,16 @@ const goBack = () => {
 };
 
 const goToBindHouse = () => {
+  showHousePicker.value = true;
+};
+
+const onHouseSelect = (item: any) => {
+  const selectedAddress = item.label || item.value;
+  currentHouse.value = selectedAddress;
+  uni.setStorageSync('selectedHouse', selectedAddress);
+  showHousePicker.value = false;
   uni.showToast({
-    title: '房屋绑定功能开发中',
+    title: `已切换至 ${selectedAddress}`,
     icon: 'none'
   });
 };

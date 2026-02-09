@@ -165,6 +165,15 @@
 
     <!-- App Tab Bar -->
     <app-tab-bar activePath="pages/index/index" />
+
+    <!-- 切换房屋选择器 -->
+    <t-action-sheet
+      v-model="showHousePicker"
+      :items="houseOptions"
+      @selected="onHouseSelect"
+      @cancel="showHousePicker = false"
+      title="选择房屋"
+    />
   </view>
 </template>
 
@@ -179,8 +188,29 @@ onShow(() => {
 const userInfo = ref({
   name: '刘泽辉',
   slogan: '共建和谐小区,共享温馨生活',
-  address: '阳光水岸一期 1-1-802'
+  address: uni.getStorageSync('selectedHouse') || '阳光水岸一期 1-1-802'
 });
+
+const showHousePicker = ref(false);
+const houseOptions = [
+  { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802' },
+  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202' }
+];
+
+const handleSwitchHouse = () => {
+  showHousePicker.value = true;
+};
+
+const onHouseSelect = (item: any) => {
+  const selectedAddress = item.label || item.value;
+  userInfo.value.address = selectedAddress;
+  uni.setStorageSync('selectedHouse', selectedAddress);
+  showHousePicker.value = false;
+  uni.showToast({
+    title: `已切换至 ${selectedAddress}`,
+    icon: 'none'
+  });
+};
 
 const notices = ref<string[]>([
   '关于2月10日停水通知：上午8:00至12:00',
@@ -228,13 +258,6 @@ const handleFundClick = (card: FundCard) => {
       url: '/pages/fund/income'
     });
   }
-};
-
-const handleSwitchHouse = () => {
-  uni.showToast({
-    title: '切换房屋功能开发中',
-    icon: 'none'
-  });
 };
 
 // 数字滚动动画函数
