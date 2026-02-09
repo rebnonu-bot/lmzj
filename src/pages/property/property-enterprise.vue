@@ -21,10 +21,10 @@
             <t-icon name="city-1" size="64rpx" color="#10B981" />
           </view>
           <view class="property-title-box">
-            <text class="property-name">苏州金牌物业管理有限公司</text>
+            <text class="property-name">赣州市金牌物业管理有限公司</text>
             <view class="property-tags">
               <text class="tag">一级资质</text>
-              <text class="tag">诚信企业</text>
+              <text class="tag">赣州十强</text>
             </view>
           </view>
         </view>
@@ -62,7 +62,7 @@
         <view class="info-section">
           <view class="section-title">企业简介</view>
           <text class="intro-text">
-            苏州金牌物业管理有限公司成立于2010年，是一家具有国家一级物业管理资质的专业物业服务企业。公司秉承“服务至上、品质第一”的经营理念，致力于为业主提供全方位、高品质的物业管理服务。
+            赣州市金牌物业管理有限公司成立于2010年，是一家具有国家一级物业管理资质的专业物业服务企业。公司立足赣州，秉承“服务至上、品质第一”的经营理念，致力于为赣南地区业主提供全方位、高品质的智慧物业管理服务。
           </text>
         </view>
 
@@ -70,11 +70,11 @@
           <view class="section-title">工商信息</view>
           <view class="detail-row">
             <text class="d-label">统一社会信用代码</text>
-            <text class="d-value">91320500MA1XXXXXXX</text>
+            <text class="d-value">91360700MA1XXXXXXX</text>
           </view>
           <view class="detail-row">
             <text class="d-label">法定代表人</text>
-            <text class="d-value">张三</text>
+            <text class="d-value">刘先生</text>
           </view>
           <view class="detail-row">
             <text class="d-label">注册资本</text>
@@ -86,7 +86,7 @@
           </view>
           <view class="detail-row">
             <text class="d-label">登记机关</text>
-            <text class="d-value">苏州市市场监督管理局</text>
+            <text class="d-value">赣州市市场监督管理局</text>
           </view>
         </view>
       </view>
@@ -155,10 +155,10 @@ const services = ref([
 ]);
 
 const honors = ref([
-  { title: '江苏省省级物业管理示范住宅小区', date: '2023-12' },
-  { title: '苏州市文明社区创建先进单位', date: '2022-10' },
-  { title: '苏州市物业管理行业优秀企业', date: '2021-08' },
-  { title: '垃圾分类工作优秀物业企业', date: '2021-03' }
+  { title: '江西省省级物业管理示范住宅小区', date: '2023-12' },
+  { title: '赣州市文明社区创建先进单位', date: '2022-10' },
+  { title: '赣州市物业管理行业优秀企业', date: '2021-08' },
+  { title: '赣州市垃圾分类工作优秀物业企业', date: '2021-03' }
 ]);
 </script>
 

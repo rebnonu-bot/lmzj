@@ -69,7 +69,7 @@
           </view>
           <view class="detail-row">
             <text class="d-label">开发商</text>
-            <text class="d-value">阳光房地产开发有限公司</text>
+            <text class="d-value">赣州阳光房地产开发有限公司</text>
           </view>
           <view class="detail-row">
             <text class="d-label">物业类型</text>

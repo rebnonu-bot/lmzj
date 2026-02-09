@@ -34,7 +34,7 @@
         </view>
         <view class="info-item">
           <text class="label">投诉电话</text>
-          <text class="value highlight">0512-12345678</text>
+          <text class="value highlight">0797-12345678</text>
         </view>
       </view>
     </view>
