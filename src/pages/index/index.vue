@@ -198,6 +198,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
+import { useNumberAnimation } from '@/composables/useNumberAnimation';
+
+const { animateNumber } = useNumberAnimation();
 
 onShow(() => {
   uni.hideTabBar().catch(() => {});
@@ -298,46 +301,13 @@ const handleFundClick = (card: FundCard) => {
 
 // 数字滚动动画函数
 const animateNumbers = () => {
-  try {
-    fundCards.value.forEach((card) => {
-      if (card.type === 'balance') {
-        const target = parseFloat(card.amount);
-        if (isNaN(target)) return;
-        
-        const hasDecimal = card.amount.includes('.');
-        const duration = 1500; // 动画时长 1.5s
-        const startTime = Date.now();
-        
-        const update = () => {
-          const now = Date.now();
-          const progress = Math.min((now - startTime) / duration, 1);
-          
-          // 使用 easeOutExpo 缓动函数使效果更自然
-          const easeOutExpo = (x: number): number => {
-            return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
-          };
-          
-          const current = target * easeOutExpo(progress);
-          
-          if (hasDecimal) {
-            card.displayAmount = current.toFixed(2);
-          } else {
-            card.displayAmount = Math.floor(current).toString();
-          }
-          
-          if (progress < 1) {
-            requestAnimationFrame(update);
-          } else {
-            card.displayAmount = card.amount; // 确保最终数值准确
-          }
-        };
-        
-        requestAnimationFrame(update);
-      }
-    });
-  } catch (error) {
-    console.error('animateNumbers error:', error);
-  }
+  fundCards.value.forEach((card) => {
+    if (card.type === 'balance') {
+      animateNumber(card.amount, (val) => {
+        card.displayAmount = val;
+      });
+    }
+  });
 };
 
 onMounted(() => {
@@ -363,22 +333,22 @@ interface MenuItem {
 }
 
 const subMenus = ref<MenuItem[]>([
-  { label: '电子投票', icon: 'assignment', color: '#2DD4BF' },
-  { label: '小区信息', icon: 'info-circle', color: '#34D399' },
-  { label: '物业企业', icon: 'city', color: '#60A5FA' },
-  { label: '电梯维保', icon: 'service', color: '#818CF8' },
-  { label: '消防维保', icon: 'secured', color: '#F87171' },
-  { label: '日常巡查', icon: 'search', color: '#64748B' },
-  { label: '民意调查', icon: 'edit-1', color: '#818CF8' },
-  { label: '学习园地', icon: 'book', color: '#FB923C' },
-  { label: '公示公告', icon: 'notification', color: '#F472B6' },
-  { label: '小区报修', icon: 'tools', color: '#FB923C' },
-  { label: '小区招采', icon: 'cart', color: '#2DD4BF' },
-  { label: '小区生活', icon: 'shop', color: '#4ADE80' },
-  { label: '数字基金', icon: 'wallet', color: '#60A5FA' },
-  { label: '维修资金', icon: 'money', color: '#F87171' },
-  { label: '服务动态', icon: 'root-list', color: '#F87171' },
-  { label: '业主自治', icon: 'user-talk', color: '#FB923C' }
+  { label: '电子投票', icon: 'assignment', color: '#2DD4BF', url: '/pages/voting/voting' },
+  { label: '小区信息', icon: 'info-circle', color: '#34D399', url: '/pages/community/community-info' },
+  { label: '物业企业', icon: 'city', color: '#60A5FA', url: '/pages/property/property-enterprise' },
+  { label: '电梯维保', icon: 'service', color: '#818CF8', url: '/pages/elevator/elevator-maintenance' },
+  { label: '消防维保', icon: 'secured', color: '#F87171', url: '/pages/fire/fire-maintenance' },
+  { label: '日常巡查', icon: 'search', color: '#64748B', url: '/pages/patrol/patrol' },
+  { label: '民意调查', icon: 'edit-1', color: '#818CF8', url: '/pages/survey/survey' },
+  { label: '学习园地', icon: 'book', color: '#FB923C', url: '/pages/learning/learning' },
+  { label: '公示公告', icon: 'notification', color: '#F472B6', url: '/pages/notice/notice' },
+  { label: '小区报修', icon: 'tools', color: '#FB923C', url: '/pages/repair/repair' },
+  { label: '小区招采', icon: 'cart', color: '#2DD4BF', url: '/pages/bidding/bidding' },
+  { label: '小区生活', icon: 'shop', color: '#4ADE80', url: '/pages/life/life' },
+  { label: '数字基金', icon: 'wallet', color: '#60A5FA', url: '/pages/fund/income' },
+  { label: '维修资金', icon: 'money', color: '#F87171', url: '/pages/fund/fund' },
+  { label: '服务动态', icon: 'root-list', color: '#F87171', url: '/pages/service-news/service-news' },
+  { label: '业主自治', icon: 'user-talk', color: '#FB923C', url: '/pages/autonomy/autonomy' }
 ]);
 
 const quickServices = ref<MenuItem[]>([
@@ -386,31 +356,36 @@ const quickServices = ref<MenuItem[]>([
     label: '公租房', 
     icon: 'home', 
     color: '#3B82F6',
-    desc: '保障住房困难的城镇中低收入家庭、新就业无房职工、稳定就业的外来务工人员。'
+    desc: '保障住房困难的城镇中低收入家庭、新就业无房职工、稳定就业的外来务工人员。',
+    url: ''
   },
   { 
     label: '保障性租赁住房', 
     icon: 'root-list', 
     color: '#10B981',
-    desc: '重点解决小区周边、乡镇基层等新市民、青年人阶段性住房困难。'
+    desc: '重点解决小区周边、乡镇基层等新市民、青年人阶段性住房困难。',
+    url: ''
   },
   { 
     label: '人才住房', 
     icon: 'user-avatar', 
     color: '#F59E0B',
-    desc: '保障符合条件的高层次人才、紧缺人才及特定引进人才。'
+    desc: '保障符合条件的高层次人才、紧缺人才及特定引进人才。',
+    url: ''
   },
   { 
     label: '配售型保障性住房', 
     icon: 'shop', 
     color: '#6366F1',
-    desc: '(国家平台) 摸清住房困难工薪收入群体的刚性住房需求。'
+    desc: '(国家平台) 摸清住房困难工薪收入群体的刚性住房需求。',
+    url: ''
   },
   { 
     label: '赣州青年人才驿站', 
     icon: 'location', 
     color: '#EC4899',
-    desc: '(求职免费住) 保障毕业3年内大学生来我市中心城区求职和见习实习过渡住房需求。'
+    desc: '(求职免费住) 保障毕业3年内大学生来我市中心城区求职和见习实习过渡住房需求。',
+    url: ''
   }
 ]);
 
@@ -423,103 +398,6 @@ const menuPages = computed(() => {
 });
 
 const handleMenuClick = (item: MenuItem) => {
-  if (item.label === '维修资金') {
-    uni.navigateTo({
-      url: '/pages/fund/fund'
-    });
-    return;
-  }
-  if (item.label === '电梯维保') {
-    uni.navigateTo({
-      url: '/pages/elevator/elevator-maintenance'
-    });
-    return;
-  }
-  if (item.label === '消防维保') {
-    uni.navigateTo({
-      url: '/pages/fire/fire-maintenance'
-    });
-    return;
-  }
-  if (item.label === '小区信息') {
-    uni.navigateTo({
-      url: '/pages/community/community-info'
-    });
-    return;
-  }
-  if (item.label === '物业企业') {
-    uni.navigateTo({
-      url: '/pages/property/property-enterprise'
-    });
-    return;
-  }
-  if (item.label === '电子投票') {
-    uni.navigateTo({
-      url: '/pages/voting/voting'
-    });
-    return;
-  }
-  if (item.label === '日常巡查') {
-    uni.navigateTo({
-      url: '/pages/patrol/patrol'
-    });
-    return;
-  }
-  if (item.label === '民意调查') {
-    uni.navigateTo({
-      url: '/pages/survey/survey'
-    });
-    return;
-  }
-  if (item.label === '学习园地') {
-    uni.navigateTo({
-      url: '/pages/learning/learning'
-    });
-    return;
-  }
-  if (item.label === '公示公告') {
-    uni.navigateTo({
-      url: '/pages/notice/notice'
-    });
-    return;
-  }
-  if (item.label === '小区报修') {
-    uni.navigateTo({
-      url: '/pages/repair/repair'
-    });
-    return;
-  }
-  if (item.label === '小区招采') {
-    uni.navigateTo({
-      url: '/pages/bidding/bidding'
-    });
-    return;
-  }
-  if (item.label === '小区生活') {
-    uni.navigateTo({
-      url: '/pages/life/life'
-    });
-    return;
-  }
-  if (item.label === '数字基金') {
-    uni.navigateTo({
-      url: '/pages/fund/income'
-    });
-    return;
-  }
-  if (item.label === '服务动态') {
-    uni.navigateTo({
-      url: '/pages/service-news/service-news'
-    });
-    return;
-  }
-  if (item.label === '业主自治') {
-    uni.navigateTo({
-      url: '/pages/autonomy/autonomy'
-    });
-    return;
-  }
-  
   if (item.url) {
     uni.navigateTo({
       url: item.url
