@@ -104,6 +104,18 @@
 			}
 		},
 		{
+			"path": "pages/fund/community-fund",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/fund/community-fund-record-list",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/voice/voice",
 			"style": {
 				"navigationStyle": "custom"
@@ -129,6 +141,12 @@
 		},
 		{
 			"path": "pages/community/community-info",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/community/member-list",
 			"style": {
 				"navigationStyle": "custom"
 			}

@@ -169,6 +169,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import config from '@/config';
 
 interface Message {
   id: string;
@@ -294,7 +295,7 @@ onMounted(() => {
       isRead: true,
       type: 'repair',
       publisher: '报修中心',
-      images: ['https://img.js.design/assets/img/65a8e1a1b16c905330e6a8e8.png']
+      images: [config.placeholderImage]
     },
     notice: {
       id: '3',

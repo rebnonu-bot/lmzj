@@ -1,3 +1,4 @@
+
 <template>
   <view class="page-container">
     <!-- 1. Custom Header Section -->
@@ -55,19 +56,59 @@
       </view>
     </view>
 
-    <!-- 3. Statistics Card -->
-    <view class="stats-card-container">
-      <view class="stats-card">
-        <view class="stats-header">
-          <t-icon name="chart-bar" size="36rpx" color="#3B82F6" />
-          <text class="stats-title">选举项目统计</text>
+    <!-- 2.6 Voting Rules Reminder -->
+    <view class="voting-rules-container">
+      <view class="rules-card" :class="{ 'is-expanded': isRulesExpanded }">
+        <view class="rules-header" @click="toggleRules">
+          <view class="header-left">
+            <t-icon name="info-circle-filled" size="32rpx" color="#3B82F6" />
+            <text class="rules-title">民法典表决规则指引</text>
+            <t-icon 
+              :name="isRulesExpanded ? 'chevron-up' : 'chevron-down'" 
+              size="32rpx" 
+              color="#3B82F6" 
+              class="toggle-icon"
+            />
+          </view>
+          <view class="header-right">依据《民法典》第278条</view>
         </view>
-        <view class="stats-grid">
-          <view class="stats-item" v-for="(stat, index) in stats" :key="index">
-            <text class="stats-label">{{ stat.label }}</text>
-            <view class="num-box">
-              <text class="stats-num">{{ stat.value }}</text>
-              <text class="stats-unit">项</text>
+        
+        <view class="rules-list-wrapper" v-show="isRulesExpanded">
+          <view class="rules-list">
+            <!-- 一般重大事项 -->
+            <view class="rule-card-item normal">
+              <view class="item-top">
+                <text class="item-tag">一般重大事项</text>
+                <view class="item-threshold">
+                  <text class="threshold-label">表决门槛：</text>
+                  <text class="threshold-value">双过半</text>
+                </view>
+              </view>
+              <view class="item-content">
+                物业费调整、选聘/解聘物业、使用维修资金、制定管理规约等。
+              </view>
+              <view class="item-footer">
+                <t-icon name="check-circle" size="24rpx" color="#3B82F6" />
+                <text>参与业主面积过半 + 人数过半同意</text>
+              </view>
+            </view>
+
+            <!-- 特别重大事项 -->
+            <view class="rule-card-item special">
+              <view class="item-top">
+                <text class="item-tag">特别重大事项</text>
+                <view class="item-threshold">
+                  <text class="threshold-label">表决门槛：</text>
+                  <text class="threshold-value">双3/4</text>
+                </view>
+              </view>
+              <view class="item-content">
+                ①筹集维修资金；②改建、重建建筑物；③改变共有部分用途 or 经营。
+              </view>
+              <view class="item-footer">
+                <t-icon name="check-circle" size="24rpx" color="#EF4444" />
+                <text>参与业主面积3/4以上 + 人数3/4以上同意</text>
+              </view>
             </view>
           </view>
         </view>
@@ -76,36 +117,66 @@
 
     <!-- 4. Tabs Section -->
     <view class="tabs-bar">
-      <scroll-view 
-        scroll-x 
-        class="tabs-scroll" 
-        :scroll-into-view="'tab-' + activeTab"
-        scroll-with-animation
-        show-scrollbar="false"
-      >
+      <view class="main-tabs-container">
+        <!-- Sliding Background Slider -->
         <view 
-          v-for="(tab, index) in tabs" 
+          class="tabs-slider" 
+          :style="{ 
+            width: (100 / mainTabs.length) + '%',
+            transform: 'translateX(' + (activeMainTab * 100) + '%)'
+          }"
+        ></view>
+        
+        <view 
+          v-for="(tab, index) in mainTabs" 
           :key="index"
-          :id="'tab-' + index"
-          class="tab-item"
-          :class="{ active: activeTab === index }"
-          @click="activeTab = index"
+          class="main-tab-item"
+          :class="{ active: activeMainTab === index }"
+          @click="handleMainTabChange(index)"
         >
-          <text>{{ tab }}</text>
+          <text class="tab-label">{{ tab.label }}</text>
         </view>
-      </scroll-view>
+      </view>
+
+      <!-- Sub Tabs (Only shown for General and Special) -->
+      <view class="sub-tabs-container" v-if="currentSubTabs.length > 0">
+        <scroll-view 
+          scroll-x 
+          class="sub-tabs-scroll" 
+          show-scrollbar="false"
+        >
+          <view 
+            v-for="(sub, index) in currentSubTabs" 
+            :key="index"
+            class="sub-tab-item"
+            :class="{ active: activeSubTab === index }"
+            @click="activeSubTab = index"
+          >
+            <text>{{ sub }}</text>
+          </view>
+        </scroll-view>
+      </view>
     </view>
 
     <!-- 5. List Content Area -->
     <scroll-view scroll-y class="content-scroll">
-      <view class="vote-list" v-if="filteredVotes.length > 0">
+      <view class="vote-list" v-if="displayVotes.length > 0">
         <vote-card 
-          v-for="item in filteredVotes" 
+          v-for="item in displayVotes" 
           :key="item.id"
           :vote="item"
           @click="item.statusType === 'ongoing' ? handleVote(item) : handleResults(item)"
         />
-        <view class="list-end">
+        
+        <!-- More Button -->
+        <view class="more-btn-wrapper" v-if="filteredVotes.length > 5" @click="handleShowMore">
+          <view class="more-btn">
+            <text>查看更多投票项目</text>
+            <t-icon name="chevron-right" size="32rpx" color="#3B82F6" />
+          </view>
+        </view>
+
+        <view class="list-end" v-else>
           <text>没有更多了</text>
         </view>
       </view>
@@ -123,95 +194,170 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 import VoteCard from '@/components/business/VoteCard.vue';
 
 
 
 
 const searchKey = ref('');
-const activeTab = ref(0);
+const activeMainTab = ref(0);
+const activeSubTab = ref(0);
+const statusFilter = ref('all'); // all, ongoing, ended
+const isRulesExpanded = ref(false);
 
-const tabs = ['业委会选举', '维修资金使用投票', '重大事项', '公共收益'];
-
-const stats = computed(() => {
-  return [
-    { label: '业委会', value: mockVotes.value.filter(i => i.type === '业委会选举').length },
-    { label: '维修资金', value: mockVotes.value.filter(i => i.type === '维修资金使用投票').length },
-    { label: '重大事项', value: mockVotes.value.filter(i => i.type === '重大事项').length },
-    { label: '公共收益', value: mockVotes.value.filter(i => i.type === '公共收益').length }
-  ];
+onLoad((options) => {
+  if (options && options.status) {
+    statusFilter.value = options.status;
+  }
 });
+
+const toggleRules = () => {
+  isRulesExpanded.value = !isRulesExpanded.value;
+};
+
+const mainTabs = [
+  { label: '全部', value: 'all', subTabs: [] },
+  { 
+    label: '一般重大事项', 
+    value: 'normal', 
+    subTabs: ['全部', '物业费调整', '物业选聘', '使用维修资金', '管理规约', '业委会选举'] 
+  },
+  { 
+    label: '特别重大事项', 
+    value: 'special', 
+    subTabs: ['全部', '筹集维修资金', '改建重建', '共有部分经营'] 
+  }
+];
+
+const currentSubTabs = computed(() => mainTabs[activeMainTab.value]?.subTabs || []);
+
+const handleMainTabChange = (index: number) => {
+  activeMainTab.value = index;
+  activeSubTab.value = 0;
+  statusFilter.value = 'all';
+};
 
 const goBack = () => {
   uni.navigateBack();
 };
 
 const handleVote = (item?: any) => {
-  const url = item ? `/pages/voting/reminder?id=${item.id}` : '/pages/voting/reminder';
-  uni.navigateTo({
-    url
-  });
+  if (item && item.id) {
+    uni.navigateTo({
+      url: `/pages/voting/reminder?id=${item.id}`
+    });
+  } else {
+    uni.navigateTo({
+      url: '/pages/voting/vote-topics?tab=1'
+    });
+  }
 };
 
 const handleResults = (item?: any) => {
-  const url = item ? `/pages/voting/vote-result?id=${item.id}` : '/pages/voting/vote-topics?tab=1';
-  uni.navigateTo({
-    url
-  });
+  if (item && item.id) {
+    uni.navigateTo({
+      url: `/pages/voting/vote-result?id=${item.id}`
+    });
+  } else {
+    uni.navigateTo({
+      url: '/pages/voting/vote-topics?tab=2'
+    });
+  }
 };
 
 // 模拟数据
 const mockVotes = ref([
   {
     id: 1,
-    title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
+    title: '阳光水岸小区第三届业主委员会选举',
     startTime: '2026-01-15 00:00',
     endTime: '01-25 23:59',
     statusText: '已结束',
     statusType: 'ended',
+    mainType: 'normal',
     type: '业委会选举',
     participants: 450
   },
   {
     id: 2,
-    title: '赣州市章贡区《阳光水岸》2026年度物业服务续聘表决',
+    title: '阳光水岸2026年度物业服务续聘表决',
     startTime: '2025-12-01 00:00',
     endTime: '02-28 23:59',
     statusText: '进行中',
     statusType: 'ongoing',
-    type: '重大事项',
+    mainType: 'normal',
+    type: '物业选聘',
     participants: 128
   },
   {
     id: 3,
-    title: '赣州市章贡区《阳光水岸》1-1单元电梯更新改造维修资金使用投票',
+    title: '阳光水岸1-1单元电梯更新改造维修资金使用投票',
     startTime: '2026-02-01 00:00',
     endTime: '02-20 23:59',
     statusText: '进行中',
     statusType: 'ongoing',
-    type: '维修资金使用投票',
+    mainType: 'normal',
+    type: '使用维修资金',
     participants: 45
   },
   {
     id: 4,
-    title: '赣州市章贡区《阳光水岸》2026年公共收益分配方案投票',
+    title: '阳光水岸2026年公共收益分配方案投票',
     startTime: '2026-01-10 00:00',
     endTime: '01-30 23:59',
     statusText: '已结束',
     statusType: 'ended',
-    type: '公共收益',
+    mainType: 'special',
+    type: '共有部分经营',
     participants: 560
+  },
+  {
+    id: 5,
+    title: '阳光水岸关于筹集二期专项维修资金的表决',
+    startTime: '2026-02-05 00:00',
+    endTime: '02-25 23:59',
+    statusText: '进行中',
+    statusType: 'ongoing',
+    mainType: 'special',
+    type: '筹集维修资金',
+    participants: 89
+  },
+  {
+    id: 6,
+    title: '关于阳光水岸物业费调整（由1.8元/㎡调至2.1元/㎡）的投票',
+    startTime: '2026-02-01 00:00',
+    endTime: '02-28 23:59',
+    statusText: '进行中',
+    statusType: 'ongoing',
+    mainType: 'normal',
+    type: '物业费调整',
+    participants: 234
   }
 ]);
 
 const filteredVotes = computed(() => {
   let list = mockVotes.value;
   
-  // 标签过滤
-  const targetType = tabs[activeTab.value];
-  list = list.filter(item => item.type === targetType);
+  // 1. 状态过滤 (进行中/已结束)
+  if (statusFilter.value !== 'all') {
+    list = list.filter(item => item.statusType === statusFilter.value);
+  }
+
+  // 2. 主类别过滤
+  const activeMain = mainTabs[activeMainTab.value];
+  if (activeMain && activeMain.value !== 'all') {
+    list = list.filter(item => item.mainType === activeMain.value);
+    
+    // 3. 子类别过滤
+    const subTabs = currentSubTabs.value;
+    const subType = subTabs[activeSubTab.value];
+    if (subType && subType !== '全部') {
+      list = list.filter(item => item.type === subType);
+    }
+  }
   
-  // 搜索过滤
+  // 4. 搜索过滤
   if (searchKey.value) {
     const key = searchKey.value.toLowerCase();
     list = list.filter(item => 
@@ -221,6 +367,16 @@ const filteredVotes = computed(() => {
   
   return list;
 });
+
+const displayVotes = computed(() => {
+  return filteredVotes.value.slice(0, 5);
+});
+
+const handleShowMore = () => {
+  uni.navigateTo({
+    url: '/pages/voting/vote-topics?tab=0'
+  });
+};
 </script>
 
 <style lang="less" scoped>
@@ -444,62 +600,145 @@ const filteredVotes = computed(() => {
   }
 }
 
-.stats-card-container {
-  padding: 0 @page-padding;
-  margin-bottom: 30rpx;
+.voting-rules-container {
+  padding: 0 @page-padding 30rpx;
 
-  .stats-card {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 30rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
-    border: 1rpx solid rgba(59, 130, 246, 0.05);
+  .rules-card {
+    background: #EFF6FF;
+    border-radius: 20rpx;
+    padding: 24rpx;
+    border: 1rpx solid rgba(59, 130, 246, 0.1);
 
-    .stats-header {
+    .rules-header {
       display: flex;
       align-items: center;
-      gap: 12rpx;
-      margin-bottom: 30rpx;
+      justify-content: space-between;
+      margin-bottom: 0rpx; // 默认收起时没有底部间距
+      transition: margin 0.3s;
 
-      .stats-title {
-        font-size: 28rpx;
-        font-weight: 700;
-        color: #1E3A8A;
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12rpx;
+
+        .rules-title {
+          font-size: 28rpx;
+          font-weight: 700;
+          color: #1E40AF;
+        }
+
+        .toggle-icon {
+          transition: transform 0.3s;
+        }
+      }
+
+      .header-right {
+        font-size: 22rpx;
+        color: #60A5FA;
+        background: rgba(59, 130, 246, 0.1);
+        padding: 4rpx 16rpx;
+        border-radius: 20rpx;
       }
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      text-align: center;
+    &.is-expanded {
+      .rules-header {
+        margin-bottom: 24rpx;
+      }
+    }
 
-      .stats-item {
-        display: flex;
-        flex-direction: column;
-        gap: 8rpx;
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20rpx;
 
-        .stats-label {
-          font-size: 22rpx;
-          color: #94A3B8;
-        }
+      .rule-card-item {
+        background: #fff;
+        border-radius: 16rpx;
+        padding: 20rpx;
+        box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.05);
 
-        .stats-num {
-          font-size: 36rpx;
-          font-weight: 700;
-          color: #1E293B;
-          font-family: 'DIN Alternate', sans-serif;
-        }
-
-        .num-box {
+        .item-top {
           display: flex;
-          align-items: baseline;
-          justify-content: center;
-          gap: 4rpx;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16rpx;
 
-          .stats-unit {
-            font-size: 20rpx;
-            color: #94A3B8;
-            font-weight: 400;
+          .item-tag {
+            font-size: 22rpx;
+            font-weight: 700;
+            padding: 4rpx 16rpx;
+            border-radius: 8rpx;
+          }
+
+          .item-threshold {
+            display: flex;
+            align-items: center;
+            gap: 4rpx;
+
+            .threshold-label {
+              font-size: 22rpx;
+              color: #64748B;
+            }
+
+            .threshold-value {
+              font-size: 24rpx;
+              font-weight: 700;
+              color: #1E293B;
+            }
+          }
+        }
+
+        &.normal {
+          border-left: 8rpx solid #3B82F6;
+          .item-tag {
+            background: #DBEAFE;
+            color: #2563EB;
+          }
+          .threshold-value {
+            color: #2563EB;
+          }
+        }
+
+        &.special {
+          border-left: 8rpx solid #EF4444;
+          .item-tag {
+            background: #FEE2E2;
+            color: #EF4444;
+          }
+          .threshold-value {
+            color: #EF4444;
+          }
+        }
+
+        .item-content {
+          font-size: 24rpx;
+          color: #475569;
+          line-height: 1.6;
+          margin-bottom: 16rpx;
+          padding: 0 4rpx;
+          word-break: break-all;
+          text-align: justify;
+        }
+
+        .item-footer {
+          display: flex;
+          align-items: flex-start;
+          gap: 12rpx;
+          padding-top: 16rpx;
+          border-top: 1rpx dashed #E2E8F0;
+
+          .t-icon {
+            margin-top: 4rpx;
+          }
+
+          text {
+            font-size: 22rpx;
+            color: #1E293B;
+            font-weight: 500;
+            line-height: 1.4;
+            flex: 1;
+            word-break: break-all;
           }
         }
       }
@@ -507,63 +746,111 @@ const filteredVotes = computed(() => {
   }
 }
 
-
-
 .tabs-bar {
-  background: #F8FAFC;
-  padding: 10rpx @page-padding 20rpx;
-  z-index: 20;
-  width: 100%;
-  box-sizing: border-box;
+    background: #F8FAFC;
+    padding: 20rpx @page-padding 30rpx;
+    z-index: 20;
 
-  .tabs-scroll {
-    white-space: nowrap;
-    background: #EDF2F7;
-    border-radius: 16rpx;
-    padding: 8rpx;
-    width: 100%;
-    box-sizing: border-box;
+    .main-tabs-container {
+      display: flex;
+      background: #F1F5F9;
+      border-radius: 24rpx;
+      padding: 8rpx;
+      position: relative;
+      margin-bottom: 24rpx;
+      border: 1rpx solid rgba(0, 0, 0, 0.02);
 
-    // 隐藏滚动条
-    ::-webkit-scrollbar {
-      display: none;
-      width: 0 !important;
-      height: 0 !important;
-      -webkit-appearance: none;
-      background: transparent;
+      .tabs-slider {
+        position: absolute;
+        height: calc(100% - 16rpx);
+        background: #FFFFFF;
+        border-radius: 18rpx;
+        box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
+      }
+
+      .main-tab-item {
+        flex: 1;
+        height: 72rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s;
+
+        .tab-label {
+          font-size: 26rpx;
+          color: #64748B;
+          font-weight: 500;
+          transition: all 0.3s;
+        }
+
+        &.active {
+          .tab-label {
+            color: #3B82F6;
+            font-weight: 700;
+          }
+        }
+      }
     }
-  }
 
-  .tab-item {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 72rpx;
-    padding: 0 40rpx;
-    border-radius: 12rpx;
-    position: relative;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-sizing: border-box;
+    .sub-tabs-container {
+      .sub-tabs-scroll {
+        white-space: nowrap;
+        width: 100%;
 
-    text {
-      font-size: 26rpx;
-      color: #64748B;
-      font-weight: 500;
-      transition: all 0.3s;
-      white-space: nowrap;
-    }
+        // 隐藏滚动条
+        ::-webkit-scrollbar {
+          display: none;
+          width: 0 !important;
+          height: 0 !important;
+          -webkit-appearance: none;
+          background: transparent;
+        }
 
-    &.active {
-      background: #FFFFFF;
-      box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+        .sub-tab-item {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          height: 52rpx;
+          padding: 0 24rpx;
+          border-radius: 26rpx;
+          background: #FFFFFF;
+          margin-right: 16rpx;
+          border: 1rpx solid #E2E8F0;
+          transition: all 0.2s;
 
-      text {
-        color: #3B82F6;
-        font-weight: 600;
+          text {
+            font-size: 22rpx;
+            color: #64748B;
+            font-weight: 500;
+          }
+
+          &.active {
+            background: #EFF6FF;
+            border-color: #3B82F6;
+            transform: scale(1.02);
+
+            text {
+              color: #3B82F6;
+              font-weight: 600;
+            }
+          }
+
+          &:active {
+            transform: scale(0.95);
+          }
+        }
       }
     }
   }
-}
+
+  @keyframes slide-in {
+    from { transform: scaleX(0); opacity: 0; }
+    to { transform: scaleX(1); opacity: 1; }
+  }
 
 .content-scroll {
   flex: 1;
@@ -571,6 +858,34 @@ const filteredVotes = computed(() => {
 
   .vote-list {
     padding: 10rpx @page-padding 40rpx;
+
+    .more-btn-wrapper {
+      padding: 20rpx 0 40rpx;
+      display: flex;
+      justify-content: center;
+
+      .more-btn {
+        display: flex;
+        align-items: center;
+        gap: 8rpx;
+        padding: 16rpx 40rpx;
+        background: #FFFFFF;
+        border: 2rpx solid #E0E7FF;
+        border-radius: 40rpx;
+        box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+
+        text {
+          font-size: 26rpx;
+          color: #3B82F6;
+          font-weight: 600;
+        }
+
+        &:active {
+          background: #F8FAFC;
+          transform: scale(0.98);
+        }
+      }
+    }
 
     .list-end {
       text-align: center;

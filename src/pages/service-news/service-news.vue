@@ -92,9 +92,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-
-
-
+import config from '@/config';
 
 const goBack = () => {
   uni.navigateBack();
@@ -116,14 +114,14 @@ const news = ref([
     desc: '上周末，50余户业主家庭积极参与了“我为社区添新绿”植树节活动，共栽种苗木120余棵。',
     time: '昨天',
     category: '社区活动',
-    cover: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2013&auto=format&fit=crop'
+    cover: config.placeholderImage
   },
   {
     title: '小区公共路灯节能改造工程启动',
     desc: '物业服务中心计划本周起对小区公共路灯进行LED节能改造，预计工期两周，请业主注意安全。',
     time: '2天前',
     category: '物业动态',
-    cover: 'https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?q=80&w=2000&auto=format&fit=crop'
+    cover: config.placeholderImage
   },
   {
     title: '新版《业主手册》领取指南',

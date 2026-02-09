@@ -26,7 +26,7 @@
       <view v-if="currentStep === 1" class="step-content face-step">
         <view class="face-scanner">
           <view class="scanner-box">
-            <image src="https://img.js.design/assets/img/65a8e1a1b16c905330e6a8e8.png" mode="aspectFill" class="face-img" />
+            <image :src="config.placeholderImage" mode="aspectFill" class="face-img" />
             <view class="scan-line"></view>
           </view>
           <view class="scanner-tips">
@@ -100,6 +100,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import config from '@/config';
 
 const currentStep = ref(1);
 const isScanning = ref(false);

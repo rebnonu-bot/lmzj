@@ -76,6 +76,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import config from '@/config';
 
 
 
@@ -94,7 +95,7 @@ const courses = ref([
     duration: '15分钟', 
     views: 1250, 
     points: 20,
-    cover: 'https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=500&q=80'
+    cover: config.placeholderImage
   },
   { 
     title: '垃圾分类减量，共建绿色家园', 
@@ -102,7 +103,7 @@ const courses = ref([
     duration: '10分钟', 
     views: 3420, 
     points: 15,
-    cover: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&q=80'
+    cover: config.placeholderImage
   },
   { 
     title: '民法典中关于物业管理的最新解读', 
@@ -110,7 +111,7 @@ const courses = ref([
     duration: '25分钟', 
     views: 890, 
     points: 30,
-    cover: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&q=80'
+    cover: config.placeholderImage
   },
   { 
     title: '居家节水省电小妙招分享', 
@@ -118,7 +119,7 @@ const courses = ref([
     duration: '8分钟', 
     views: 2100, 
     points: 10,
-    cover: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=500&q=80'
+    cover: config.placeholderImage
   }
 ]);
 

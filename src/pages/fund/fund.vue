@@ -236,25 +236,36 @@ const isExpanded = ref(false);
 const showHousePicker = ref(false);
 const houseOptions = [
   { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802', community: '阳光水岸', area: '124.50' },
-  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202', community: '阳光水岸', area: '98.50' },
-  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501', community: '翡翠江景', area: '138.20' }
+  { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202', community: '阳光水岸', area: '98.60' },
+  { label: '亚运城天成一期 2-1-1503', value: '亚运城天成一期 2-1-1503', community: '亚运城天成', area: '115.80' },
+  { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501', community: '翡翠江景', area: '142.00' }
 ];
 
 const communityFundDetailMap: Record<string, { total: number, list: any[] }> = {
   '阳光水岸': {
     total: 245.82,
     list: [
-      { title: '1号楼电梯钢丝绳更换工程', date: '2026-01-15', status: '进行中', amount: '4.50' },
-      { title: '小区监控系统升级改造', date: '2025-12-20', status: '已公示', amount: '2.80' },
-      { title: '地库排水泵检修', date: '2025-11-05', status: '已完成', amount: '0.65' }
+      { id: '1', title: '1-3栋电梯主板更换维修', date: '2026-01-15', amount: '1.25', status: '已完成' },
+      { id: '2', title: '5栋消防泵维修', date: '2025-12-20', amount: '0.85', status: '已完成' },
+      { id: '3', title: '小区监控系统局部升级', date: '2025-11-05', amount: '3.42', status: '已完成' },
+      { id: '4', title: '2栋外墙瓷砖脱落修复', date: '2025-10-12', amount: '0.68', status: '已完成' },
+      { id: '5', title: '地下车库排水管更换', date: '2025-09-28', amount: '1.15', status: '已完成' },
+      { id: '6', title: '7栋顶层防水补漏', date: '2025-08-15', amount: '2.30', status: '已完成' }
+    ]
+  },
+  '亚运城天成': {
+    total: 186.50,
+    list: [
+      { id: '101', title: '天成一期电梯钢丝绳更换', date: '2026-01-20', amount: '2.10', status: '已完成' },
+      { id: '102', title: '路灯线路全面检修', date: '2025-12-10', amount: '0.45', status: '已完成' },
+      { id: '103', title: '消防控制柜显示屏维修', date: '2025-11-15', amount: '0.32', status: '已完成' }
     ]
   },
   '翡翠江景': {
-    total: 485.50,
+    total: 512.40,
     list: [
-      { title: '翡翠江景中庭喷泉维修', date: '2026-02-01', status: '进行中', amount: '12.50' },
-      { title: '地下车库地坪漆翻新', date: '2025-12-10', status: '已完成', amount: '25.30' },
-      { title: '3号楼屋顶防水工程', date: '2025-11-15', status: '已完成', amount: '8.40' }
+      { id: '201', title: '景观喷泉水泵更换', date: '2026-01-05', amount: '0.75', status: '已完成' },
+      { id: '202|', title: '二次供水设备维护', date: '2025-12-28', amount: '1.50', status: '已完成' }
     ]
   }
 };

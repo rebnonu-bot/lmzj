@@ -92,12 +92,16 @@ const goBack = () => {
 };
 
 const handleNext = () => {
-  const url = voteId.value 
-    ? `/pages/voting/vote-detail?id=${voteId.value}` 
-    : '/pages/voting/vote-topics';
-  uni.navigateTo({
-    url
-  });
+  if (voteId.value) {
+    uni.navigateTo({
+      url: `/pages/voting/vote-detail?id=${voteId.value}`
+    });
+  } else {
+    // 跳转回投票列表页，并筛选出“进行中”的项目
+    uni.reLaunch({
+      url: '/pages/voting/voting?status=ongoing'
+    });
+  }
 };
 </script>
 

@@ -95,9 +95,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-
-
-
+import config from '@/config';
 
 const activeTab = ref(0);
 const tabs = ['全部', '社区活动', '邻里互助', '跳蚤市场'];
@@ -116,7 +114,7 @@ const items = ref([
     status: '进行中',
     statusType: 'ongoing',
     btnText: '立即报名',
-    cover: 'https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=500&q=80'
+    cover: config.placeholderImage
   },
   { 
     title: '求助：谁家有闲置的梯子借用一下？', 
@@ -139,7 +137,7 @@ const items = ref([
     status: '出售中',
     statusType: 'sale',
     btnText: '联系卖家',
-    cover: 'https://images.unsplash.com/photo-1512338411170-d39cb3ca4720?w=500&q=80'
+    cover: config.placeholderImage
   },
   { 
     title: '元宵节社区猜灯谜活动', 
@@ -150,7 +148,7 @@ const items = ref([
     status: '进行中',
     statusType: 'ongoing',
     btnText: '查看详情',
-    cover: 'https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?w=500&q=80'
+    cover: config.placeholderImage
   }
 ]);
 

@@ -10,8 +10,8 @@
       
       <view class="header-main">
         <view class="title-box">
-          <text class="main-title">公共收益余额</text>
-          <text class="sub-title">公开透明可监督</text>
+          <text class="main-title">小区数字基金</text>
+          <text class="sub-title">你家物业费邻檬帮你减</text>
           <view class="house-info" @click="goToBindHouse">
             <t-icon name="swap" size="28rpx" color="#fff" class="swap-icon" />
             <text>{{ currentHouse }}</text>
@@ -20,7 +20,7 @@
         <view class="header-illustration">
           <view class="illust-glass-card card-back"></view>
           <view class="illust-glass-card card-front">
-            <t-icon name="wallet" size="64rpx" color="#fff" />
+            <t-icon name="chart-bubble" size="64rpx" color="#fff" />
           </view>
           <view class="illust-coin coin-1"></view>
           <view class="illust-coin coin-2"></view>
@@ -60,12 +60,12 @@
         <view class="balance-card animate-fade-in">
           <view class="balance-info">
             <view class="balance-header">
-              <text class="label">公共收益余额</text>
-              <text class="sub-label">(数据来源于银行)</text>
+              <text class="label">小区数字基金</text>
+              <text class="sub-label">数据来源：邻檬智家</text>
             </view>
             <view class="balance-value">
-              <text class="amount">12.85</text>
-              <text class="unit">万元</text>
+              <text class="amount">{{ totalBalance }}</text>
+              <text class="unit">元</text>
             </view>
           </view>
           <view class="balance-icon-box">
@@ -73,26 +73,37 @@
           </view>
         </view>
 
-        <!-- Bank Info Card -->
-        <view class="info-list-card animate-fade-in" style="animation-delay: 0.1s">
-          <view class="info-row">
-            <text class="i-label">银行账户</text>
-            <text class="i-value">{{ bankInfo.name }}</text>
+        <!-- 我的贡献 Card -->
+        <view class="contribution-summary-card animate-fade-in" style="animation-delay: 0.05s" @click="activeTab = 2">
+          <view class="card-bg-decoration">
+            <view class="circle-1"></view>
+            <view class="circle-2"></view>
           </view>
-          <view class="info-row">
-            <text class="i-label">银行账号</text>
-            <text class="i-value">{{ bankInfo.account }}</text>
-          </view>
-          <view class="info-row">
-            <text class="i-label">开户银行</text>
-            <text class="i-value">{{ bankInfo.bank }}</text>
+          
+          <view class="card-content">
+            <view class="summary-left">
+              <view class="label-group">
+                <text class="label">我的累计贡献</text>
+              </view>
+              <view class="summary-value">
+                <text class="amount">{{ myTotalContribution }}</text>
+                <text class="unit">元</text>
+              </view>
+            </view>
+            
+            <view class="summary-right">
+              <view class="view-btn">
+                <text>明细</text>
+                <t-icon name="chevron-right" size="24rpx" color="#3B82F6" />
+              </view>
+            </view>
           </view>
         </view>
 
         <!-- Trend Chart Card -->
-        <view class="chart-card animate-fade-in" style="animation-delay: 0.2s">
+        <view class="chart-card animate-fade-in" style="animation-delay: 0.1s">
           <view class="chart-header">
-            <text class="chart-title">收支趋势量</text>
+            <text class="chart-title">小区基金收支趋势量</text>
             <view class="chart-legend">
               <view class="legend-item">
                 <view class="dot income"></view>
@@ -145,12 +156,44 @@
             </view>
           </view>
           <view class="chart-footer">
-            <text class="unit-text">单位：万元</text>
+            <text class="unit-text">单位：元</text>
+          </view>
+        </view>
+
+        <!-- Ranking List Card -->
+        <view class="ranking-card animate-fade-in" style="animation-delay: 0.15s">
+          <view class="ranking-header">
+            <view class="title-group">
+              <t-icon name="chart-bar" size="36rpx" color="#F59E0B" />
+              <text class="ranking-title">贡献排行榜</text>
+            </view>
+            <text class="ranking-subtitle">前五榜单</text>
+          </view>
+          
+          <view class="ranking-list">
+            <view 
+              class="ranking-item" 
+              v-for="(item, index) in rankingList" 
+              :key="index"
+            >
+              <view class="rank-num" :class="'rank-' + item.rank">
+                <text v-if="item.rank > 3">{{ item.rank }}</text>
+                <t-icon v-else name="measurement-1" size="32rpx" />
+              </view>
+              <image class="user-avatar" :src="item.avatar" mode="aspectFill" />
+              <view class="user-info">
+                <text class="user-name">{{ item.name }}</text>
+              </view>
+              <view class="user-amount">
+                <text class="amount-val">{{ item.amount }}</text>
+                <text class="amount-unit">元</text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
 
-      <!-- 收支记录 Tab -->
+      <!-- 贡献列表 Tab -->
       <view class="tab-content" v-else-if="activeTab === 1">
         <view 
           class="record-item" 
@@ -159,53 +202,65 @@
           @click="handleDetail(item)"
         >
           <view class="record-left">
-            <view class="record-type" :class="item.type">{{ item.typeText }}</view>
             <view class="record-info">
-              <text class="record-title">{{ item.title }}</text>
+              <view class="title-row">
+                <text class="record-title">{{ item.title }}</text>
+                <text class="scene-tag" :class="item.scene === 'online' ? 'online' : 'offline'">
+                  {{ item.scene === 'online' ? '线上' : '线下' }}
+                </text>
+              </view>
               <text class="record-date">{{ item.date }}</text>
             </view>
           </view>
           <view class="record-right">
-            <text class="record-amount" :class="item.type">
-              {{ item.type === 'in' ? '+' : '-' }}{{ item.amount }}
+            <text class="record-amount" :class="item.type === 'expense' ? 'expense' : 'contribution'">
+              {{ item.type === 'expense' ? '-' : '+' }}{{ item.amount }}元
             </text>
-            <t-icon name="chevron-right" size="32rpx" color="#CBD5E1" />
           </view>
         </view>
-        <view class="view-more-btn" v-if="recordList.length > 5" @click="goToRecordList">
+        <view class="view-more-btn" v-if="recordList.length > 5" @click="goToRecordList('all')">
           <text>查看更多明细</text>
           <t-icon name="chevron-right" size="32rpx" />
         </view>
         <view class="empty-state" v-if="recordList.length === 0">
           <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
-          <text>暂无收支记录</text>
+          <text>暂无贡献记录</text>
         </view>
       </view>
 
-      <!-- 合同 Tab -->
+      <!-- 我的贡献 Tab -->
       <view class="tab-content" v-else-if="activeTab === 2">
-        <view class="contract-card" v-for="(item, index) in contractList" :key="index">
-          <view class="contract-header">
-            <t-icon name="file-base" size="40rpx" color="#3B82F6" />
-            <text class="contract-title">{{ item.title }}</text>
-          </view>
-          <view class="contract-body">
-            <view class="contract-row">
-              <text class="c-label">签署单位：</text>
-              <text class="c-value">{{ item.company }}</text>
+        <view 
+          class="record-item" 
+          v-for="(item, index) in myContributionList.slice(0, 5)" 
+          :key="index"
+          @click="handleDetail(item)"
+        >
+          <view class="record-left">
+            <view class="record-info">
+              <view class="title-row">
+                <text class="record-title">{{ item.title }}</text>
+                <text class="scene-tag" :class="item.scene === 'online' ? 'online' : 'offline'">
+                  {{ item.scene === 'online' ? '线上' : '线下' }}
+                </text>
+              </view>
+              <text class="record-status">{{ item.status }}</text>
+              <text class="record-date">{{ item.date }}</text>
             </view>
-            <view class="contract-row">
-              <text class="c-label">有效期限：</text>
-              <text class="c-value">{{ item.period }}</text>
-            </view>
           </view>
-          <view class="contract-footer">
-            <text class="view-btn">查看电子合同</text>
+          <view class="record-right">
+            <text class="record-amount contribution">
+              +{{ item.amount }}元
+            </text>
           </view>
         </view>
-        <view class="empty-state" v-if="contractList.length === 0">
+        <view class="view-more-btn" v-if="myContributionList.length > 5" @click="goToRecordList('mine')">
+          <text>查看更多明细</text>
+          <t-icon name="chevron-right" size="32rpx" />
+        </view>
+        <view class="empty-state" v-if="myContributionList.length === 0">
           <t-icon name="info-circle" size="64rpx" color="#CBD5E1" />
-          <text>暂无合同信息</text>
+          <text>暂无贡献记录</text>
         </view>
       </view>
     </scroll-view>
@@ -218,6 +273,22 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useFundStore } from '@/composables/useFundStore';
+
+const { recordList: storeRecordList, totalBalanceFormatted: totalBalance } = useFundStore();
+
+// 我的贡献列表：过滤出贡献类型的记录，并排除初始余额
+const myContributionList = computed(() => {
+  return storeRecordList.value
+    .filter(item => item.type === 'contribution')
+    .map(item => ({
+      ...item,
+      status: `成功消费${(parseFloat(item.amount) * 100).toFixed(2)}元`
+    }));
+});
+
+// 贡献列表（用于 Tab 1）：排除初始余额显示，或者保留？用户说“金额应该是列表总和”，保留可能更好
+const recordList = computed(() => storeRecordList.value);
 
 const isLoading = ref(true);
 const activeTab = ref(0);
@@ -229,7 +300,7 @@ onMounted(() => {
   }, 800);
 });
 
-const tabs = ['基本情况', '收支记录', '合同'];
+const tabs = ['基本情况', '贡献列表', '我的贡献'];
 
 const currentHouse = ref('阳光水岸一期 1-1-802');
 
@@ -238,7 +309,6 @@ const goBack = () => {
   if (pages.length > 1) {
     uni.navigateBack();
   } else {
-    // 如果没有历史记录（比如直接刷新页面），则回到首页
     uni.reLaunch({
       url: '/pages/index/index'
     });
@@ -252,112 +322,32 @@ const goToBindHouse = () => {
   });
 };
 
-const goToRecordList = () => {
+const goToRecordList = (type: string = 'all') => {
   uni.navigateTo({
-    url: '/pages/fund/income-record-list'
+    url: `/pages/fund/community-fund-record-list?type=${type}`
   });
 };
 
 const handleDetail = (item: any) => {
   uni.navigateTo({
-    url: `/pages/fund/income-record-detail?data=${encodeURIComponent(JSON.stringify(item))}`
+    url: `/pages/fund/community-fund-record-detail?data=${encodeURIComponent(JSON.stringify(item))}`
   });
 };
 
-// 模拟数据 - 银行信息
-const bankInfo = ref({
-  name: '阳光水岸一期业主委员会',
-  account: '6222 **** **** 8892',
-  bank: '中国建设银行赣州分行'
-});
-
-// 模拟数据 - 收支记录
-const recordList = ref([
-  {
-    title: '电梯广告位租金收入',
-    date: '2026-02-01',
-    amount: '16000.00',
-    type: 'in',
-    typeText: '收入'
-  },
-  {
-    title: '电梯维保支出',
-    date: '2026-02-05',
-    amount: '9500.00',
-    type: 'out',
-    typeText: '支出'
-  },
-  {
-    title: '小区停车位租赁收入',
-    date: '2026-01-20',
-    amount: '22000.00',
-    type: 'in',
-    typeText: '收入'
-  },
-  {
-    title: '春节氛围装饰采购',
-    date: '2026-01-10',
-    amount: '14000.00',
-    type: 'out',
-    typeText: '支出'
-  },
-  {
-    title: '外墙广告位收益',
-    date: '2025-12-15',
-    amount: '18000.00',
-    type: 'in',
-    typeText: '收入'
-  },
-  {
-    title: '公共区域照明维修',
-    date: '2025-12-05',
-    amount: '12000.00',
-    type: 'out',
-    typeText: '支出'
-  },
-  {
-    title: '快递柜场地租赁费',
-    date: '2025-11-30',
-    amount: '11000.00',
-    type: 'in',
-    typeText: '收入'
-  },
-  {
-    title: '垃圾分类宣传费',
-    date: '2025-11-10',
-    amount: '7500.00',
-    type: 'out',
-    typeText: '支出'
-  },
-  {
-    title: '路面停车位收益',
-    date: '2025-10-25',
-    amount: '15000.00',
-    type: 'in',
-    typeText: '收入'
-  },
-  {
-    title: '小区绿化补植支出',
-    date: '2025-10-10',
-    amount: '9000.00',
-    type: 'out',
-    typeText: '支出'
-  },
-  {
-    title: '共有用房出租收益',
-    date: '2025-09-15',
-    amount: '12000.00',
-    type: 'in',
-    typeText: '收入'
-  },
-  {
-    title: '中秋节物业慰问支出',
-    date: '2025-09-05',
-    amount: '8000.00',
-    type: 'out',
-    typeText: '支出'
-  }
+// 模拟数据 - 贡献排行榜
+const rankingList = ref([
+  { rank: 1, name: '张**', amount: '156.40', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix' },
+  { rank: 2, name: '李**', amount: '142.85', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka' },
+  { rank: 3, name: '王**', amount: '128.60', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John' },
+  { rank: 4, name: '赵**', amount: '115.20', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=James' },
+  { rank: 5, name: '陈**', amount: '98.55', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Caleb' }
 ]);
+
+// 计算我的总贡献
+const myTotalContribution = computed(() => {
+  const total = myContributionList.value.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+  return total.toFixed(2);
+});
 
 // 趋势图数据 - 动态获取最近6个月
 const trendData = computed(() => {
@@ -368,24 +358,17 @@ const trendData = computed(() => {
   }
   const data: TrendItem[] = [];
   const now = new Date();
-  if (!recordList.value || !Array.isArray(recordList.value)) return data;
-
+  
   for (let i = 5; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     const yearMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    const monthlyRecords = recordList.value.filter(r => r.date && typeof r.date === 'string' && r.date.startsWith(yearMonth));
+    const monthlyRecords = recordList.value.filter(r => r.date.startsWith(yearMonth));
     const income = monthlyRecords
-      .filter(r => r.type === 'in')
-      .reduce((sum, r) => {
-        const amt = parseFloat(r.amount);
-        return sum + (isNaN(amt) ? 0 : amt);
-      }, 0) / 10000;
+      .filter(r => r.type === 'contribution' || r.type === 'initial')
+      .reduce((sum, r) => sum + parseFloat(r.amount), 0);
     const expense = monthlyRecords
-      .filter(r => r.type === 'out')
-      .reduce((sum, r) => {
-        const amt = parseFloat(r.amount);
-        return sum + (isNaN(amt) ? 0 : amt);
-      }, 0) / 10000;
+      .filter(r => r.type === 'expense')
+      .reduce((sum, r) => sum + parseFloat(r.amount), 0);
     data.push({
       month: `${d.getMonth() + 1}月`,
       income: parseFloat(income.toFixed(2)),
@@ -398,31 +381,8 @@ const trendData = computed(() => {
 const maxTrendValue = computed(() => {
   const values = trendData.value.flatMap(d => [d.income, d.expense]);
   const max = Math.max(...values);
-  return max > 0 ? max * 1.2 : 1; // 增加20%余量，避免触顶
+  return max > 0 ? max * 1.2 : 1;
 });
-
-const contractList = ref([
-  {
-    title: '分众传媒电梯广告租赁合同',
-    company: '分众传媒有限公司',
-    period: '2026-01-01 至 2027-12-31'
-  },
-  {
-    title: '小区快递柜进驻协议',
-    company: '丰巢科技有限公司',
-    period: '2024-06-01 至 2027-05-31'
-  },
-  {
-    title: '共有用房租赁协议 - A栋底商',
-    company: '悦生活超市',
-    period: '2023-08-01 至 2026-07-31'
-  },
-  {
-    title: '饮水机场地租赁协议',
-    company: '农夫山泉股份有限公司',
-    period: '2026-01-01 至 2027-12-31'
-  }
-]);
 </script>
 
 <style lang="less" scoped>
@@ -645,7 +605,7 @@ const contractList = ref([
     background: #FFFFFF;
     border-radius: 20rpx;
     padding: 40rpx;
-    margin-bottom: 30rpx;
+    margin-bottom: 40rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -671,11 +631,11 @@ const contractList = ref([
       .amount {
         font-size: 56rpx;
         font-weight: bold;
-        color: #EF4444;
+        color: #F59E0B;
       }
       .unit {
         font-size: 32rpx;
-        color: #EF4444;
+        color: #F59E0B;
         margin-left: 8rpx;
         font-weight: 500;
       }
@@ -684,7 +644,7 @@ const contractList = ref([
     .balance-icon-box {
       width: 100rpx;
       height: 100rpx;
-      background: #EFF6FF;
+      background: #FFF7ED;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -693,7 +653,7 @@ const contractList = ref([
       .coin-icon {
         width: 64rpx;
         height: 64rpx;
-        background: #3B82F6;
+        background: #F59E0B;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -701,25 +661,124 @@ const contractList = ref([
         color: #fff;
         font-size: 32rpx;
         font-weight: bold;
-        box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
+        box-shadow: 0 4rpx 12rpx rgba(245, 158, 11, 0.4);
         animation: breathe 2s ease-in-out infinite;
       }
     }
   }
 
+  .contribution-summary-card {
+    position: relative;
+    background: #FFFFFF;
+    border-radius: 24rpx;
+    padding: 32rpx 40rpx;
+    margin-bottom: 40rpx;
+    overflow: hidden;
+    box-shadow: 0 10rpx 30rpx rgba(59, 130, 246, 0.08);
+    border: 1rpx solid #EFF6FF;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+      background-color: #F8FAFC;
+    }
+
+    .card-bg-decoration {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1;
+      pointer-events: none;
+
+      .circle-1 {
+        position: absolute;
+        top: -60rpx;
+        right: -60rpx;
+        width: 200rpx;
+        height: 200rpx;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0) 70%);
+        border-radius: 50%;
+      }
+
+      .circle-2 {
+        position: absolute;
+        bottom: -40rpx;
+        left: 20%;
+        width: 120rpx;
+        height: 120rpx;
+        background: radial-gradient(circle, rgba(59, 130, 246, 0.03) 0%, rgba(59, 130, 246, 0) 70%);
+        border-radius: 50%;
+      }
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-left {
+      .label-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12rpx;
+
+        .label {
+          font-size: 26rpx;
+          color: #64748B;
+          font-weight: 500;
+          letter-spacing: 1rpx;
+        }
+      }
+
+      .summary-value {
+        display: flex;
+        align-items: baseline;
+        padding-left: 4rpx;
+
+        .amount {
+          font-size: 52rpx;
+          font-weight: 800;
+          color: #2563EB;
+        }
+        .unit {
+          font-size: 24rpx;
+          color: #94A3B8;
+          margin-left: 10rpx;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .summary-right {
+      .view-btn {
+        display: flex;
+        align-items: center;
+        gap: 6rpx;
+        font-size: 22rpx;
+        color: #3B82F6;
+        background: #F0F7FF;
+        padding: 12rpx 28rpx;
+        border-radius: 100rpx;
+        border: 1rpx solid #DBEAFE;
+        font-weight: 600;
+
+        &:active {
+          background: #DBEAFE;
+        }
+      }
+    }
+  }
+
   @keyframes breathe {
-    0% {
-      transform: scale(1);
-      box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
-    }
-    50% {
-      transform: scale(1.1);
-      box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.6);
-    }
-    100% {
-      transform: scale(1);
-      box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
-    }
+    0% { transform: scale(1); box-shadow: 0 4rpx 12rpx rgba(245, 158, 11, 0.4); }
+    50% { transform: scale(1.1); box-shadow: 0 8rpx 24rpx rgba(245, 158, 11, 0.6); }
+    100% { transform: scale(1); box-shadow: 0 4rpx 12rpx rgba(245, 158, 11, 0.4); }
   }
 
   .info-list-card {
@@ -754,11 +813,11 @@ const contractList = ref([
   }
 
   .chart-card {
-    background: #fff;
+    background: #FFFFFF;
     border-radius: 24rpx;
     padding: 30rpx;
-    margin-top: 30rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+    margin-bottom: 40rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
 
     .chart-header {
       display: flex;
@@ -784,120 +843,95 @@ const contractList = ref([
           color: #64748b;
 
           .dot {
-            width: 16rpx;
-            height: 16rpx;
-            border-radius: 4rpx;
-
-            &.income {
-              background: #3B82F6;
-            }
-
-            &.expense {
-              background: #F97316;
-            }
+            width: 12rpx;
+            height: 12rpx;
+            border-radius: 50%;
+            &.income { background: #3B82F6; }
+            &.expense { background: #EF4444; }
           }
         }
       }
     }
 
     .chart-body {
-      height: 320rpx;
       display: flex;
+      height: 300rpx;
       gap: 20rpx;
-      position: relative;
 
       .chart-y-axis {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding-bottom: 40rpx;
         font-size: 20rpx;
         color: #94a3b8;
-        width: 40rpx;
-        text-align: right;
+        padding-bottom: 40rpx;
       }
 
       .chart-main {
         flex: 1;
         position: relative;
-        display: flex;
-        flex-direction: column;
-
+        
         .chart-grid {
           position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 40rpx;
+          inset: 0 0 40rpx 0;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
-          pointer-events: none;
 
           .grid-line {
             height: 1rpx;
             background: #f1f5f9;
-            width: 100%;
           }
         }
 
         .bar-container {
-          flex: 1;
+          position: absolute;
+          inset: 0 0 40rpx 0;
           display: flex;
-          justify-content: space-around;
-          align-items: flex-end;
-          padding-bottom: 40rpx; // 这里的 padding 留给轴标签
-          z-index: 1;
+          justify-content: space-between;
+          padding: 0 10rpx;
 
           .bar-group {
             display: flex;
             flex-direction: column;
             align-items: center;
-            flex: 1;
-            height: 100%;
             justify-content: flex-end;
-            position: relative;
+            width: 14%;
 
             .bars {
-              height: 240rpx;
               display: flex;
               align-items: flex-end;
               gap: 4rpx;
+              height: 100%;
               width: 100%;
-              justify-content: center;
-              margin-bottom: 12rpx; // 与标签的间距
 
               .bar {
-                width: 16rpx;
+                flex: 1;
                 border-radius: 4rpx 4rpx 0 0;
                 position: relative;
-                transition: height 0.3s ease;
+                min-height: 4rpx;
 
-                &.income {
-                  background: linear-gradient(to top, #3B82F6, #60A5FA);
-                }
-
-                &.expense {
-                  background: linear-gradient(to top, #F97316, #FB923C);
-                }
+                &.income { background: linear-gradient(to top, #3B82F6, #60A5FA); }
+                &.expense { background: linear-gradient(to top, #EF4444, #F87171); }
 
                 .bar-value {
                   position: absolute;
-                  top: -32rpx;
+                  top: -30rpx;
                   left: 50%;
                   transform: translateX(-50%);
                   font-size: 18rpx;
-                  color: #64748b;
+                  color: #94a3b8;
                   white-space: nowrap;
-                  font-weight: 500;
                 }
               }
             }
 
             .bar-label {
+              margin-top: 12rpx;
               font-size: 22rpx;
               color: #64748b;
-              line-height: 1;
+              position: absolute;
+              bottom: -40rpx;
             }
           }
         }
@@ -905,9 +939,8 @@ const contractList = ref([
     }
 
     .chart-footer {
-      margin-top: 10rpx;
+      margin-top: 60rpx;
       text-align: right;
-      
       .unit-text {
         font-size: 20rpx;
         color: #94a3b8;
@@ -915,48 +948,173 @@ const contractList = ref([
     }
   }
 
-  .record-item {
+  .ranking-card {
     background: #FFFFFF;
+    border-radius: 24rpx;
+    padding: 30rpx;
+    margin-bottom: 40rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
+
+    .ranking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30rpx;
+
+      .title-group {
+        display: flex;
+        align-items: center;
+        gap: 12rpx;
+
+        .ranking-title {
+          font-size: 32rpx;
+          font-weight: 600;
+          color: #1E293B;
+        }
+      }
+
+      .ranking-subtitle {
+        font-size: 24rpx;
+        color: #94A3B8;
+      }
+    }
+
+    .ranking-list {
+      .ranking-item {
+        display: flex;
+        align-items: center;
+        padding: 24rpx 0;
+        border-bottom: 1rpx solid #F8FAFC;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .rank-num {
+          width: 60rpx;
+          height: 60rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 28rpx;
+          font-weight: bold;
+          color: #64748B;
+          margin-right: 20rpx;
+
+          &.rank-1 { color: #F59E0B; }
+          &.rank-2 { color: #94A3B8; }
+          &.rank-3 { color: #B45309; }
+        }
+
+        .user-avatar {
+          width: 80rpx;
+          height: 80rpx;
+          border-radius: 50%;
+          margin-right: 24rpx;
+          background: #F1F5F9;
+          border: 2rpx solid #FFFFFF;
+          box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+        }
+
+        .user-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4rpx;
+
+          .user-name {
+            font-size: 30rpx;
+            font-weight: 600;
+            color: #334155;
+          }
+        }
+
+        .user-amount {
+          text-align: right;
+          .amount-val {
+            font-size: 32rpx;
+            font-weight: 700;
+            color: #F59E0B;
+            margin-right: 4rpx;
+          }
+          .amount-unit {
+            font-size: 20rpx;
+            color: #94A3B8;
+          }
+        }
+      }
+    }
+  }
+
+  .record-item {
+    background: #fff;
     padding: 30rpx;
     border-radius: 20rpx;
     margin-bottom: 20rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
 
     .record-left {
       display: flex;
       align-items: center;
+      gap: 24rpx;
 
       .record-type {
         width: 80rpx;
-        height: 40rpx;
-        font-size: 22rpx;
-        border-radius: 8rpx;
+        height: 80rpx;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-right: 24rpx;
+        font-size: 24rpx;
+        font-weight: 500;
 
-        &.in {
-          background: #F0FDF4;
-          color: #10B981;
-        }
-        &.out {
-          background: #FEF2F2;
-          color: #EF4444;
-        }
+        &.in { background: #EFF6FF; color: #3B82F6; }
+        &.out { background: #F8FAFC; color: #64748B; }
       }
 
       .record-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8rpx;
+
+        .title-row {
+          display: flex;
+          align-items: center;
+          gap: 12rpx;
+        }
+
         .record-title {
           font-size: 28rpx;
           color: #1E293B;
           font-weight: 500;
-          margin-bottom: 4rpx;
-          display: block;
         }
+
+        .scene-tag {
+          font-size: 20rpx;
+          padding: 2rpx 12rpx;
+          border-radius: 6rpx;
+          font-weight: 500;
+
+          &.online {
+            background: #E0F2FE;
+            color: #0284C7;
+          }
+
+          &.offline {
+            background: #F0FDF4;
+            color: #16A34A;
+          }
+        }
+
+        .record-status {
+          font-size: 24rpx;
+          color: #64748B;
+        }
+
         .record-date {
           font-size: 24rpx;
           color: #94A3B8;
@@ -970,15 +1128,11 @@ const contractList = ref([
       gap: 12rpx;
 
       .record-amount {
-        font-size: 30rpx;
-        font-weight: 600;
+        font-size: 32rpx;
+        font-weight: bold;
 
-        &.in {
-          color: #10B981;
-        }
-        &.out {
-          color: #1E293B;
-        }
+        &.contribution { color: #F59E0B; }
+        &.expense { color: #EF4444; }
       }
     }
   }
@@ -988,129 +1142,59 @@ const contractList = ref([
     align-items: center;
     justify-content: center;
     gap: 8rpx;
-    padding: 30rpx 0;
-    color: #64748B;
+    padding: 30rpx;
     font-size: 26rpx;
-    
+    color: #94A3B8;
+
     &:active {
       opacity: 0.7;
     }
   }
 
-  .contract-card {
-    background: #FFFFFF;
-    border-radius: 20rpx;
-    padding: 30rpx;
-    margin-bottom: 30rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.02);
-
-    .contract-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 24rpx;
-      padding-bottom: 20rpx;
-      border-bottom: 1rpx solid #F1F5F9;
-
-      .contract-title {
-        font-size: 30rpx;
-        font-weight: 500;
-        color: #1E293B;
-        margin-left: 16rpx;
-      }
-    }
-
-    .contract-body {
-      .contract-row {
-        display: flex;
-        margin-bottom: 12rpx;
-        font-size: 26rpx;
-
-        .c-label {
-          color: #94A3B8;
-          width: 140rpx;
-        }
-        .c-value {
-          color: #475569;
-          flex: 1;
-        }
-      }
-    }
-
-    .contract-footer {
-      margin-top: 30rpx;
-      display: flex;
-      justify-content: flex-end;
-
-      .view-btn {
-        font-size: 24rpx;
-        color: #3B82F6;
-        padding: 8rpx 24rpx;
-        border: 1rpx solid #3B82F6;
-        border-radius: 30rpx;
-      }
-    }
-  }
-
   .empty-state {
+    padding: 100rpx 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 100rpx 0;
+    gap: 20rpx;
     color: #94A3B8;
     font-size: 28rpx;
-
-    text {
-      margin-top: 20rpx;
-    }
   }
+}
 
-  // --- Animations & Skeletons ---
-  .skeleton-card {
-    background: #fff;
-    border-radius: 24rpx;
-    margin-bottom: 30rpx;
-    position: relative;
-    overflow: hidden;
-    
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
-      animation: skeleton-loading 1.5s infinite;
-    }
-  }
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
 
-  .balance-skeleton { height: 220rpx; }
-  .info-skeleton { height: 380rpx; }
-  .chart-skeleton { height: 450rpx; }
+.animate-grow-up {
+  transform-origin: bottom;
+  animation: grow-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
 
-  @keyframes skeleton-loading {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out both;
-  }
+@keyframes grow-up {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
 
-  .animate-grow-up {
-    transform-origin: bottom;
-    animation: growUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  }
+.skeleton-card {
+  background: #fff;
+  border-radius: 20rpx;
+  margin-bottom: 30rpx;
+  animation: skeleton-pulse 1.5s infinite ease-in-out;
+}
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20rpx); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+.balance-skeleton { height: 200rpx; }
+.info-skeleton { height: 300rpx; }
+.chart-skeleton { height: 400rpx; }
 
-  @keyframes growUp {
-    from { transform: scaleY(0); }
-    to { transform: scaleY(1); }
-  }
+@keyframes skeleton-pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
 }
 </style>

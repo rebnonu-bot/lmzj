@@ -4,7 +4,7 @@
     <view class="header">
       <view class="header-content">
         <view class="app-title-row">
-          <text class="app-title">智慧物业服务平台</text>
+          <text class="app-title">赣州市智慧物业服务平台</text>
         </view>
         <view class="slogan-row">
           <text class="slogan-text">{{ userInfo.slogan }}</text>
@@ -67,49 +67,119 @@
       </view>
       <view class="funds-grid">
           <view class="fund-card" v-for="(card, index) in fundCards" :key="index" @click="handleFundClick(card)">
+            <!-- Top Right Action Badge -->
+             <view class="fund-action-badge" :style="{ backgroundColor: card.type === 'balance' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(14, 165, 233, 0.15)' }">
+               <t-icon name="chevron-right" size="16rpx" :color="card.type === 'balance' ? '#3B82F6' : '#0EA5E9'" />
+             </view>
             <view class="fund-decor-circle"></view>
-            <t-icon :name="card.bgIcon" class="fund-bg-icon" />
+            <view class="fund-bg-illust">
+              <view class="illust-main" v-if="card.type === 'balance'">
+                <view class="list-card">
+                  <view class="check-item"></view>
+                  <view class="check-item"></view>
+                </view>
+                <view class="cloud c1"></view>
+                <view class="cloud c2"></view>
+              </view>
+              <view class="illust-main" v-else>
+                <view class="chart-box">
+                  <view class="bar b1"></view>
+                  <view class="bar b2"></view>
+                  <view class="bar b3"></view>
+                </view>
+                <view class="cloud c1"></view>
+                <view class="cloud c3"></view>
+              </view>
+            </view>
             <view class="fund-content">
-            <!-- Top: Value -->
-            <view class="fund-value-box">
-              <template v-if="card.type === 'balance'">
-                <text class="fund-amount">{{ card.displayAmount }}</text>
-                <text class="fund-unit">{{ card.unit }}</text>
+              <!-- Top Section: Title and Amount tightly grouped -->
+              <view class="fund-main-info">
+                <text class="fund-title">{{ card.title }}</text>
+                
+                <view class="fund-value-box">
+              <template v-if="card.type === 'balance' || card.type === 'fund'">
+                <view class="fund-amount-wrapper">
+                  <text class="fund-amount">{{ card.displayAmount }}</text>
+                  <text class="fund-unit">{{ card.unit }}</text>
+                </view>
               </template>
               <template v-else>
                 <text class="fund-value-small">{{ card.value }}</text>
               </template>
             </view>
-            
-            <!-- Bottom: Title + Icon -->
-            <view class="fund-title-row">
-              <text class="fund-title">{{ card.title }}</text>
-              <t-icon name="logout" size="24rpx" color="#94A3B8" class="fund-icon" />
+              </view>
+
+              <!-- Bottom: Hint Text -->
+              <view class="fund-footer">
+                <rich-text class="fund-hint" v-if="card.hint" :nodes="card.hint"></rich-text>
+              </view>
             </view>
-          </view>
         </view>
       </view>
     </view>
 
-    <!-- 4. 业主有话说 Banner Section -->
+    <!-- 4. Feature Cards Section -->
     <view class="section-container">
-      <view class="voice-banner" @click="handleVoiceClick">
-        <view class="banner-content">
-          <text class="banner-title">业主有话说</text>
-          <text class="banner-subtitle">业主诉求高效处置</text>
-          <view class="banner-btn">
-            <text>进入</text>
+      <view class="feature-grid">
+        <!-- Left Card: 业主有话说 -->
+        <view class="feature-card large voice" @click="handleVoiceClick">
+          <view class="card-content">
+            <text class="card-title">业主有话说</text>
+            <text class="card-subtitle">业主诉求高效处置</text>
+            <view class="card-btn">
+              <text>进入</text>
+            </view>
+          </view>
+          <view class="card-illustration">
+            <view class="illust-main">
+              <view class="list-card">
+                <view class="check-item"></view>
+                <view class="check-item"></view>
+              </view>
+              <view class="cloud c1"></view>
+              <view class="cloud c2"></view>
+            </view>
+          </view>
+          <view class="card-wave"></view>
+        </view>
+
+        <!-- Right Column -->
+        <view class="feature-col">
+          <!-- Top Right: 信息公开 -->
+          <view class="feature-card small notice" @click="handleNoticeClick">
+            <view class="card-content">
+              <text class="card-title">信息公开</text>
+              <text class="card-subtitle">信息更透明</text>
+            </view>
+            <view class="card-illustration">
+              <view class="illust-main">
+                <view class="notice-box">
+                  <view class="notice-line"></view>
+                  <view class="notice-line"></view>
+                  <view class="notice-dot"></view>
+                </view>
+                <view class="cloud c1"></view>
+              </view>
+            </view>
+          </view>
+
+          <!-- Bottom Right: 电子投票 -->
+          <view class="feature-card small voting" @click="handleVotingClick">
+            <view class="card-content">
+              <text class="card-title">电子投票</text>
+              <text class="card-subtitle">共同决定事项</text>
+            </view>
+            <view class="card-illustration">
+              <view class="illust-main">
+                <view class="vote-box">
+                  <view class="vote-slot"></view>
+                  <view class="vote-card"></view>
+                </view>
+                <view class="cloud c1"></view>
+              </view>
+            </view>
           </view>
         </view>
-        <view class="banner-illustration">
-          <view class="list-card">
-            <view class="check-item"></view>
-            <view class="check-item"></view>
-          </view>
-          <view class="cloud c1"></view>
-          <view class="cloud c2"></view>
-        </view>
-        <view class="banner-wave"></view>
       </view>
     </view>
 
@@ -199,11 +269,15 @@
 import { ref, onMounted, computed } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { useNumberAnimation } from '@/composables/useNumberAnimation';
+import { useFundStore } from '@/composables/useFundStore';
 
+const { totalBalanceWan, setCommunity } = useFundStore();
 const { animateNumber } = useNumberAnimation();
 
 onShow(() => {
   uni.hideTabBar().catch(() => {});
+  // 每次显示时根据当前选择的房屋更新社区数据
+  setCommunity(userInfo.value.address);
 });
 
 const userInfo = ref({
@@ -215,12 +289,14 @@ const userInfo = ref({
 const houseOptions = [
   { label: '阳光水岸一期 1-1-802', value: '阳光水岸一期 1-1-802', community: '阳光水岸' },
   { label: '阳光水岸二期 5-1-1202', value: '阳光水岸二期 5-1-1202', community: '阳光水岸' },
+  { label: '亚运城天成一期 2-1-1503', value: '亚运城天成一期 2-1-1503', community: '亚运城天成' },
   { label: '翡翠江景 3-2-1501', value: '翡翠江景 3-2-1501', community: '翡翠江景' }
 ];
 
-const communityFundsMap: Record<string, { main: string, digital: string }> = {
-  '阳光水岸': { main: '233.37', digital: '12.85' },
-  '翡翠江景': { main: '456.12', digital: '25.60' }
+const communityFundsMap: Record<string, { main: string, public: string, community: string }> = {
+  '阳光水岸': { main: '233.37', public: '12.85', community: '5.56' },
+  '亚运城天成': { main: '156.45', public: '8.20', community: '3.45' },
+  '翡翠江景': { main: '456.12', public: '25.60', community: '8.92' }
 };
 
 const showHousePicker = ref(false);
@@ -235,12 +311,16 @@ const onHouseSelect = (item: any) => {
   uni.setStorageSync('selectedHouse', selectedAddress);
   showHousePicker.value = false;
   
+  // 更新社区数据
+  setCommunity(selectedAddress);
+  
   // 更新资金数据
   const community = item.community || (selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景');
   const funds = communityFundsMap[community];
   if (funds && fundCards.value[0] && fundCards.value[1]) {
-    fundCards.value[0].amount = funds.main;
-    fundCards.value[1].amount = funds.digital;
+    fundCards.value[0].amount = funds.public;
+    // 小区数字基金金额与详情页保持一致
+    fundCards.value[1].amount = totalBalanceWan.value;
     // 重新触发动画
     animateNumbers();
   }
@@ -260,41 +340,44 @@ const notices = ref<string[]>([
 
 interface FundCard {
   title: string;
-  type: 'balance' | 'qrcode';
+  type: 'balance' | 'qrcode' | 'fund';
   amount: string; // 目标金额
   displayAmount: string; // 显示的动画金额
   unit?: string;
   value?: string;
   bgIcon: string;
+  hint?: string;
 }
 
 const fundCards = ref<FundCard[]>([
   { 
-    title: '住维资金余额', 
-    amount: '233.37', 
-    displayAmount: '0',
-    unit: '万元', 
-    type: 'balance', 
-    bgIcon: 'tools'
-  },
-  { 
-    title: '小区数字基金', 
+    title: '公共收益', 
     amount: '12.85', 
     displayAmount: '0',
     unit: '万元', 
     type: 'balance',
-    bgIcon: 'wallet'
+    bgIcon: 'wallet',
+    hint: '来自广告、经营、设施等收益'
+  },
+  { 
+    title: '数字基金', 
+    amount: '5.68', 
+    displayAmount: '0',
+    unit: '万元', 
+    type: 'fund',
+    bgIcon: 'chart-bubble',
+    hint: '来自<span class="brand-tag">邻檬智家</span>线上线下消费'
   }
 ]);
 
 const handleFundClick = (card: FundCard) => {
-  if (card.title === '住维资金余额') {
-    uni.navigateTo({
-      url: '/pages/fund/fund'
-    });
-  } else if (card.title === '小区数字基金') {
+  if (card.title === '公共收益') {
     uni.navigateTo({
       url: '/pages/fund/income'
+    });
+  } else if (card.title === '数字基金') {
+    uni.navigateTo({
+      url: '/pages/fund/community-fund'
     });
   }
 };
@@ -302,7 +385,7 @@ const handleFundClick = (card: FundCard) => {
 // 数字滚动动画函数
 const animateNumbers = () => {
   fundCards.value.forEach((card) => {
-    if (card.type === 'balance') {
+    if (card.type === 'balance' || card.type === 'fund') {
       animateNumber(card.amount, (val) => {
         card.displayAmount = val;
       });
@@ -313,14 +396,16 @@ const animateNumbers = () => {
 onMounted(() => {
   // 初始化资金数据
   const selectedAddress = userInfo.value.address;
+  setCommunity(selectedAddress);
+  
   const house = houseOptions.find(h => h.value === selectedAddress);
   const community = house?.community || (selectedAddress.includes('阳光水岸') ? '阳光水岸' : '翡翠江景');
   const funds = communityFundsMap[community];
   if (funds && fundCards.value[0] && fundCards.value[1]) {
-    fundCards.value[0].amount = funds.main;
-    fundCards.value[1].amount = funds.digital;
+    fundCards.value[0].amount = funds.public;
+    // 小区数字基金金额与详情页保持一致
+    fundCards.value[1].amount = totalBalanceWan.value;
   }
-  
   animateNumbers();
 });
 
@@ -334,21 +419,18 @@ interface MenuItem {
 
 const subMenus = ref<MenuItem[]>([
   { label: '电子投票', icon: 'assignment', color: '#2DD4BF', url: '/pages/voting/voting' },
+  { label: '小区数字基金', icon: 'chart-bubble', color: '#F59E0B', url: '/pages/fund/community-fund' },
+  { label: '公共收益', icon: 'wallet', color: '#60A5FA', url: '/pages/fund/income' },
+  { label: '维修资金', icon: 'money', color: '#F87171', url: '/pages/fund/fund' },
+  { label: '信息公开', icon: 'notification', color: '#F472B6', url: '/pages/notice/notice' },
   { label: '小区信息', icon: 'info-circle', color: '#34D399', url: '/pages/community/community-info' },
   { label: '物业企业', icon: 'city', color: '#60A5FA', url: '/pages/property/property-enterprise' },
   { label: '电梯维保', icon: 'service', color: '#818CF8', url: '/pages/elevator/elevator-maintenance' },
   { label: '消防维保', icon: 'secured', color: '#F87171', url: '/pages/fire/fire-maintenance' },
   { label: '日常巡查', icon: 'search', color: '#64748B', url: '/pages/patrol/patrol' },
   { label: '民意调查', icon: 'edit-1', color: '#818CF8', url: '/pages/survey/survey' },
-  { label: '学习园地', icon: 'book', color: '#FB923C', url: '/pages/learning/learning' },
-  { label: '公示公告', icon: 'notification', color: '#F472B6', url: '/pages/notice/notice' },
   { label: '小区报修', icon: 'tools', color: '#FB923C', url: '/pages/repair/repair' },
-  { label: '小区招采', icon: 'cart', color: '#2DD4BF', url: '/pages/bidding/bidding' },
-  { label: '小区生活', icon: 'shop', color: '#4ADE80', url: '/pages/life/life' },
-  { label: '数字基金', icon: 'wallet', color: '#60A5FA', url: '/pages/fund/income' },
-  { label: '维修资金', icon: 'money', color: '#F87171', url: '/pages/fund/fund' },
-  { label: '服务动态', icon: 'root-list', color: '#F87171', url: '/pages/service-news/service-news' },
-  { label: '业主自治', icon: 'user-talk', color: '#FB923C', url: '/pages/autonomy/autonomy' }
+  { label: '小区招采', icon: 'cart', color: '#2DD4BF', url: '/pages/bidding/bidding' }
 ]);
 
 const quickServices = ref<MenuItem[]>([
@@ -413,6 +495,18 @@ const handleMenuClick = (item: MenuItem) => {
 const handleVoiceClick = () => {
   uni.navigateTo({
     url: '/pages/voice/voice'
+  });
+};
+
+const handleNoticeClick = () => {
+  uni.navigateTo({
+    url: '/pages/notice/notice'
+  });
+};
+
+const handleVotingClick = () => {
+  uni.navigateTo({
+    url: '/pages/voting/voting'
   });
 };
 </script>
@@ -801,152 +895,391 @@ const handleVoiceClick = () => {
 .funds-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24rpx;
+  gap: 20rpx;
 
   .fund-card {
-    background: #FFFFFF;
-    padding: 24rpx;
-    min-height: 140rpx;
-    border-radius: 24rpx;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
-    border: 1px solid #F1F5F9;
-
-    .fund-decor-circle {
-      position: absolute;
-      left: -20rpx;
-      top: -20rpx;
-      width: 100rpx;
-      height: 100rpx;
-      background: radial-gradient(circle, fade(@primary-blue, 5%) 0%, fade(@primary-blue, 0%) 70%);
-      border-radius: 50%;
-      z-index: 1;
-      animation: float-slow 8s ease-in-out infinite;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      right: -30rpx;
-      bottom: -30rpx;
-      width: 120rpx;
-      height: 120rpx;
-      background: radial-gradient(circle, fade(@secondary-blue, 5%) 0%, fade(@secondary-blue, 0%) 70%);
-      border-radius: 50%;
-      z-index: 1;
-      animation: float-slow 10s ease-in-out infinite reverse;
-    }
-    
-    .fund-bg-icon {
-      position: absolute;
-      right: 10rpx;
-      bottom: 10rpx;
-      font-size: 80rpx !important;
-      background: linear-gradient(135deg, @primary-blue 0%, @secondary-blue 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      opacity: 0.12;
-      transform: rotate(-15deg);
-      z-index: 1;
-    }
-
-    .fund-content {
-      width: 100%;
+      background: #FFFFFF;
+      padding: 24rpx 20rpx;
+      min-height: 190rpx;
+      border-radius: 24rpx;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
       position: relative;
-      z-index: 2;
-    }
+      overflow: hidden;
+      box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.03);
+      border: 1px solid #F1F5F9;
 
-    .fund-value-box {
-      margin-bottom: 8rpx;
-      display: flex;
-      align-items: baseline;
-      justify-content: center;
-
-      .fund-amount {
-        font-size: 36rpx;
-        font-weight: 400;
-        color: #E11D48;
-        line-height: 1;
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 1) 100%);
+        z-index: 0;
       }
 
-      .fund-unit {
-        font-size: 20rpx;
-        color: #E11D48;
-        margin-left: 4rpx;
-        font-weight: 400;
+      /* 微弱纹理效果 */
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        background-image: radial-gradient(#3B82F6 0.5px, transparent 0.5px);
+        background-size: 12rpx 12rpx;
+        z-index: 0;
       }
 
-      .fund-value-small {
-        font-size: 22rpx;
-        color: #E11D48;
-        background: rgba(225, 29, 72, 0.05);
-        padding: 4rpx 10rpx;
-        border-radius: 8rpx;
-        line-height: 1.4;
+      .fund-decor-circle {
+        position: absolute;
+        left: -20rpx;
+        top: -20rpx;
+        width: 80rpx;
+        height: 80rpx;
+        background: radial-gradient(circle, fade(@primary-blue, 5%) 0%, fade(@primary-blue, 0%) 70%);
+        border-radius: 50%;
+        z-index: 1;
+        animation: float-slow 8s ease-in-out infinite;
       }
-    }
 
-    .fund-title-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6rpx;
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        background-image: radial-gradient(#3B82F6 0.5px, transparent 0.5px);
+        background-size: 12rpx 12rpx;
+        z-index: 0;
+      }
+      
+      .fund-bg-illust {
+        position: absolute;
+        right: -20rpx;
+        bottom: -20rpx;
+        width: 180rpx;
+        height: 180rpx;
+        opacity: 0.08;
+        z-index: 1;
+        pointer-events: none;
+        transform: rotate(-5deg);
+
+        .illust-main {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .list-card {
+          position: relative;
+          width: 100rpx;
+          height: 140rpx;
+          background: #BFDBFE;
+          border-radius: 12rpx;
+          transform: rotate(15deg);
+          display: flex;
+          flex-direction: column;
+          padding: 16rpx 12rpx;
+          gap: 12rpx;
+          box-shadow: 4rpx 8rpx 16rpx rgba(59, 130, 246, 0.1);
+          z-index: 2;
+          animation: illust-float 4s ease-in-out infinite;
+          
+          &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12rpx;
+            background: #60A5FA;
+            border-radius: 12rpx 12rpx 0 0;
+          }
+
+          .check-item {
+            width: 24rpx;
+            height: 24rpx;
+            background: #3B82F6;
+            border-radius: 6rpx;
+            position: relative;
+            animation: check-pop 3s ease-in-out infinite;
+
+            &:nth-child(2) {
+              animation-delay: 1.5s;
+            }
+
+            &::after {
+              content: '✓';
+              color: #fff;
+              font-size: 16rpx;
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
+          }
+        }
+
+        .chart-box {
+          position: relative;
+          width: 120rpx;
+          height: 120rpx;
+          background: #F0F9FF;
+          border-radius: 16rpx;
+          border: 4rpx solid #BAE6FD;
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-around;
+          padding: 16rpx;
+          gap: 8rpx;
+          transform: rotate(-10deg);
+          box-shadow: 4rpx 8rpx 16rpx rgba(14, 165, 233, 0.1);
+          z-index: 2;
+          animation: illust-float 4s ease-in-out infinite reverse;
+
+          .bar {
+            width: 16rpx;
+            background: #0EA5E9;
+            border-radius: 8rpx 8rpx 0 0;
+            transform-origin: bottom;
+            
+            &.b1 { height: 40%; animation: bar-grow 2.5s ease-in-out infinite; }
+            &.b2 { height: 70%; animation: bar-grow 2.5s ease-in-out infinite 0.4s; }
+            &.b3 { height: 55%; animation: bar-grow 2.5s ease-in-out infinite 0.8s; }
+          }
+        }
+        
+        @keyframes illust-float {
+          0%, 100% { transform: rotate(15deg) translateY(0); }
+          50% { transform: rotate(12deg) translateY(-10rpx); }
+        }
+
+        @keyframes check-pop {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        @keyframes bar-grow {
+          0%, 100% { transform: scaleY(1); }
+          50% { transform: scaleY(1.3); }
+        }
+        
+        .cloud {
+          position: absolute;
+          background: #fff;
+          border-radius: 12rpx;
+          box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
+          z-index: 3;
+          
+          &.c1 {
+            width: 50rpx;
+            height: 18rpx;
+            right: 0rpx;
+            top: 40rpx;
+            animation: cloud-drift 4s ease-in-out infinite;
+          }
+          &.c2 {
+            width: 60rpx;
+            height: 22rpx;
+            left: -10rpx;
+            bottom: 40rpx;
+            animation: cloud-drift 6s ease-in-out infinite reverse;
+          }
+          &.c3 {
+            width: 45rpx;
+            height: 16rpx;
+            left: -10rpx;
+            top: 20rpx;
+            animation: cloud-drift 5s ease-in-out infinite;
+          }
+        }
+      }
+
+      .fund-content {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .fund-main-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 8rpx;
+      }
 
       .fund-title {
-        font-size: 24rpx;
-        color: #334155;
-        font-weight: 400;
+        font-size: 28rpx;
+        color: #64748B;
+        font-weight: 600;
+        margin-bottom: 8rpx;
       }
 
-      .fund-icon {
-        opacity: 0.8;
-        animation: move-right 1.5s ease-in-out infinite;
+      .fund-value-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+
+        .fund-amount-wrapper {
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          position: relative;
+          /* 核心：确保 wrapper 本身居中，且不被单位撑开 */
+        }
+
+        .fund-amount {
+          font-size: 60rpx;
+          font-weight: 900;
+          color: #E11D48;
+          line-height: 1;
+          font-family: 'DIN Alternate', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        .fund-unit {
+          font-size: 20rpx;
+          color: #94A3B8;
+          font-weight: 500;
+          position: absolute;
+          left: 100%;
+          bottom: 6rpx;
+          margin-left: 4rpx;
+          white-space: nowrap;
+        }
+
+        .fund-value-small {
+          font-size: 26rpx;
+          font-weight: 700;
+          color: #E11D48;
+          background: rgba(225, 29, 72, 0.05);
+          padding: 2rpx 10rpx;
+          border-radius: 4rpx;
+        }
       }
+
+      .fund-action-badge {
+        position: absolute;
+        right: 16rpx;
+        top: 16rpx;
+        width: 32rpx;
+        height: 32rpx;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        animation: badge-pulse 2s ease-in-out infinite;
+        
+        /* 箭头微调：指向右上 */
+        :deep(.t-icon) {
+          transform: rotate(-45deg);
+        }
+      }
+
+      .fund-footer {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 6rpx;
+        position: relative;
+      }
+
+      .fund-hint {
+        font-size: 18rpx;
+        color: #94A3B8;
+        font-weight: 400;
+        text-align: center;
+        line-height: 1.2;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        border: none;
+        display: inline-block;
+        max-width: 95%;
+        box-sizing: border-box;
+        box-shadow: none;
+
+        :deep(.brand-tag) {
+          color: #3B82F6;
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          background: rgba(59, 130, 246, 0.05);
+          padding: 0rpx 6rpx;
+          border-radius: 4rpx;
+          margin: 0 2rpx;
+          font-weight: 500;
+        }
+      }
+      
+      @keyframes badge-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.1); opacity: 1; }
+        }
     }
-  }
 }
 
-.voice-banner {
-  background: #FFFFFF;
-  border-radius: 32rpx;
-  height: 160rpx;
-  position: relative;
-  overflow: hidden;
-  padding: 24rpx 40rpx;
+.feature-grid {
   display: flex;
-  align-items: center;
-  border: 1px solid #E0F2FE;
-  box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.02);
-  
-  .banner-content {
+  gap: 20rpx;
+  height: 340rpx;
+
+  .feature-card {
+    background: #FFFFFF;
+    border-radius: 28rpx;
     position: relative;
-    z-index: 2;
+    overflow: hidden;
+    padding: 28rpx;
+    border: 1px solid #F1F5F9;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+      box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.01);
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 32rpx;
+      font-weight: bold;
+      color: #1E293B;
+      margin-bottom: 6rpx;
+    }
+
+    .card-subtitle {
+      font-size: 22rpx;
+      color: #64748B;
+    }
+  }
+
+  .large {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    
-    .banner-title {
-      font-size: 36rpx;
-      font-weight: bold;
-      color: #0F172A;
-      margin-bottom: 4rpx;
+    justify-content: flex-start;
+    padding: 32rpx;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%);
+    border-color: #E0F2FE;
+
+    .card-subtitle {
+      margin-bottom: 20rpx;
     }
-    
-    .banner-subtitle {
-      font-size: 24rpx;
-      color: #64748B;
-      margin-bottom: 16rpx;
-    }
-    
-    .banner-btn {
+
+    .card-btn {
       width: 100rpx;
       height: 44rpx;
       background: linear-gradient(90deg, #60A5FA 0%, #3B82F6 100%);
@@ -959,106 +1292,277 @@ const handleVoiceClick = () => {
       box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
       animation: breathe 2s ease-in-out infinite;
     }
-  }
-  
-  .banner-illustration {
-    position: absolute;
-    right: 40rpx;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 140rpx;
-    height: 140rpx;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    &::before {
-      content: '';
+
+    .card-illustration {
       position: absolute;
-      width: 120rpx;
-      height: 120rpx;
-      background: rgba(59, 130, 246, 0.05);
-      border-radius: 50%;
-    }
-    
-    .list-card {
-      position: relative;
-      width: 60rpx;
-      height: 80rpx;
-      background: #BFDBFE;
-      border-radius: 6rpx;
-      transform: rotate(5deg);
+      right: 16rpx;
+      bottom: 24rpx;
+      width: 160rpx;
+      height: 160rpx;
+      z-index: 1;
       display: flex;
-      flex-direction: column;
-      padding: 12rpx 10rpx;
-      gap: 10rpx;
-      box-shadow: 4rpx 8rpx 16rpx rgba(59, 130, 246, 0.1);
-      z-index: 2;
-      
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
+      align-items: center;
+      justify-content: center;
+
+      .illust-main {
+        position: relative;
         width: 100%;
-        height: 8rpx;
-        background: #60A5FA;
-        border-radius: 6rpx 6rpx 0 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          width: 120rpx;
+          height: 120rpx;
+          background: rgba(59, 130, 246, 0.05);
+          border-radius: 50%;
+        }
       }
 
-      .check-item {
-        width: 18rpx;
-        height: 18rpx;
-        background: #3B82F6;
-        border-radius: 3rpx;
+      .list-card {
         position: relative;
-        &::after {
-          content: '✓';
-          color: #fff;
-          font-size: 12rpx;
+        width: 64rpx;
+        height: 88rpx;
+        background: #BFDBFE;
+        border-radius: 6rpx;
+        transform: rotate(5deg);
+        display: flex;
+        flex-direction: column;
+        padding: 12rpx 10rpx;
+        gap: 10rpx;
+        box-shadow: 4rpx 8rpx 16rpx rgba(59, 130, 246, 0.1);
+        z-index: 2;
+        
+        &::before {
+          content: '';
           position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 8rpx;
+          background: #60A5FA;
+          border-radius: 6rpx 6rpx 0 0;
+        }
+
+        .check-item {
+          width: 20rpx;
+          height: 20rpx;
+          background: #3B82F6;
+          border-radius: 3rpx;
+          position: relative;
+          &::after {
+            content: '✓';
+            color: #fff;
+            font-size: 14rpx;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+      }
+      
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 10rpx;
+        box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
+        z-index: 3;
+        
+        &.c1 {
+          width: 32rpx;
+          height: 12rpx;
+          right: 8rpx;
+          top: 32rpx;
+          animation: cloud-drift 4s ease-in-out infinite;
+        }
+        &.c2 {
+          width: 40rpx;
+          height: 16rpx;
+          left: 8rpx;
+          bottom: 32rpx;
+          animation: cloud-drift 6s ease-in-out infinite reverse;
         }
       }
     }
-    
-    .cloud {
+
+    .card-wave {
       position: absolute;
-      background: #fff;
-      border-radius: 12rpx;
-      box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
-      z-index: 3;
-      
-      &.c1 {
-        width: 30rpx;
-        height: 12rpx;
-        right: 0;
-        top: 20rpx;
-        animation: cloud-drift 4s ease-in-out infinite;
-      }
-      &.c2 {
-        width: 40rpx;
-        height: 16rpx;
-        left: 0;
-        bottom: 20rpx;
-        animation: cloud-drift 6s ease-in-out infinite reverse;
-      }
+      bottom: -32rpx;
+      left: -10%;
+      width: 120%;
+      height: 64rpx;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(59, 130, 246, 0.08) 100%);
+      border-radius: 50% 50% 0 0;
+      z-index: 0;
     }
   }
-  
-  .banner-wave {
-    position: absolute;
-    bottom: -40rpx;
-    left: -10%;
-    width: 120%;
-    height: 80rpx;
-    background: linear-gradient(180deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.1) 100%);
-    border-radius: 50% 50% 0 0;
-    z-index: 0;
+
+  .feature-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
   }
+
+  .small {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20rpx 24rpx;
+
+    .card-title {
+      font-size: 30rpx;
+    }
+
+    .card-subtitle {
+      font-size: 22rpx;
+    }
+
+    .card-illustration {
+      width: 100rpx;
+      height: 100rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      .illust-main {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &::before {
+          content: '';
+          position: absolute;
+          width: 80rpx;
+          height: 80rpx;
+          border-radius: 50%;
+          opacity: 0.1;
+        }
+      }
+
+      .notice-box {
+        position: relative;
+        width: 44rpx;
+        height: 54rpx;
+        background: #D1FAE5;
+        border-radius: 6rpx;
+        border-top: 6rpx solid #10B981;
+        display: flex;
+        flex-direction: column;
+        padding: 8rpx 6rpx;
+        gap: 6rpx;
+        z-index: 2;
+        box-shadow: 2rpx 4rpx 8rpx rgba(16, 185, 129, 0.1);
+        animation: illust-float 4s ease-in-out infinite;
+
+        .notice-line {
+          width: 100%;
+          height: 4rpx;
+          background: #10B981;
+          opacity: 0.3;
+          border-radius: 2rpx;
+          transform-origin: left;
+          animation: line-grow 2s ease-in-out infinite;
+
+          &:nth-child(2) {
+            animation-delay: 0.5s;
+          }
+        }
+        .notice-dot {
+          width: 12rpx;
+          height: 12rpx;
+          background: #10B981;
+          border-radius: 50%;
+          align-self: flex-end;
+          margin-top: auto;
+          animation: dot-pulse 2s ease-in-out infinite;
+        }
+      }
+
+      @keyframes line-grow {
+        0%, 100% { transform: scaleX(1); opacity: 0.3; }
+        50% { transform: scaleX(0.6); opacity: 0.1; }
+      }
+
+      @keyframes dot-pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.3); opacity: 0.6; }
+      }
+
+      .vote-box {
+        position: relative;
+        width: 50rpx;
+        height: 40rpx;
+        background: #E0E7FF;
+        border: 2px solid #6366F1;
+        border-radius: 4rpx;
+        z-index: 2;
+        box-shadow: 2rpx 4rpx 8rpx rgba(99, 102, 241, 0.1);
+
+        .vote-slot {
+          position: absolute;
+          top: 4rpx;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 24rpx;
+          height: 4rpx;
+          background: #6366F1;
+          border-radius: 2rpx;
+        }
+
+        .vote-card {
+          position: absolute;
+          top: -12rpx;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 18rpx;
+          height: 24rpx;
+          background: #fff;
+          border: 1px solid #6366F1;
+          border-radius: 2rpx;
+          animation: slide-in-down 2s ease-in-out infinite;
+        }
+      }
+
+      @keyframes slide-in-down {
+        0%, 100% { transform: translate(-50%, 0); }
+        50% { transform: translate(-50%, 10rpx); }
+      }
+
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 8rpx;
+        box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
+        z-index: 3;
+        
+        &.c1 {
+          width: 24rpx;
+          height: 10rpx;
+          right: 0;
+          top: 10rpx;
+          animation: cloud-drift 4s ease-in-out infinite;
+        }
+      }
+    }
+
+    &.notice .illust-main::before { background: #10B981; }
+    &.voting .illust-main::before { background: #6366F1; }
+  }
+}
+
+@keyframes slide-in-down {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 10rpx); }
 }
 
 .quick-services-card {
