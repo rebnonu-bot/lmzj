@@ -103,7 +103,7 @@
           v-for="item in filteredVotes" 
           :key="item.id"
           class="vote-card"
-          @click="item.statusType === 'ongoing' ? handleVote() : handleResults()"
+          @click="item.statusType === 'ongoing' ? handleVote(item) : handleResults(item)"
         >
           <view class="card-header">
             <view class="time-info">
@@ -168,15 +168,17 @@ const goBack = () => {
   uni.navigateBack();
 };
 
-const handleVote = () => {
+const handleVote = (item?: any) => {
+  const url = item ? `/pages/voting/reminder?id=${item.id}` : '/pages/voting/reminder';
   uni.navigateTo({
-    url: '/pages/voting/reminder'
+    url
   });
 };
 
-const handleResults = () => {
+const handleResults = (item?: any) => {
+  const url = item ? `/pages/voting/vote-result?id=${item.id}` : '/pages/voting/vote-topics?tab=1';
   uni.navigateTo({
-    url: '/pages/voting/vote-topics?tab=1'
+    url
   });
 };
 

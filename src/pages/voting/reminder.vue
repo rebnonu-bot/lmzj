@@ -76,13 +76,27 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
+
+const voteId = ref('');
+
+onLoad((options) => {
+  if (options && options.id) {
+    voteId.value = options.id;
+  }
+});
+
 const goBack = () => {
   uni.navigateBack();
 };
 
 const handleNext = () => {
+  const url = voteId.value 
+    ? `/pages/voting/vote-detail?id=${voteId.value}` 
+    : '/pages/voting/vote-topics';
   uni.navigateTo({
-    url: '/pages/voting/vote-topics'
+    url
   });
 };
 </script>
