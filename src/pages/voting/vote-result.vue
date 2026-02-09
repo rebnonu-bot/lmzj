@@ -98,7 +98,7 @@ import { onLoad } from '@dcloudio/uni-app';
 
 const resultInfo = ref({
   id: 4,
-  title: '赣州市章贡区《阳光水岸》2025年公共收益分配方案投票',
+  title: '赣州市章贡区《阳光水岸》2026年公共收益分配方案投票',
   date: '2026-01-30',
   status: 'closed',
   statusName: '已结束',

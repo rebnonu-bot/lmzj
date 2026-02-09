@@ -392,7 +392,7 @@ const quickServices = ref<MenuItem[]>([
     label: '保障性租赁住房', 
     icon: 'root-list', 
     color: '#10B981',
-    desc: '重点解决产业园区、乡镇基层等新市民、青年人阶段性住房困难。'
+    desc: '重点解决小区周边、乡镇基层等新市民、青年人阶段性住房困难。'
   },
   { 
     label: '人才住房', 

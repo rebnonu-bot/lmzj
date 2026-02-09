@@ -142,43 +142,43 @@ const publicityList = ref<PublicityItem[]>([
   },
   {
     title: '小区监控系统升级改造',
-    date: '2025-12-20',
+    date: '2026-01-20',
     status: '已公示',
     amount: '2.80'
   },
   {
     title: '地库排水泵检修',
-    date: '2025-11-05',
+    date: '2026-01-05',
     status: '已完成',
     amount: '0.65'
   },
   {
     title: '2号楼外墙脱落维修',
-    date: '2025-10-12',
+    date: '2025-12-12',
     status: '已完成',
     amount: '1.20'
   },
   {
     title: '小区消防管道渗漏维修',
-    date: '2025-09-28',
+    date: '2025-11-28',
     status: '已完成',
     amount: '0.85'
   },
   {
     title: '单元门禁系统维护',
-    date: '2025-08-15',
+    date: '2025-10-15',
     status: '已完成',
     amount: '0.45'
   },
   {
     title: '屋面防水补强工程',
-    date: '2025-07-20',
+    date: '2025-09-20',
     status: '已完成',
     amount: '1.65'
   },
   {
     title: '生活水泵房变频器更换',
-    date: '2025-06-10',
+    date: '2025-08-10',
     status: '已完成',
     amount: '0.35'
   }

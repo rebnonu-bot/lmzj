@@ -133,7 +133,7 @@ onLoad((options) => {
       voteInfo.value = {
         id: 3,
         title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
-        date: '2025-12-25',
+        date: '2026-12-25',
         typeName: '业委会选举',
         typeCode: 'election',
         description: '本小区第二届业主委员会任期届满，现依法进行换届选举。请从以下候选人名单中选出您支持的5位委员。'

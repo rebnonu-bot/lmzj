@@ -93,7 +93,7 @@ const goBack = () => {
 
 const surveys = ref([
   { 
-    title: '小区公共空间绿化改造意见调查', 
+    title: '关于小区公共空间绿化改造意见调查', 
     deadline: '2026-03-15', 
     participants: 320, 
     statusText: '进行中', 
@@ -109,15 +109,15 @@ const surveys = ref([
     reward: '精美礼品'
   },
   { 
-    title: '2025年冬季供暖满意度专题调查', 
-    deadline: '2026-01-10', 
+    title: '2026年冬季空调维保服务满意度调查', 
+    deadline: '2026-12-10', 
     participants: 890, 
     statusText: '已结束', 
     statusType: 'ended' 
   },
   { 
     title: '小区智慧化停车方案反馈调查', 
-    deadline: '2025-12-20', 
+    deadline: '2026-05-20', 
     participants: 540, 
     statusText: '已结束', 
     statusType: 'ended' 

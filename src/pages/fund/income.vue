@@ -405,7 +405,7 @@ const contractList = ref([
   {
     title: '分众传媒电梯广告租赁合同',
     company: '分众传媒有限公司',
-    period: '2025-01-01 至 2026-12-31'
+    period: '2026-01-01 至 2027-12-31'
   },
   {
     title: '小区快递柜进驻协议',
@@ -420,7 +420,7 @@ const contractList = ref([
   {
     title: '饮水机场地租赁协议',
     company: '农夫山泉股份有限公司',
-    period: '2024-01-01 至 2025-12-31'
+    period: '2026-01-01 至 2027-12-31'
   }
 ]);
 </script>

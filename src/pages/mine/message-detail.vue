@@ -221,7 +221,7 @@ const voteOptions = [
 const timelineSteps = [
   { title: '维保人员已出发', time: '09:45', desc: '维保人员张师傅已接单，预计10:15到达现场。' },
   { title: '物业已受理', time: '09:15', desc: '您的报修申请已通过审核，正在指派维修人员。' },
-  { title: '报修提交成功', time: '09:00', desc: '报修单号：BX20240319001，请耐心等待。' }
+  { title: '报修提交成功', time: '09:00', desc: '报修单号：BX20260209001，请耐心等待。' }
 ];
 
 const handleBack = () => {
@@ -247,7 +247,7 @@ const handleSubmitVote = () => {
 
 const handleContact = () => {
   uni.makePhoneCall({
-    phoneNumber: '010-88888888'
+    phoneNumber: '0797-8386110'
   });
 };
 
@@ -270,16 +270,16 @@ onMounted(() => {
   const mockMessages: Record<string, Message> = {
     vote: {
       id: '1',
-      title: '关于2024年物业费调整的投票邀请',
+      title: '关于2026年物业费调整的投票邀请',
       desc: '为了进一步提升物业服务质量，拟对现行物业费标准进行小幅调整，主要用于增加社区监控覆盖面及更换公共区域老化健身器材。',
       time: '10:30',
-      fullTime: '2024-03-19 10:30',
+      fullTime: '2026-02-09 10:30',
       category: '电子投票',
       categoryCode: 'voting',
       icon: 'bulletpoint',
       isRead: true,
       type: 'vote',
-      publisher: '龙湖物业管理处',
+      publisher: '赣州金牌物业管理中心',
       isClosed: false
     },
     repair: {

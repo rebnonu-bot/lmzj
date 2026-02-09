@@ -112,12 +112,12 @@ const projects = ref([
     deadline: '2026-01-30'
   },
   { 
-    title: '2025年度小区化粪池清掏服务项目', 
+    title: '2026年度小区化粪池清掏服务项目', 
     type: '服务类', 
     budget: '30,000.00', 
     status: '已完成', 
     statusType: 'completed',
-    deadline: '2025-12-15'
+    deadline: '2026-02-15'
   }
 ]);
 

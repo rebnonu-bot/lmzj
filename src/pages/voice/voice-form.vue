@@ -169,7 +169,7 @@
 import { ref, reactive, computed } from 'vue';
 
 const types = ['诉求', '建议', '咨询'];
-const communities = ['理想之城 1号楼', '理想之城 2号楼', '理想之城 3号楼'];
+const communities = ['阳光水岸 1号楼', '阳光水岸 2号楼', '阳光水岸 3号楼'];
 
 const formData = reactive({
   type: '诉求',

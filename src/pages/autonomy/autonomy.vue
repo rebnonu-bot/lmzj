@@ -124,18 +124,18 @@ const members = ref([
 
 const items = ref([
   {
-    title: '关于2024年度物业费调整的听证会纪要',
+    title: '关于2026年度物业费调整的听证会纪要',
     desc: '本会议就物业费调整的必要性及调整方案进行了公开讨论，收集了广大业主的初步意见。',
-    date: '2024-03-20',
+    date: '2026-03-20',
     type: '议事大厅',
     typeCode: 'meeting',
     status: '已公示',
     statusCode: 'published'
   },
   {
-    title: '龙景名苑小区文明养犬公约',
+    title: '阳光水岸小区文明养犬公约',
     desc: '为营造和谐社区，经业主大会表决通过，特制定本公约，请广大养犬业主共同遵守。',
-    date: '2024-02-15',
+    date: '2026-02-15',
     type: '自治规约',
     typeCode: 'rule',
     status: '生效中',
@@ -144,16 +144,16 @@ const items = ref([
   {
     title: '小区南门车辆出入管理优化方案表决结果',
     desc: '关于南门单向通行的方案已获得超过2/3业主同意，将于下月起正式实施。',
-    date: '2024-01-10',
+    date: '2026-01-10',
     type: '议事大厅',
     typeCode: 'meeting',
     status: '已生效',
     statusCode: 'active'
   },
   {
-    title: '龙景名苑首届业主大会议事规则',
+    title: '阳光水岸首届业主大会议事规则',
     desc: '明确业主大会的职责、召集程序及表决规则，是社区自治的基础性文件。',
-    date: '2023-12-05',
+    date: '2025-12-05',
     type: '自治规约',
     typeCode: 'rule',
     status: '生效中',

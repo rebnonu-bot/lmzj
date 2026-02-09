@@ -161,7 +161,7 @@ const recordList = ref<IncomeRecord[]>([
   },
   {
     title: '外墙广告位收益',
-    date: '2025-12-15',
+    date: '2026-01-15',
     amount: '18000.00',
     type: 'in',
     typeText: '收入'

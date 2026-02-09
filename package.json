@@ -1,6 +1,6 @@
 {
   "name": "lmzj",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "scripts": {
     "dev:custom": "uni -p",
     "dev": "npm run dev:h5",

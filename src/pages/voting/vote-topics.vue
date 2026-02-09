@@ -96,14 +96,14 @@ const mockVotes = ref([
   {
     id: 3,
     title: '赣州市章贡区《阳光水岸》第三届业主委员会选举',
-    date: '2025-12-15',
+    date: '2026-12-15',
     typeName: '业委会选举',
     typeCode: 'election',
     status: 1
   },
   {
     id: 4,
-    title: '赣州市章贡区《阳光水岸》2025年公共收益分配方案投票',
+    title: '赣州市章贡区《阳光水岸》2026年公共收益分配方案投票',
     date: '2026-01-10',
     typeName: '公共收益',
     typeCode: 'benefit',
