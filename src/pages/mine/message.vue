@@ -124,6 +124,17 @@ const messages = ref<Message[]>([
     icon: 'tools',
     isRead: true,
     type: 'repair'
+  },
+  {
+    id: '4',
+    title: '房屋认证成功通知',
+    desc: '恭喜！您名下的“阳光水岸二期 5-1-1202”已通过实名认证。',
+    time: '02-05',
+    category: '系统通知',
+    categoryCode: 'notice',
+    icon: 'check-circle',
+    isRead: true,
+    type: 'notice'
   }
 ]);
 

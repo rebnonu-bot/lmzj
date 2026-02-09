@@ -99,6 +99,15 @@ const houseList = ref([
     status: '已认证',
     statusType: 'verified',
     isDefault: true
+  },
+  {
+    name: '阳光水岸二期 5-1-1202',
+    address: '江西省赣州市章贡区阳光大道1号',
+    area: '98.5',
+    role: '业主',
+    status: '已认证',
+    statusType: 'verified',
+    isDefault: false
   }
 ]);
 
