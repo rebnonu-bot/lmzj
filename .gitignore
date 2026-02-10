@@ -31,3 +31,7 @@ unpackage
 backups/
 *.tar.gz
 *.zip
+
+# Design and IDE
+design-system/
+.trae/
