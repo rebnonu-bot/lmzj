@@ -128,8 +128,11 @@
             <text class="card-subtitle">业主诉求高效处置</text>
             <view class="card-btn">
               <text>进入</text>
+              <t-icon name="chevron-right" size="24rpx" color="#FFFFFF" />
             </view>
           </view>
+          
+          <!-- Illustration for Left Card -->
           <view class="card-illustration">
             <view class="illust-main">
               <view class="list-card">
@@ -1261,8 +1264,164 @@ const handleVotingClick = () => {
     }
 
     .card-subtitle {
-      font-size: 22rpx;
+      font-size: 24rpx;
       color: #64748B;
+    }
+
+    .card-illustration {
+      position: absolute;
+      right: -10rpx;
+      bottom: -10rpx;
+      width: 160rpx;
+      height: 160rpx;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.9;
+
+      .illust-main {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cloud {
+        position: absolute;
+        background: #fff;
+        border-radius: 12rpx;
+        box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
+        z-index: 3;
+        
+        &.c1 {
+          width: 50rpx;
+          height: 18rpx;
+          right: 20rpx;
+          top: 30rpx;
+          animation: cloud-drift 4s ease-in-out infinite;
+        }
+        &.c2 {
+          width: 60rpx;
+          height: 22rpx;
+          left: 10rpx;
+          bottom: 30rpx;
+          animation: cloud-drift 6s ease-in-out infinite reverse;
+        }
+      }
+
+      .list-card {
+        width: 80rpx;
+        height: 110rpx;
+        background: #BFDBFE;
+        border-radius: 12rpx;
+        transform: rotate(15deg);
+        display: flex;
+        flex-direction: column;
+        padding: 12rpx 10rpx;
+        gap: 10rpx;
+        box-shadow: 4rpx 8rpx 16rpx rgba(59, 130, 246, 0.1);
+        z-index: 2;
+        
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 10rpx;
+          background: #60A5FA;
+          border-radius: 12rpx 12rpx 0 0;
+        }
+
+        .check-item {
+          width: 20rpx;
+          height: 20rpx;
+          background: #3B82F6;
+          border-radius: 4rpx;
+          position: relative;
+          animation: check-pop 3s ease-in-out infinite;
+
+          &:nth-child(2) {
+            animation-delay: 1.5s;
+          }
+
+          &::after {
+            content: '✓';
+            color: #fff;
+            font-size: 14rpx;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+        }
+      }
+
+      .notice-box {
+        width: 90rpx;
+        height: 90rpx;
+        background: #FDF2F8;
+        border-radius: 16rpx;
+        border: 4rpx solid #FBCFE8;
+        padding: 12rpx;
+        display: flex;
+        flex-direction: column;
+        gap: 8rpx;
+        transform: rotate(-10deg);
+        box-shadow: 4rpx 8rpx 16rpx rgba(219, 39, 119, 0.1);
+        z-index: 2;
+
+        .notice-line {
+          height: 6rpx;
+          background: #F472B6;
+          border-radius: 3rpx;
+          &:nth-child(1) { width: 80%; }
+          &:nth-child(2) { width: 60%; }
+        }
+        .notice-dot {
+          width: 12rpx;
+          height: 12rpx;
+          background: #DB2777;
+          border-radius: 50%;
+          margin-top: auto;
+          align-self: flex-end;
+        }
+      }
+
+      .vote-box {
+        width: 100rpx;
+        height: 80rpx;
+        background: #ECFDF5;
+        border-radius: 12rpx;
+        border: 4rpx solid #A7F3D0;
+        position: relative;
+        transform: rotate(5deg);
+        box-shadow: 4rpx 8rpx 16rpx rgba(5, 150, 105, 0.1);
+        z-index: 2;
+
+        .vote-slot {
+          position: absolute;
+          top: 15rpx;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 60rpx;
+          height: 8rpx;
+          background: #059669;
+          border-radius: 4rpx;
+        }
+        .vote-card {
+          position: absolute;
+          top: -20rpx;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40rpx;
+          height: 50rpx;
+          background: #34D399;
+          border-radius: 4rpx;
+          animation: vote-drop 3s ease-in-out infinite;
+        }
+      }
     }
   }
 
@@ -1276,7 +1435,7 @@ const handleVotingClick = () => {
     border-color: #E0F2FE;
 
     .card-subtitle {
-      margin-bottom: 20rpx;
+      margin-bottom: 32rpx;
     }
 
     .card-btn {
@@ -1293,111 +1452,14 @@ const handleVotingClick = () => {
       animation: breathe 2s ease-in-out infinite;
     }
 
-    .card-illustration {
-      position: absolute;
-      right: 16rpx;
-      bottom: 24rpx;
-      width: 160rpx;
-      height: 160rpx;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      .illust-main {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        
-        &::before {
-          content: '';
-          position: absolute;
-          width: 120rpx;
-          height: 120rpx;
-          background: rgba(59, 130, 246, 0.05);
-          border-radius: 50%;
-        }
-      }
-
-      .list-card {
-        position: relative;
-        width: 64rpx;
-        height: 88rpx;
-        background: #BFDBFE;
-        border-radius: 6rpx;
-        transform: rotate(5deg);
-        display: flex;
-        flex-direction: column;
-        padding: 12rpx 10rpx;
-        gap: 10rpx;
-        box-shadow: 4rpx 8rpx 16rpx rgba(59, 130, 246, 0.1);
-        z-index: 2;
-        
-        &::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 8rpx;
-          background: #60A5FA;
-          border-radius: 6rpx 6rpx 0 0;
-        }
-
-        .check-item {
-          width: 20rpx;
-          height: 20rpx;
-          background: #3B82F6;
-          border-radius: 3rpx;
-          position: relative;
-          &::after {
-            content: '✓';
-            color: #fff;
-            font-size: 14rpx;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-          }
-        }
-      }
-      
-      .cloud {
-        position: absolute;
-        background: #fff;
-        border-radius: 10rpx;
-        box-shadow: 0 4rpx 8rpx rgba(0,0,0,0.05);
-        z-index: 3;
-        
-        &.c1 {
-          width: 32rpx;
-          height: 12rpx;
-          right: 8rpx;
-          top: 32rpx;
-          animation: cloud-drift 4s ease-in-out infinite;
-        }
-        &.c2 {
-          width: 40rpx;
-          height: 16rpx;
-          left: 8rpx;
-          bottom: 32rpx;
-          animation: cloud-drift 6s ease-in-out infinite reverse;
-        }
-      }
-    }
-
     .card-wave {
       position: absolute;
-      bottom: -32rpx;
-      left: -10%;
-      width: 120%;
-      height: 64rpx;
-      background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(59, 130, 246, 0.08) 100%);
-      border-radius: 50% 50% 0 0;
-      z-index: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 80rpx;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0) 0%, rgba(59, 130, 246, 0.05) 100%);
+      clip-path: ellipse(80% 50% at 50% 100%);
     }
   }
 
@@ -1411,153 +1473,34 @@ const handleVotingClick = () => {
   .small {
     flex: 1;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20rpx 24rpx;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24rpx 32rpx;
 
-    .card-title {
-      font-size: 30rpx;
+    &.notice {
+      background: linear-gradient(135deg, #FFFFFF 0%, #FDF2F8 100%);
+      border-color: #FCE7F3;
     }
 
-    .card-subtitle {
-      font-size: 22rpx;
+    &.voting {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);
+      border-color: #DCFCE7;
     }
 
     .card-illustration {
-      width: 100rpx;
-      height: 100rpx;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-
-      .illust-main {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &::before {
-          content: '';
-          position: absolute;
-          width: 80rpx;
-          height: 80rpx;
-          border-radius: 50%;
-          opacity: 0.1;
-        }
-      }
-
-      .notice-box {
-        position: relative;
-        width: 44rpx;
-        height: 54rpx;
-        background: #D1FAE5;
-        border-radius: 6rpx;
-        border-top: 6rpx solid #10B981;
-        display: flex;
-        flex-direction: column;
-        padding: 8rpx 6rpx;
-        gap: 6rpx;
-        z-index: 2;
-        box-shadow: 2rpx 4rpx 8rpx rgba(16, 185, 129, 0.1);
-        animation: illust-float 4s ease-in-out infinite;
-
-        .notice-line {
-          width: 100%;
-          height: 4rpx;
-          background: #10B981;
-          opacity: 0.3;
-          border-radius: 2rpx;
-          transform-origin: left;
-          animation: line-grow 2s ease-in-out infinite;
-
-          &:nth-child(2) {
-            animation-delay: 0.5s;
-          }
-        }
-        .notice-dot {
-          width: 12rpx;
-          height: 12rpx;
-          background: #10B981;
-          border-radius: 50%;
-          align-self: flex-end;
-          margin-top: auto;
-          animation: dot-pulse 2s ease-in-out infinite;
-        }
-      }
-
-      @keyframes line-grow {
-        0%, 100% { transform: scaleX(1); opacity: 0.3; }
-        50% { transform: scaleX(0.6); opacity: 0.1; }
-      }
-
-      @keyframes dot-pulse {
-        0%, 100% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.3); opacity: 0.6; }
-      }
-
-      .vote-box {
-        position: relative;
-        width: 50rpx;
-        height: 40rpx;
-        background: #E0E7FF;
-        border: 2px solid #6366F1;
-        border-radius: 4rpx;
-        z-index: 2;
-        box-shadow: 2rpx 4rpx 8rpx rgba(99, 102, 241, 0.1);
-
-        .vote-slot {
-          position: absolute;
-          top: 4rpx;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 24rpx;
-          height: 4rpx;
-          background: #6366F1;
-          border-radius: 2rpx;
-        }
-
-        .vote-card {
-          position: absolute;
-          top: -12rpx;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 18rpx;
-          height: 24rpx;
-          background: #fff;
-          border: 1px solid #6366F1;
-          border-radius: 2rpx;
-          animation: slide-in-down 2s ease-in-out infinite;
-        }
-      }
-
-      @keyframes slide-in-down {
-        0%, 100% { transform: translate(-50%, 0); }
-        50% { transform: translate(-50%, 10rpx); }
-      }
-
-      .cloud {
-        position: absolute;
-        background: #fff;
-        border-radius: 8rpx;
-        box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
-        z-index: 3;
-        
-        &.c1 {
-          width: 24rpx;
-          height: 10rpx;
-          right: 0;
-          top: 10rpx;
-          animation: cloud-drift 4s ease-in-out infinite;
-        }
-      }
+      width: 120rpx;
+      height: 120rpx;
+      right: -10rpx;
+      bottom: -10rpx;
     }
-
-    &.notice .illust-main::before { background: #10B981; }
-    &.voting .illust-main::before { background: #6366F1; }
   }
+}
+
+@keyframes vote-drop {
+  0% { transform: translate(-50%, -20rpx); opacity: 0; }
+  20% { transform: translate(-50%, 0); opacity: 1; }
+  80% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, 20rpx); opacity: 0; }
 }
 
 @keyframes slide-in-down {

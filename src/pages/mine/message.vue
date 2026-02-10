@@ -3,15 +3,18 @@
     <t-navbar
       title="我的消息"
       left-arrow
-      :delta="0"
       @go-back="handleBack"
-      :fixed="true"
+      :fixed="false"
       class="custom-navbar"
-    />
+    >
+      <template #left-icon>
+        <t-icon name="chevron-left" size="48rpx" color="#1E293B" />
+      </template>
+    </t-navbar>
 
     <!-- 1. Tabs Section -->
     <view class="tabs-wrapper">
-      <t-tabs :value="activeTab" @click="handleTabChange" :bottom-line="true">
+      <t-tabs :value="activeTab" @click="handleTabChange" :bottom-line="true" class="custom-tabs">
         <t-tab-panel label="全部" value="all" />
         <t-tab-panel label="未读" value="unread" />
         <t-tab-panel label="已读" value="read" />
@@ -19,7 +22,7 @@
     </view>
 
     <!-- 2. Message List -->
-    <scroll-view scroll-y class="message-scroll">
+    <view class="message-scroll">
       <view class="message-list" v-if="filteredMessages.length > 0">
         <view 
           v-for="(item, index) in filteredMessages" 
@@ -62,7 +65,7 @@
         <t-icon name="chat-error" size="120rpx" color="#E2E8F0" />
         <text class="empty-text">暂无相关消息</text>
       </view>
-    </scroll-view>
+    </view>
 
     <!-- 3. Bottom Actions -->
     <view class="bottom-bar" v-if="hasUnread">
@@ -202,18 +205,26 @@ const handleMarkAllRead = () => {
   background-color: #F8FAFC;
   display: flex;
   flex-direction: column;
-  padding-top: 100rpx;
 }
 
 .custom-navbar {
   --td-navbar-bg-color: #FFFFFF;
+  border-bottom: 1rpx solid #F8FAFC;
 }
 
 .tabs-wrapper {
   background: #FFFFFF;
   position: sticky;
-  top: 100rpx;
+  top: 0;
   z-index: 10;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
+
+  .custom-tabs {
+    --td-tab-item-active-color: @primary-blue;
+    --td-tab-track-color: @primary-blue;
+    --td-tab-font-size: 28rpx;
+    --td-tab-active-font-size: 30rpx;
+  }
 }
 
 .message-scroll {
@@ -222,51 +233,55 @@ const handleMarkAllRead = () => {
 }
 
 .message-list {
-  padding: 20rpx @page-padding 40rpx;
+  padding: 32rpx @page-padding 40rpx;
 }
 
 .message-card {
   background: #FFFFFF;
   border-radius: @radius-large;
-  padding: 30rpx;
-  margin-bottom: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 28rpx;
   display: flex;
   align-items: flex-start;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.02);
-  transition: all 0.2s;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.03);
+  border: 1px solid #FFFFFF;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:active {
+    transform: scale(0.98) translateY(2rpx);
     background: #F8FAFC;
-    transform: scale(0.99);
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
   }
 
   .card-left {
     position: relative;
-    margin-right: 24rpx;
+    margin-right: 28rpx;
 
     .icon-box {
-      width: 88rpx;
-      height: 88rpx;
-      border-radius: 20rpx;
+      width: 96rpx;
+      height: 96rpx;
+      border-radius: 24rpx;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.05);
 
-      &.voting { background: linear-gradient(135deg, #60A5FA, #3B82F6); }
+      &.vote { background: linear-gradient(135deg, #60A5FA, #3B82F6); }
+      &.bill { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
       &.repair { background: linear-gradient(135deg, #F87171, #EF4444); }
       &.notice { background: linear-gradient(135deg, #34D399, #10B981); }
-      &.complaint { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
     }
 
     .unread-dot {
       position: absolute;
-      top: -4rpx;
-      right: -4rpx;
-      width: 16rpx;
-      height: 16rpx;
+      top: -6rpx;
+      right: -6rpx;
+      width: 20rpx;
+      height: 20rpx;
       background: #EF4444;
       border-radius: 50%;
-      border: 3rpx solid #FFFFFF;
+      border: 4rpx solid #FFFFFF;
+      box-shadow: 0 2rpx 8rpx rgba(239, 68, 68, 0.3);
     }
   }
 
@@ -278,12 +293,13 @@ const handleMarkAllRead = () => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8rpx;
+      margin-bottom: 12rpx;
 
       .category-name {
         font-size: 24rpx;
-        color: #94A3B8;
-        font-weight: 500;
+        color: #64748B;
+        font-weight: 600;
+        letter-spacing: 1rpx;
       }
 
       .message-time {
@@ -293,20 +309,21 @@ const handleMarkAllRead = () => {
     }
 
     .title-row {
-      margin-bottom: 8rpx;
+      margin-bottom: 10rpx;
 
       .message-title {
-        font-size: 30rpx;
-        font-weight: 600;
+        font-size: 32rpx;
+        font-weight: 700;
         color: #1E293B;
         display: block;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        line-height: 1.4;
 
         &.read {
-          color: #64748B;
-          font-weight: 400;
+          color: #94A3B8;
+          font-weight: 500;
         }
       }
     }
@@ -314,8 +331,8 @@ const handleMarkAllRead = () => {
     .desc-row {
       .message-desc {
         font-size: 26rpx;
-        color: #94A3B8;
-        line-height: 1.4;
+        color: #64748B;
+        line-height: 1.5;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
@@ -328,6 +345,7 @@ const handleMarkAllRead = () => {
   .card-right {
     margin-left: 16rpx;
     align-self: center;
+    opacity: 0.5;
   }
 }
 

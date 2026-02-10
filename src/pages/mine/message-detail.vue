@@ -1,18 +1,24 @@
 <template>
   <view class="page-container">
     <t-navbar
-      :title="pageTitle"
+      title="消息详情"
       left-arrow
-      :delta="0"
       @go-back="handleBack"
-      :fixed="true"
+      :fixed="false"
       class="custom-navbar"
-    />
+    >
+      <template #left-icon>
+        <t-icon name="chevron-left" size="48rpx" color="#1E293B" />
+      </template>
+    </t-navbar>
+
+    <!-- Header Background -->
+    <view class="header-bg"></view>
 
     <scroll-view scroll-y class="detail-scroll">
       <view class="content-wrapper" v-if="message">
         <!-- 1. Header Section (Common) -->
-        <view class="detail-header">
+        <view class="detail-header-info">
           <view class="type-tag" :class="message.categoryCode">
             <t-icon :name="message.icon" size="32rpx" color="#FFFFFF" />
             <text>{{ message.category }}</text>
@@ -25,99 +31,110 @@
         <view class="title-section">
           <text class="main-title">{{ message.title }}</text>
           <view class="meta-info">
-            <text class="time">{{ message.fullTime || message.time }}</text>
-            <text class="publisher" v-if="message.publisher">发布人：{{ message.publisher }}</text>
-          </view>
-        </view>
-
-        <view class="divider"></view>
-
-        <!-- 2. Dynamic Content Section -->
-        
-        <!-- A. Voting Content -->
-        <view v-if="message.type === 'vote'" class="vote-content">
-          <view class="section-title">投票描述</view>
-          <text class="description">{{ message.desc }}</text>
-          
-          <view class="options-list">
-            <view 
-              v-for="(option, index) in voteOptions" 
-              :key="index"
-              class="option-item"
-              :class="{ active: selectedOption === index }"
-              @click="handleSelectOption(index)"
-            >
-              <view class="radio-box">
-                <view class="radio-inner" v-if="selectedOption === index"></view>
-              </view>
-              <text class="option-text">{{ option.label }}</text>
-              <text class="vote-count" v-if="message.isClosed">{{ option.count }}票</text>
+            <view class="meta-item">
+              <t-icon name="time" size="28rpx" color="#94A3B8" />
+              <text>{{ message.fullTime || message.time }}</text>
             </view>
-          </view>
-
-          <view class="vote-stats" v-if="message.isClosed">
-            <view class="stat-item">
-              <text class="label">参与人数</text>
-              <text class="value">156人</text>
-            </view>
-            <view class="stat-item">
-              <text class="label">投票截止</text>
-              <text class="value">2024-03-25</text>
+            <view class="meta-item" v-if="message.publisher">
+              <t-icon name="user" size="28rpx" color="#94A3B8" />
+              <text>{{ message.publisher }}</text>
             </view>
           </view>
         </view>
 
-        <!-- B. Repair/Complaint Content (Process Timeline) -->
-        <view v-else-if="message.type === 'repair' || message.type === 'voice'" class="process-content">
-          <view class="section-title">反馈内容</view>
-          <text class="description">{{ message.desc }}</text>
+        <view class="detail-card">
+          <!-- 2. Dynamic Content Section -->
           
-          <view class="image-grid" v-if="message.images && message.images.length > 0">
-            <image 
-              v-for="(img, idx) in message.images" 
-              :key="idx" 
-              :src="img" 
-              mode="aspectFill"
-              class="grid-img"
-            />
-          </view>
-
-          <view class="section-title mt-40">处理进度</view>
-          <view class="timeline">
-            <view 
-              v-for="(step, idx) in timelineSteps" 
-              :key="idx" 
-              class="timeline-item"
-              :class="{ last: idx === timelineSteps.length - 1, active: idx === 0 }"
-            >
-              <view class="line-box">
-                <view class="dot"></view>
-                <view class="line" v-if="idx !== timelineSteps.length - 1"></view>
-              </view>
-              <view class="step-content">
-                <view class="step-header">
-                  <text class="step-title">{{ step.title }}</text>
-                  <text class="step-time">{{ step.time }}</text>
+          <!-- A. Voting Content -->
+          <view v-if="message.type === 'vote'" class="vote-content">
+            <view class="section-title">投票描述</view>
+            <text class="description">{{ message.desc }}</text>
+            
+            <view class="options-list">
+              <view 
+                v-for="(option, index) in voteOptions" 
+                :key="index"
+                class="option-item"
+                :class="{ active: selectedOption === index }"
+                @click="handleSelectOption(index)"
+              >
+                <view class="radio-box" :class="{ active: selectedOption === index }">
+                  <view class="radio-inner" v-if="selectedOption === index"></view>
                 </view>
-                <text class="step-desc">{{ step.desc }}</text>
+                <text class="option-text">{{ option.label }}</text>
+                <text class="vote-count" v-if="message.isClosed">{{ option.count }}票</text>
+              </view>
+            </view>
+
+            <view class="vote-stats" v-if="message.isClosed">
+              <view class="stat-item">
+                <text class="label">参与人数</text>
+                <text class="value">156人</text>
+              </view>
+              <view class="stat-item">
+                <text class="label">投票截止</text>
+                <text class="value">2024-03-25</text>
               </view>
             </view>
           </view>
-        </view>
 
-        <!-- C. Notice Content -->
-        <view v-else class="notice-content">
-          <view class="rich-text">
-            {{ message.content || message.desc }}
-            <!-- In real app, use <rich-text> or v-html -->
+          <!-- B. Repair/Complaint Content (Process Timeline) -->
+          <view v-else-if="message.type === 'repair' || message.type === 'voice'" class="process-content">
+            <view class="section-title">反馈内容</view>
+            <text class="description">{{ message.desc }}</text>
+            
+            <view class="image-grid" v-if="message.images && message.images.length > 0">
+              <image 
+                v-for="(img, idx) in message.images" 
+                :key="idx" 
+                :src="img" 
+                mode="aspectFill"
+                class="grid-img"
+                @click="handlePreviewImage(message.images, idx)"
+              />
+            </view>
+
+            <view class="section-title mt-48">处理进度</view>
+            <view class="timeline">
+              <view 
+                v-for="(step, idx) in timelineSteps" 
+                :key="idx" 
+                class="timeline-item"
+                :class="{ last: idx === timelineSteps.length - 1, active: idx === 0 }"
+              >
+                <view class="line-box">
+                  <view class="dot"></view>
+                  <view class="line" v-if="idx !== timelineSteps.length - 1"></view>
+                </view>
+                <view class="step-content">
+                  <view class="step-header">
+                    <text class="step-title">{{ step.title }}</text>
+                    <text class="step-time">{{ step.time }}</text>
+                  </view>
+                  <text class="step-desc">{{ step.desc }}</text>
+                </view>
+              </view>
+            </view>
           </view>
-          
-          <view class="attachments" v-if="message.attachments">
-            <view class="section-title">附件列表</view>
-            <view class="file-item" v-for="(file, idx) in message.attachments" :key="idx">
-              <t-icon name="attach" size="36rpx" color="#64748B" />
-              <text class="file-name">{{ file.name }}</text>
-              <text class="file-size">{{ file.size }}</text>
+
+          <!-- C. Notice Content -->
+          <view v-else class="notice-content">
+            <view class="rich-text">
+              {{ message.content || message.desc }}
+            </view>
+            
+            <view class="attachments" v-if="message.attachments">
+              <view class="section-title">附件列表</view>
+              <view class="file-item" v-for="(file, idx) in message.attachments" :key="idx" @click="handleOpenFile(file)">
+                <view class="file-icon">
+                  <t-icon name="attach" size="40rpx" color="@primary-blue" />
+                </view>
+                <view class="file-info">
+                  <text class="file-name">{{ file.name }}</text>
+                  <text class="file-size">{{ file.size }}</text>
+                </view>
+                <t-icon name="download" size="32rpx" color="#94A3B8" />
+              </view>
             </view>
           </view>
         </view>
@@ -226,7 +243,14 @@ const timelineSteps = [
 ];
 
 const handleBack = () => {
-  uni.navigateBack();
+  const pages = getCurrentPages();
+  if (pages.length > 1) {
+    uni.navigateBack();
+  } else {
+    uni.redirectTo({
+      url: '/pages/mine/message'
+    });
+  }
 };
 
 const handleSelectOption = (index: number) => {
@@ -256,6 +280,25 @@ const handleShare = () => {
   uni.showShareMenu({
     withShareTicket: true
   });
+};
+
+const handlePreviewImage = (urls: string[] | undefined, current: number) => {
+  if (!urls) return;
+  uni.previewImage({
+    urls,
+    current: urls[current]
+  });
+};
+
+const handleOpenFile = (file: { name: string; size: string }) => {
+  uni.showLoading({ title: '文件预览中' });
+  setTimeout(() => {
+    uni.hideLoading();
+    uni.showToast({
+      title: '暂不支持预览 ' + file.name,
+      icon: 'none'
+    });
+  }, 1000);
 };
 
 onMounted(() => {
@@ -336,25 +379,37 @@ onMounted(() => {
 
 .page-container {
   min-height: 100vh;
-  background-color: #FFFFFF;
+  background-color: #F8FAFC;
   display: flex;
   flex-direction: column;
-  padding-top: 100rpx;
 }
 
 .custom-navbar {
   --td-navbar-bg-color: #FFFFFF;
+  --td-navbar-color: #1E293B;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280rpx;
+  background: @header-gradient;
+  z-index: 0;
 }
 
 .detail-scroll {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .content-wrapper {
-  padding: 40rpx @page-padding;
+  padding: 20rpx @page-padding;
 }
 
-.detail-header {
+.detail-header-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -364,16 +419,17 @@ onMounted(() => {
     display: flex;
     align-items: center;
     gap: 8rpx;
-    padding: 6rpx 20rpx;
+    padding: 8rpx 24rpx;
     border-radius: 30rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
     
     text {
       font-size: 24rpx;
       color: #FFFFFF;
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    &.voting { background: #3B82F6; }
+    &.voting { background: @primary-blue; }
     &.repair { background: #EF4444; }
     &.notice { background: #10B981; }
     &.complaint { background: #F59E0B; }
@@ -381,39 +437,51 @@ onMounted(() => {
 
   .status-tag {
     font-size: 24rpx;
-    padding: 6rpx 16rpx;
-    border-radius: 8rpx;
+    padding: 8rpx 20rpx;
+    border-radius: 12rpx;
+    font-weight: 500;
 
-    &.active { background: #ECFDF5; color: #10B981; }
+    &.active { background: #F0FDF4; color: #10B981; }
     &.closed { background: #F1F5F9; color: #94A3B8; }
-    &.processing { background: #EFF6FF; color: #3B82F6; }
+    &.processing { background: #EFF6FF; color: @primary-blue; }
     &.notice { background: #F8FAFC; color: #64748B; }
   }
 }
 
 .title-section {
   margin-bottom: 32rpx;
+  padding: 0 4rpx;
 
   .main-title {
-    font-size: 40rpx;
+    font-size: 42rpx;
     font-weight: 600;
     color: #1E293B;
     line-height: 1.4;
-    margin-bottom: 16rpx;
+    margin-bottom: 24rpx;
     display: block;
   }
 
   .meta-info {
     display: flex;
-    gap: 24rpx;
-    font-size: 26rpx;
-    color: #94A3B8;
+    flex-wrap: wrap;
+    gap: 32rpx;
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8rpx;
+      font-size: 26rpx;
+      color: #94A3B8;
+    }
   }
 }
 
-.divider {
-  height: 1rpx;
-  background: #F1F5F9;
+.detail-card {
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
   margin-bottom: 40rpx;
 }
 
@@ -421,7 +489,7 @@ onMounted(() => {
   font-size: 32rpx;
   font-weight: 600;
   color: #1E293B;
-  margin-bottom: 20rpx;
+  margin-bottom: 24rpx;
   display: flex;
   align-items: center;
 
@@ -429,86 +497,102 @@ onMounted(() => {
     content: '';
     width: 8rpx;
     height: 32rpx;
-    background: #3B82F6;
+    background: @primary-blue;
     border-radius: 4rpx;
     margin-right: 16rpx;
   }
 }
 
 .description {
-  font-size: 28rpx;
+  font-size: 30rpx;
   color: #475569;
-  line-height: 1.6;
+  line-height: 1.7;
   display: block;
 }
 
 /* Vote Specific */
 .options-list {
-  margin-top: 32rpx;
+  margin-top: 40rpx;
 }
 
 .option-item {
   display: flex;
   align-items: center;
-  padding: 30rpx;
+  padding: 32rpx;
   background: #F8FAFC;
   border: 2rpx solid transparent;
-  border-radius: @radius-large;
-  margin-bottom: 20rpx;
-  transition: all 0.2s;
+  border-radius: 20rpx;
+  margin-bottom: 24rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active {
+    transform: scale(0.99);
+  }
 
   &.active {
     background: #EFF6FF;
-    border-color: #3B82F6;
+    border-color: @primary-blue;
+    
+    .radio-box {
+      border-color: @primary-blue;
+    }
   }
 
   .radio-box {
-    width: 36rpx;
-    height: 36rpx;
-    border: 2rpx solid #CBD5E1;
+    width: 40rpx;
+    height: 40rpx;
+    border: 3rpx solid #CBD5E1;
     border-radius: 50%;
-    margin-right: 24rpx;
+    margin-right: 28rpx;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #FFFFFF;
+    transition: all 0.2s;
+
+    &.active {
+      border-color: @primary-blue;
+    }
 
     .radio-inner {
       width: 20rpx;
       height: 20rpx;
-      background: #3B82F6;
+      background: @primary-blue;
       border-radius: 50%;
     }
   }
 
   .option-text {
     flex: 1;
-    font-size: 28rpx;
+    font-size: 30rpx;
     color: #1E293B;
+    font-weight: 500;
   }
 
   .vote-count {
-    font-size: 24rpx;
+    font-size: 26rpx;
     color: #94A3B8;
+    font-weight: 500;
   }
 }
 
 .vote-stats {
-  margin-top: 40rpx;
+  margin-top: 48rpx;
   background: #F8FAFC;
-  border-radius: @radius-large;
-  padding: 24rpx;
+  border-radius: 20rpx;
+  padding: 32rpx;
   display: flex;
   justify-content: space-around;
+  border: 1rpx solid #F1F5F9;
 
   .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8rpx;
+    gap: 12rpx;
 
     .label { font-size: 24rpx; color: #94A3B8; }
-    .value { font-size: 28rpx; color: #1E293B; font-weight: 500; }
+    .value { font-size: 30rpx; color: #1E293B; font-weight: 600; }
   }
 }
 
@@ -516,27 +600,28 @@ onMounted(() => {
 .image-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
-  margin-top: 24rpx;
+  gap: 20rpx;
+  margin-top: 32rpx;
 
   .grid-img {
-    width: 200rpx;
-    height: 200rpx;
-    border-radius: 12rpx;
+    width: calc((100% - 40rpx) / 3);
+    height: 180rpx;
+    border-radius: 16rpx;
     background: #F1F5F9;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   }
 }
 
-.mt-40 { margin-top: 40rpx; }
+.mt-48 { margin-top: 48rpx; }
 
 .timeline {
-  margin-top: 24rpx;
-  padding-left: 10rpx;
+  margin-top: 32rpx;
+  padding-left: 8rpx;
 }
 
 .timeline-item {
   display: flex;
-  gap: 24rpx;
+  gap: 32rpx;
 
   .line-box {
     display: flex;
@@ -545,82 +630,113 @@ onMounted(() => {
     width: 32rpx;
 
     .dot {
-      width: 16rpx;
-      height: 16rpx;
-      background: #CBD5E1;
+      width: 20rpx;
+      height: 20rpx;
+      background: #E2E8F0;
       border-radius: 50%;
       z-index: 2;
+      transition: all 0.3s;
     }
 
     .line {
       flex: 1;
-      width: 2rpx;
+      width: 4rpx;
       background: #F1F5F9;
-      margin: 4rpx 0;
+      margin: 8rpx 0;
     }
   }
 
   &.active {
-    .dot { background: #3B82F6; box-shadow: 0 0 0 6rpx #EFF6FF; }
-    .step-title { color: #3B82F6; font-weight: 600; }
+    .dot { 
+      background: @primary-blue; 
+      box-shadow: 0 0 0 8rpx rgba(59, 130, 246, 0.15); 
+    }
+    .step-title { color: @primary-blue; font-weight: 600; }
   }
 
   .step-content {
     flex: 1;
-    padding-bottom: 40rpx;
+    padding-bottom: 48rpx;
 
     .step-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8rpx;
+      margin-bottom: 12rpx;
 
-      .step-title { font-size: 28rpx; color: #1E293B; }
-      .step-time { font-size: 24rpx; color: #CBD5E1; }
+      .step-title { font-size: 30rpx; color: #1E293B; }
+      .step-time { font-size: 24rpx; color: #94A3B8; }
     }
 
     .step-desc {
-      font-size: 26rpx;
+      font-size: 28rpx;
       color: #64748B;
-      line-height: 1.5;
+      line-height: 1.6;
     }
   }
 }
 
 /* Notice Specific */
 .rich-text {
-  font-size: 28rpx;
+  font-size: 30rpx;
   color: #475569;
   line-height: 1.8;
   white-space: pre-wrap;
 }
 
 .attachments {
-  margin-top: 60rpx;
+  margin-top: 64rpx;
+  padding-top: 48rpx;
+  border-top: 2rpx dashed #F1F5F9;
 
   .file-item {
     display: flex;
     align-items: center;
-    padding: 24rpx;
+    padding: 28rpx;
     background: #F8FAFC;
-    border-radius: 12rpx;
-    margin-bottom: 16rpx;
+    border-radius: 20rpx;
+    margin-bottom: 20rpx;
+    transition: all 0.3s;
+    border: 1rpx solid transparent;
 
-    .file-name {
-      flex: 1;
-      margin: 0 16rpx;
-      font-size: 26rpx;
-      color: #475569;
+    &:active {
+      background: #F1F5F9;
+      border-color: #E2E8F0;
     }
 
-    .file-size {
-      font-size: 22rpx;
-      color: #94A3B8;
+    .file-icon {
+      width: 80rpx;
+      height: 80rpx;
+      background: #FFFFFF;
+      border-radius: 16rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+    }
+
+    .file-info {
+      flex: 1;
+      margin: 0 24rpx;
+      display: flex;
+      flex-direction: column;
+      gap: 4rpx;
+
+      .file-name {
+        font-size: 28rpx;
+        color: #1E293B;
+        font-weight: 500;
+      }
+
+      .file-size {
+        font-size: 22rpx;
+        color: #94A3B8;
+      }
     }
   }
 }
 
 .bottom-padding {
-  height: 160rpx;
+  height: 200rpx;
 }
 
 .footer-actions {
@@ -629,8 +745,23 @@ onMounted(() => {
   left: 0;
   right: 0;
   background: #FFFFFF;
-  padding: 30rpx @page-padding calc(30rpx + env(safe-area-inset-bottom));
-  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  padding: 30rpx 40rpx calc(30rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -10rpx 30rpx rgba(0, 0, 0, 0.05);
   z-index: 100;
+
+  :deep(.t-button) {
+    --td-button-primary-bg-color: @primary-blue;
+    --td-button-primary-border-color: @primary-blue;
+    --td-button-light-bg-color: rgba(59, 130, 246, 0.08);
+    --td-button-light-color: @primary-blue;
+    font-weight: 600;
+    height: 88rpx;
+    box-shadow: 0 8rpx 20rpx rgba(59, 130, 246, 0.15);
+
+    &.t-button--variant-outline {
+      box-shadow: none;
+      --td-button-primary-color: @primary-blue;
+    }
+  }
 }
 </style>

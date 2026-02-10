@@ -42,35 +42,6 @@
           </view>
         </view>
 
-        <!-- 开发建设单位信息 -->
-        <view class="info-block mt-24">
-          <view class="block-header">开发建设单位信息</view>
-          <view class="block-content">
-            <view class="info-row no-border">
-              <text class="label">企业名称</text>
-              <text class="value">{{ communityData.developer }}</text>
-            </view>
-          </view>
-        </view>
-
-        <!-- 物业企业信息 -->
-        <view class="info-block mt-24">
-          <view class="block-header">物业企业信息</view>
-          <view class="block-content">
-            <view class="info-row clickable" @click="goToPropertyDetail">
-              <text class="label">企业名称</text>
-              <view class="value-with-icon">
-                <text class="value">{{ communityData.propertyCompany }}</text>
-                <t-icon name="chevron-right" size="32rpx" color="#94A3B8" />
-              </view>
-            </view>
-            <view class="info-row no-border">
-              <text class="label">项目经理</text>
-              <text class="value">{{ communityData.manager }} ({{ communityData.managerPhone }})</text>
-            </view>
-          </view>
-        </view>
-
         <!-- 业主绑定情况 -->
         <view class="info-block mt-24">
           <view class="block-header">
@@ -157,7 +128,7 @@
           </view>
         </view>
 
-        <!-- 业委会信息 (如果有业委会信息，就不显示物管会信息) -->
+        <!-- 业委会/物管会信息 -->
         <view class="info-block mt-24" v-if="communityData.hasCommittee">
           <view class="block-header">
             <text>业委会信息</text>
@@ -178,7 +149,6 @@
           </view>
         </view>
 
-        <!-- 物管会信息 (如果没有业委会信息，且有物管会信息时显示) -->
         <view class="info-block mt-24" v-else-if="communityData.hasManagement">
           <view class="block-header">
             <text>物管会信息</text>
@@ -199,11 +169,39 @@
           </view>
         </view>
 
-        <!-- 兜底状态：两者都没有 -->
         <view class="info-block mt-24" v-else>
           <view class="block-header">组织信息</view>
           <view class="block-content">
             <view class="empty-tip">暂无业委会或物管会信息</view>
+          </view>
+        </view>
+
+        <!-- 物业企业信息 -->
+        <view class="info-block mt-24">
+          <view class="block-header">物业企业信息</view>
+          <view class="block-content">
+            <view class="info-row clickable" @click="goToPropertyDetail">
+              <text class="label">企业名称</text>
+              <view class="value-with-icon">
+                <text class="value">{{ communityData.propertyCompany }}</text>
+                <t-icon name="chevron-right" size="32rpx" color="#94A3B8" />
+              </view>
+            </view>
+            <view class="info-row no-border">
+              <text class="label">项目经理</text>
+              <text class="value">{{ communityData.manager }} ({{ communityData.managerPhone }})</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 开发建设单位信息 -->
+        <view class="info-block mt-24">
+          <view class="block-header">开发建设单位信息</view>
+          <view class="block-content">
+            <view class="info-row no-border">
+              <text class="label">企业名称</text>
+              <text class="value">{{ communityData.developer }}</text>
+            </view>
           </view>
         </view>
       </view>

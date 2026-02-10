@@ -43,7 +43,7 @@
           :key="index"
           class="tab-item"
           :class="{ active: activeTab === index }"
-          @click="activeTab = index"
+          @click="handleTabChange(index)"
         >
           <text>{{ tab }}</text>
           <view class="active-bar" v-if="activeTab === index"></view>
@@ -53,7 +53,7 @@
 
     <!-- 3. Content Area -->
     <view class="content-area">
-      <view class="calendar-wrapper" v-if="!isLoading">
+      <view class="calendar-wrapper" v-if="!isLoading && activeTab < 2">
         <!-- Calendar Header -->
         <view class="calendar-header">
           <view class="header-left">
@@ -88,11 +88,13 @@
         <!-- Grid Table -->
         <view class="grid-table">
           <scroll-view 
-            scroll-x 
-            class="main-horizontal-scroll" 
-            :scroll-into-view="scrollIntoView"
-            :scroll-with-animation="true"
-          >
+          scroll-x 
+          class="main-horizontal-scroll" 
+          :class="{ 'initial-state': isInitialLoad }"
+          :scroll-into-view="scrollIntoView"
+          :scroll-with-animation="true"
+          @scroll="handleScroll"
+        >
             <!-- Time Axis Row -->
             <view class="table-row head-row">
               <view class="sticky-col label-cell">
@@ -149,6 +151,38 @@
           </scroll-view>
         </view>
       </view>
+
+      <view class="list-wrapper" v-else-if="!isLoading && activeTab >= 2">
+        <view class="policy-list">
+          <view 
+            class="policy-item" 
+            v-for="(item, index) in listData" 
+            :key="index"
+            @click="handleNoticeClick(item)"
+          >
+            <view class="item-icon">
+              <view class="icon-inner"></view>
+            </view>
+            <view class="item-main">
+              <text class="item-title">{{ item.title }}</text>
+              <view class="item-info">
+                <text class="item-source">{{ item.source }}</text>
+                <text class="item-date">{{ item.date }}</text>
+              </view>
+            </view>
+            <view class="item-right">
+              <t-icon name="chevron-right" size="32rpx" color="#64748B" />
+            </view>
+          </view>
+          
+          <!-- 查看更多 -->
+          <view class="view-more" @click="handleViewMore">
+            <text>查看更多</text>
+            <t-icon name="chevron-down" size="24rpx" color="#94A3B8" />
+          </view>
+        </view>
+      </view>
+
       <view class="loading-state" v-else>
         <view class="skeleton-item-card" v-for="i in 4" :key="i">
           <view class="skeleton-line tag-skel"></view>
@@ -181,8 +215,16 @@ const viewMode = ref<'day' | 'month'>('month');
 const activeMonth = ref(currentMonthStr);
 const activeDay = ref(currentDayStr);
 const scrollIntoView = ref('time-1');
+const isInitialLoad = ref(true); // 新增：标记是否为首次加载
 
-const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+// 监听滚动事件，一旦开始滚动就重置初始状态
+const handleScroll = () => {
+  if (isInitialLoad.value) {
+    isInitialLoad.value = false;
+  }
+};
+
+const months = ['12月', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
 // Calculate days for current active month
 const timeAxis = computed(() => {
@@ -271,6 +313,21 @@ const gridData = ref<Record<string, any>>({
   'activity-2月': { status: '报名中', action: '立即参加', type: 'applying', hot: true }
 });
 
+const listDataMap: Record<number, any[]> = {
+  2: [
+    { title: '关于进一步加强住宅专项维修资金管理的通知', source: '赣州市住房和城乡建设局', date: '2026-02-08' },
+    { title: '2026年第一季度物业服务质量评价结果公示', source: '赣州市物业管理协会', date: '2026-02-05' },
+    { title: '智慧社区建设标准指南（试行）', source: '江西省住房和城乡建设厅', date: '2026-01-20' }
+  ],
+  3: [
+    { title: '阳光水岸社区“元宵喜乐会”活动报名通知', source: '社区居委会', date: '2026-02-10' },
+    { title: '小区公共设施维修改造意见征集公告', source: '业主委员会', date: '2026-02-09' },
+    { title: '关于增设非机动车充电桩的进度公示', source: '物业服务中心', date: '2026-02-01' }
+  ]
+};
+
+const listData = computed(() => listDataMap[activeTab.value] || []);
+
 const gridLabel = computed(() => {
    const tabName = tabs[activeTab.value] || '';
    if (tabName.includes('公示')) return tabName.replace('公示', '项目');
@@ -282,15 +339,31 @@ onMounted(() => {
   // Simulate data loading
   setTimeout(() => {
     isLoading.value = false;
-    // Ensure scrolling to the beginning after loading
+    // 默认定位到当前月份的前一个位置
     setTimeout(() => {
-      scrollIntoView.value = 'time-1';
-    }, 100);
+      // 使用 lastIndexOf 确保定位到今年的月份（跳过开头的 12月 缓冲区）
+      const currentMonthIdx = months.lastIndexOf(currentMonthStr);
+      // 定位到当前月份的前一个 ID，使其显示格在第二个位置
+      scrollIntoView.value = `time-${Math.max(1, currentMonthIdx)}`;
+    }, 200);
   }, 800);
 });
 
 const goBack = () => {
   uni.navigateBack();
+};
+
+const handleNoticeClick = (item: any) => {
+  uni.navigateTo({
+    url: `/pages/notice/notice-detail?id=${item.id || 1}`
+  });
+};
+
+const handleViewMore = () => {
+  uni.showToast({
+    title: '加载更多...',
+    icon: 'none'
+  });
 };
 
 const toggleYearPicker = () => {
@@ -308,11 +381,26 @@ const toggleYearPicker = () => {
 
 const switchViewMode = (mode: 'day' | 'month') => {
   viewMode.value = mode;
-  // Reset scroll and active state when switching
+  // 切换视图时触发大偏移以解决遮挡
+  isInitialLoad.value = true;
+  scrollIntoView.value = ''; 
+
+  // 延迟定位补偿
   setTimeout(() => {
-    const targetIdx = mode === 'month' ? parseInt(activeMonth.value) : parseInt(activeDay.value);
-    scrollIntoView.value = `time-${Math.max(1, targetIdx - 1)}`;
-  }, 50);
+    if (mode === 'month') {
+      const monthIdx = months.lastIndexOf(activeMonth.value);
+      // 月视图：定位到当前月份的前一个位置
+      scrollIntoView.value = `time-${Math.max(1, monthIdx)}`;
+    } else {
+      const dayIdx = timeAxis.value.indexOf(activeDay.value);
+      // 日视图：定位到当前日期的前两个 ID
+      scrollIntoView.value = `time-${Math.max(1, dayIdx - 1)}`;
+    }
+  }, 200);
+
+  setTimeout(() => {
+    isInitialLoad.value = false;
+  }, 1500);
 };
 
 const getDateStatus = (time: string) => {
@@ -343,14 +431,34 @@ const getDateStatus = (time: string) => {
 const handleTimeClick = (time: string) => {
   if (viewMode.value === 'month') {
     activeMonth.value = time;
-    const monthIndex = months.indexOf(time);
-    // Scroll to index - 1 to make it the first visible item after sticky column
-    scrollIntoView.value = `time-${Math.max(1, monthIndex)}`;
+    const monthIndex = months.lastIndexOf(time);
+    
+    isInitialLoad.value = true;
+    scrollIntoView.value = '';
+    
+    setTimeout(() => {
+      // 月视图：定位到当前月份的前一个位置
+      scrollIntoView.value = `time-${Math.max(1, monthIndex)}`;
+    }, 50);
+    
+    setTimeout(() => {
+      isInitialLoad.value = false;
+    }, 1500);
   } else {
     activeDay.value = time;
-    const dayIndex = parseInt(time);
-    // Scroll to day - 1 to make it the first visible item after sticky column
-    scrollIntoView.value = `time-${Math.max(1, dayIndex - 1)}`;
+    const dayIndex = timeAxis.value.indexOf(time);
+    
+    isInitialLoad.value = true;
+    scrollIntoView.value = '';
+    
+    setTimeout(() => {
+      // 定位到当前日期的前两个 ID
+      scrollIntoView.value = `time-${Math.max(1, dayIndex - 1)}`;
+    }, 50);
+    
+    setTimeout(() => {
+      isInitialLoad.value = false;
+    }, 1500);
   }
 };
 
@@ -360,22 +468,32 @@ const handleCellClick = (catId: string, time: string) => {
     activeMonth.value = time;
     viewMode.value = 'day';
     
+    // 切换视图时也触发大偏移
+    isInitialLoad.value = true;
+    scrollIntoView.value = ''; // 同步月视图：先清空，确保触发滚动
+    
     const now = new Date();
     const isCurrentMonth = parseInt(time) === (now.getMonth() + 1) && currentYear.value === now.getFullYear();
     
     if (isCurrentMonth) {
       activeDay.value = `${now.getDate()}日`;
-      // Scroll to today (or slightly before today to ensure visibility)
       setTimeout(() => {
-        scrollIntoView.value = `time-${Math.max(1, now.getDate() - 1)}`;
-      }, 50);
+        // 定位到当前日期的前两个单位，确保完全避开遮挡
+        scrollIntoView.value = `time-${Math.max(1, now.getDate() - 2)}`;
+      }, 200);
     } else {
       activeDay.value = '1日';
       setTimeout(() => {
+        // 非当前月定位到 1 日
         scrollIntoView.value = 'time-1';
-      }, 50);
+      }, 200);
     }
     
+    // 1.5秒后恢复正常，给滚动留足时间
+    setTimeout(() => {
+      isInitialLoad.value = false;
+    }, 1500);
+
     uni.showToast({
       title: `已切换至 ${time} 详情`,
       icon: 'none'
@@ -395,6 +513,28 @@ const handleCellClick = (catId: string, time: string) => {
 const getGridItem = (catId: string, time: string) => {
   const key = viewMode.value === 'month' ? `${catId}-${time}` : `${catId}-${activeMonth.value}${time}`;
   return gridData.value[key] || null;
+};
+
+const handleTabChange = (index: number) => {
+  activeTab.value = index;
+  // 切换顶部 Tab 时也触发偏移并重新定位
+  isInitialLoad.value = true;
+  scrollIntoView.value = '';
+  
+  setTimeout(() => {
+    if (viewMode.value === 'month') {
+      const monthIdx = months.lastIndexOf(activeMonth.value);
+      // 月视图：定位到前一个月份位置
+      scrollIntoView.value = `time-${Math.max(1, monthIdx)}`;
+    } else {
+      const dayIdx = timeAxis.value.indexOf(activeDay.value);
+      scrollIntoView.value = `time-${Math.max(1, dayIdx - 1)}`;
+    }
+  }, 200);
+
+  setTimeout(() => {
+    isInitialLoad.value = false;
+  }, 1500);
 };
 </script>
 
@@ -739,6 +879,17 @@ const getGridItem = (catId: string, time: string) => {
 
   .main-horizontal-scroll {
     width: 100%;
+
+    :deep(.uni-scroll-view-content) {
+      margin-left: 0;
+      transition: margin-left 0.3s ease;
+    }
+
+    &.initial-state {
+      :deep(.uni-scroll-view-content) {
+        margin-left: -1.2rem;
+      }
+    }
   }
 
   .table-row {
@@ -837,8 +988,8 @@ const getGridItem = (catId: string, time: string) => {
    .status-card {
       width: 100%;
       height: 100%;
-      border-radius: 8rpx;
-      padding: 8rpx;
+      border-radius: 0;
+      padding: 0;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -848,18 +999,21 @@ const getGridItem = (catId: string, time: string) => {
 
       &.planning {
         background: #FFFBEB;
+        border: none;
         .status-text { color: #D97706; }
         .action-link { color: #D97706; }
       }
 
       &.applying {
         background: #FEF2F2;
+        border: none;
         .status-text { color: #EF4444; }
         .action-link { color: #EF4444; }
       }
 
       &.ending {
         background: #FFF1F2;
+        border: none;
         .status-text { color: #F43F5E; }
         .action-link { color: #F43F5E; }
       }
@@ -871,11 +1025,13 @@ const getGridItem = (catId: string, time: string) => {
         
         &.past {
           background: #FFFFFF;
+          border: 1rpx solid #E2E8F0;
           .status-text { color: #94A3B8; font-weight: 400; }
         }
         
         &.future {
           background: #F1F5F9;
+          border: 1rpx solid #E2E8F0;
           .status-text { color: #94A3B8; font-weight: 400; }
         }
 
@@ -987,6 +1143,102 @@ const getGridItem = (catId: string, time: string) => {
     margin-left: 20rpx;
   }
 }
+
+.list-wrapper {
+    background: #fff;
+    
+    .policy-list {
+      padding: 20rpx 0;
+      
+      .policy-item {
+        display: flex;
+        padding: 32rpx @page-padding;
+        position: relative;
+        transition: background-color 0.2s ease;
+
+        &:active {
+          background-color: #F8FAFC;
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: @page-padding;
+          right: @page-padding;
+          bottom: 0;
+          height: 1rpx;
+          background-color: #F1F5F9;
+        }
+
+        &:last-child::after {
+          display: none;
+        }
+
+        .item-icon {
+          width: 12rpx;
+          height: 12rpx;
+          background-color: #3B82F6;
+          border-radius: 2rpx;
+          margin-top: 14rpx;
+          flex-shrink: 0;
+        }
+
+        .item-main {
+          flex: 1;
+          margin-left: 24rpx;
+          display: flex;
+          flex-direction: column;
+          gap: 16rpx;
+
+          .item-title {
+            font-size: 30rpx;
+            color: #1E293B;
+            line-height: 1.5;
+            font-weight: 400;
+          }
+
+          .item-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20rpx;
+            
+            .item-source {
+              flex: 1;
+              font-size: 24rpx;
+              color: #64748B;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .item-date {
+              flex-shrink: 0;
+              font-size: 24rpx;
+              color: #64748B;
+            }
+          }
+        }
+      }
+    }
+
+    .view-more {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8rpx;
+      padding: 30rpx 0 60rpx;
+      
+      text {
+        font-size: 26rpx;
+        color: #94A3B8;
+      }
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+  }
 
 .skeleton-item-card {
   background: #FFFFFF;

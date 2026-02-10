@@ -3,11 +3,17 @@
     <t-navbar
       title="实名认证"
       left-arrow
-      :delta="0"
       @go-back="handleBack"
-      :fixed="true"
+      :fixed="false"
       class="custom-navbar"
-    />
+    >
+      <template #left-icon>
+        <t-icon name="chevron-left" size="48rpx" color="#1E293B" />
+      </template>
+    </t-navbar>
+
+    <!-- Header Background -->
+    <view class="header-bg"></view>
 
     <scroll-view scroll-y class="auth-scroll">
       <view class="content-wrapper">
@@ -18,18 +24,18 @@
             <view class="id-card-item" @click="handleUpload('front')">
               <view class="upload-box" v-if="!form.idCardFront">
                 <t-icon name="camera" size="64rpx" color="#94A3B8" />
-                <text class="upload-text">上传身份证人像面</text>
+                <text class="upload-text">身份证人像面</text>
               </view>
-              <image v-else :src="form.idCardFront" mode="aspectFit" class="preview-img" />
+              <image v-else :src="form.idCardFront" mode="aspectFill" class="preview-img" />
               <view class="re-upload" v-if="form.idCardFront">点击重传</view>
             </view>
             
             <view class="id-card-item" @click="handleUpload('back')">
               <view class="upload-box" v-if="!form.idCardBack">
                 <t-icon name="camera" size="64rpx" color="#94A3B8" />
-                <text class="upload-text">上传身份证国徽面</text>
+                <text class="upload-text">身份证国徽面</text>
               </view>
-              <image v-else :src="form.idCardBack" mode="aspectFit" class="preview-img" />
+              <image v-else :src="form.idCardBack" mode="aspectFill" class="preview-img" />
               <view class="re-upload" v-if="form.idCardBack">点击重传</view>
             </view>
           </view>
@@ -46,6 +52,7 @@
               placeholder="请输入手机号"
               type="number"
               maxlength="11"
+              borderless
             />
             <view class="verify-code-row">
               <t-input
@@ -54,11 +61,12 @@
                 placeholder="请输入验证码"
                 type="number"
                 maxlength="6"
+                borderless
               >
                 <template #suffix>
                   <view 
                     class="code-btn" 
-                    :class="{ disabled: counting }" 
+                    :class="{ disabled: counting || !isValidPhone }" 
                     @click="handleGetCode"
                   >
                     {{ counting ? `${count}s后重发` : '获取验证码' }}
@@ -78,26 +86,27 @@
             @click="handleFaceAuth"
           >
             <view class="left-info">
-              <t-icon 
-                :name="form.faceAuthDone ? 'check-circle-filled' : 'user-smile'" 
-                size="48rpx" 
-                :color="form.faceAuthDone ? '#10B981' : '#3B82F6'" 
-              />
+              <view class="icon-box" :class="{ success: form.faceAuthDone }">
+                <t-icon 
+                  :name="form.faceAuthDone ? 'check' : 'user-smile'" 
+                  size="40rpx" 
+                  :color="form.faceAuthDone ? '#10B981' : '#3B82F6'" 
+                />
+              </view>
               <text class="label">{{ form.faceAuthDone ? '已完成人脸识别' : '去完成人脸识别' }}</text>
             </view>
             <t-icon name="chevron-right" size="32rpx" color="#CBD5E1" v-if="!form.faceAuthDone" />
           </view>
         </view>
 
-        <view class="protocol-row">
+        <view class="protocol-row" @click="isAgreed = !isAgreed">
           <t-icon 
             :name="isAgreed ? 'check-circle-filled' : 'circle'" 
-            size="32rpx" 
-            :color="isAgreed ? '#3B82F6' : '#CBD5E1'" 
-            @click="isAgreed = !isAgreed"
+            size="36rpx" 
+            :color="isAgreed ? '@primary-blue' : '#CBD5E1'" 
           />
           <view class="protocol-text">
-            阅读并同意<text class="link">《实名认证服务协议》</text>
+            阅读并同意<text class="link" @click.stop="handleViewProtocol">《实名认证服务协议》</text>
           </view>
         </view>
       </view>
@@ -147,6 +156,10 @@ const canSubmit = computed(() => {
   );
 });
 
+const isValidPhone = computed(() => {
+  return /^1[3-9]\d{9}$/.test(form.phone);
+});
+
 const handleBack = () => {
   const pages = getCurrentPages();
   if (pages.length > 1) {
@@ -156,6 +169,14 @@ const handleBack = () => {
       url: '/pages/mine/mine'
     });
   }
+};
+
+const handleViewProtocol = () => {
+  uni.showModal({
+    title: '实名认证服务协议',
+    content: '这里是协议内容预览...',
+    showCancel: false
+  });
 };
 
 const handleUpload = (type: 'front' | 'back') => {
@@ -222,7 +243,7 @@ const handleSubmit = () => {
       duration: 2000
     });
     setTimeout(() => {
-      uni.navigateBack();
+      handleBack();
     }, 2000);
   }, 1500);
 };
@@ -236,41 +257,54 @@ const handleSubmit = () => {
   background-color: #F8FAFC;
   display: flex;
   flex-direction: column;
-  padding-top: 100rpx;
 }
 
 .custom-navbar {
   --td-navbar-bg-color: #FFFFFF;
+  --td-navbar-color: #1E293B;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280rpx;
+  background: @header-gradient;
+  z-index: 0;
 }
 
 .auth-scroll {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .content-wrapper {
-  padding: 30rpx @page-padding;
+  padding: 20rpx @page-padding;
 }
 
 .section-card {
   background: #FFFFFF;
-  border-radius: @radius-large;
-  padding: 30rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.02);
+  border-radius: 24rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
 }
 
 .section-title {
-  font-size: 32rpx;
+  font-size: 30rpx;
   font-weight: 600;
   color: #1E293B;
-  margin-bottom: 24rpx;
+  margin-bottom: 30rpx;
   display: flex;
   align-items: center;
 
   &::before {
     content: '';
     width: 8rpx;
-    height: 32rpx;
-    background: #3B82F6;
+    height: 30rpx;
+    background: @primary-blue;
     border-radius: 4rpx;
     margin-right: 16rpx;
   }
@@ -278,31 +312,38 @@ const handleSubmit = () => {
 
 .id-card-grid {
   display: flex;
-  gap: 20rpx;
-  margin-bottom: 20rpx;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
 
   .id-card-item {
     flex: 1;
-    height: 220rpx;
+    height: 240rpx;
     background: #F8FAFC;
-    border: 2rpx dashed #CBD5E1;
-    border-radius: 12rpx;
+    border: 2rpx dashed #E2E8F0;
+    border-radius: 16rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:active {
+      background: #F1F5F9;
+      transform: scale(0.98);
+    }
 
     .upload-box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12rpx;
+      gap: 16rpx;
 
       .upload-text {
         font-size: 24rpx;
-        color: #94A3B8;
+        color: #64748B;
+        font-weight: 500;
       }
     }
 
@@ -316,11 +357,13 @@ const handleSubmit = () => {
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(4px);
       color: #FFFFFF;
       font-size: 22rpx;
       text-align: center;
-      padding: 8rpx 0;
+      padding: 10rpx 0;
+      font-weight: 500;
     }
   }
 }
@@ -328,61 +371,97 @@ const handleSubmit = () => {
 .tips {
   font-size: 24rpx;
   color: #94A3B8;
-  line-height: 1.4;
+  line-height: 1.6;
+  padding: 0 4rpx;
 }
 
 .mt-24 { margin-top: 24rpx; }
 
 .input-group {
   :deep(.t-input) {
-    padding-left: 0;
-    padding-right: 0;
+    padding: 24rpx 0;
+    --td-input-label-color: #64748B;
+    --td-input-placeholder-color: #94A3B8;
+    
+    &::after {
+      left: 0;
+      right: 0;
+      border-bottom-color: #F1F5F9;
+    }
   }
 }
 
 .code-btn {
   font-size: 26rpx;
-  color: #3B82F6;
-  font-weight: 500;
-  padding: 10rpx 0;
+  color: @primary-blue;
+  font-weight: 600;
+  padding: 12rpx 20rpx;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 30rpx;
+  transition: all 0.3s;
+
+  &:active {
+    opacity: 0.7;
+  }
 
   &.disabled {
-    color: #CBD5E1;
+    color: #94A3B8;
+    background: #F1F5F9;
   }
 }
 
 .face-auth-item {
-  height: 100rpx;
+  height: 110rpx;
   background: #F8FAFC;
-  border-radius: 12rpx;
-  padding: 0 24rpx;
+  border-radius: 16rpx;
+  padding: 0 28rpx;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active {
+    background: #F1F5F9;
+    transform: scale(0.99);
+  }
 
   &.success {
-    background: #ECFDF5;
+    background: #F0FDF4;
     .label { color: #10B981; }
   }
 
   .left-info {
     display: flex;
     align-items: center;
-    gap: 16rpx;
+    gap: 20rpx;
+
+    .icon-box {
+      width: 64rpx;
+      height: 64rpx;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 12rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.success {
+        background: rgba(16, 185, 129, 0.1);
+      }
+    }
 
     .label {
       font-size: 28rpx;
       color: #1E293B;
-      font-weight: 500;
+      font-weight: 600;
     }
   }
 }
 
 .protocol-row {
-  margin-top: 40rpx;
+  margin-top: 48rpx;
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 16rpx;
   justify-content: center;
 
   .protocol-text {
@@ -390,13 +469,14 @@ const handleSubmit = () => {
     color: #64748B;
 
     .link {
-      color: #3B82F6;
+      color: @primary-blue;
+      font-weight: 500;
     }
   }
 }
 
 .bottom-padding {
-  height: 180rpx;
+  height: 200rpx;
 }
 
 .footer-actions {
@@ -405,8 +485,23 @@ const handleSubmit = () => {
   left: 0;
   right: 0;
   background: #FFFFFF;
-  padding: 30rpx @page-padding calc(30rpx + env(safe-area-inset-bottom));
-  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+  padding: 30rpx 40rpx calc(30rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -10rpx 30rpx rgba(0, 0, 0, 0.05);
   z-index: 100;
+
+  :deep(.t-button) {
+    --td-button-primary-bg-color: @primary-blue;
+    --td-button-primary-border-color: @primary-blue;
+    font-weight: 600;
+    height: 88rpx;
+    box-shadow: 0 8rpx 20rpx rgba(59, 130, 246, 0.2);
+    
+    &.t-is-disabled {
+      opacity: 0.5;
+      background: #CBD5E1;
+      border-color: #CBD5E1;
+      box-shadow: none;
+    }
+  }
 }
 </style>

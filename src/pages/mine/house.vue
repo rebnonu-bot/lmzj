@@ -3,11 +3,12 @@
     <t-navbar
       title="我的房屋"
       left-arrow
-      :delta="0"
       @go-back="handleBack"
-      :fixed="true"
+      :fixed="false"
       class="custom-navbar"
     />
+
+    <view class="header-bg"></view>
 
     <view class="content-section">
       <!-- 1. House List -->
@@ -18,13 +19,17 @@
           class="house-card"
           :class="{ active: item.isDefault }"
         >
+          <view class="default-badge" v-if="item.isDefault">默认</view>
           <view class="card-header">
             <view class="title-row">
-              <t-icon name="home" size="40rpx" color="#3B82F6" />
+              <view class="home-icon">
+                <t-icon name="home" size="44rpx" color="#3B82F6" />
+              </view>
               <text class="house-name">{{ item.name }}</text>
             </view>
             <view class="status-tag" :class="item.statusType">
-              {{ item.status }}
+              <t-icon name="check-circle-filled" size="24rpx" />
+              <text>{{ item.status }}</text>
             </view>
           </view>
           
@@ -121,14 +126,13 @@ const houseList = ref([
 ]);
 
 const handleBack = () => {
-  const pages = getCurrentPages();
-  if (pages.length > 1) {
-    uni.navigateBack();
-  } else {
-    uni.switchTab({
-      url: '/pages/mine/mine'
-    });
-  }
+  uni.navigateBack({
+    fail: () => {
+      uni.switchTab({
+        url: '/pages/mine/mine'
+      });
+    }
+  });
 };
 
 const handleSetDefault = (index: number) => {
@@ -172,14 +176,27 @@ const handleAddHouse = () => {
 .page-container {
   min-height: 100vh;
   background-color: #F8FAFC;
-  padding-top: 100rpx;
+  position: relative;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280rpx;
+  background: linear-gradient(180deg, #F1F5F9 0%, #F8FAFC 100%);
+  z-index: 0;
 }
 
 .custom-navbar {
   --td-navbar-bg-color: #FFFFFF;
+  border-bottom: 1rpx solid #F1F5F9;
 }
 
 .content-section {
+  position: relative;
+  z-index: 1;
   padding: 40rpx @page-padding;
 }
 
@@ -187,55 +204,96 @@ const handleAddHouse = () => {
   .house-card {
     background: #FFFFFF;
     border-radius: @radius-large;
-    padding: 32rpx;
+    padding: 40rpx 32rpx;
     margin-bottom: 32rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
-    border: 2rpx solid transparent;
-    transition: all 0.3s;
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.03);
+    border: 1px solid #FFFFFF;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &.active {
-      border-color: rgba(59, 130, 246, 0.2);
-      background: linear-gradient(to bottom right, #FFFFFF, #F8FAFF);
+      box-shadow: 0 12rpx 32rpx rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.1);
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 8rpx;
+        height: 100%;
+        background: @primary-blue;
+      }
+    }
+
+    .default-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: @primary-blue;
+      color: #fff;
+      font-size: 20rpx;
+      padding: 4rpx 16rpx;
+      border-bottom-left-radius: 16rpx;
+      font-weight: 600;
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 32rpx;
+      margin-bottom: 36rpx;
 
       .title-row {
         display: flex;
         align-items: center;
-        gap: 16rpx;
+        gap: 20rpx;
+        flex: 1;
+
+        .home-icon {
+          width: 80rpx;
+          height: 80rpx;
+          background: #EFF6FF;
+          border-radius: 20rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
 
         .house-name {
           font-size: 32rpx;
-          font-weight: 600;
+          font-weight: 700;
           color: #1E293B;
+          line-height: 1.4;
         }
       }
 
       .status-tag {
+        display: flex;
+        align-items: center;
+        gap: 6rpx;
         font-size: 22rpx;
-        padding: 4rpx 16rpx;
-        border-radius: 6rpx;
+        padding: 6rpx 16rpx;
+        border-radius: 24rpx;
+        font-weight: 600;
         
         &.verified {
-          background: #ECFDF5;
+          background: #F0FDF4;
           color: #10B981;
         }
       }
     }
 
     .card-body {
-      padding-bottom: 32rpx;
-      border-bottom: 1rpx solid #F1F5F9;
+      padding: 32rpx;
+      background: #F8FAFC;
+      border-radius: 20rpx;
+      margin-bottom: 32rpx;
 
       .info-row {
         display: flex;
         justify-content: space-between;
-        margin-bottom: 16rpx;
+        margin-bottom: 20rpx;
         
         &:last-child {
           margin-bottom: 0;
@@ -243,19 +301,18 @@ const handleAddHouse = () => {
 
         .label {
           font-size: 26rpx;
-          color: #94A3B8;
+          color: #64748B;
         }
 
         .value {
           font-size: 26rpx;
-          color: #475569;
-          font-weight: 500;
+          color: #1E293B;
+          font-weight: 600;
         }
       }
     }
 
     .card-footer {
-      padding-top: 24rpx;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -263,15 +320,16 @@ const handleAddHouse = () => {
       .default-setting {
         display: flex;
         align-items: center;
-        gap: 8rpx;
+        gap: 12rpx;
         
         text {
           font-size: 26rpx;
           color: #94A3B8;
+          font-weight: 500;
           
           &.active {
-            color: #3B82F6;
-            font-weight: 500;
+            color: @primary-blue;
+            font-weight: 700;
           }
         }
       }
@@ -281,10 +339,19 @@ const handleAddHouse = () => {
           display: flex;
           align-items: center;
           gap: 8rpx;
+          padding: 12rpx 24rpx;
+          background: #F1F5F9;
+          border-radius: 30rpx;
           
           text {
-            font-size: 26rpx;
-            color: #94A3B8;
+            font-size: 24rpx;
+            color: #64748B;
+            font-weight: 600;
+          }
+
+          &:active {
+            background: #FEF2F2;
+            text { color: #EF4444; }
           }
         }
       }
@@ -296,23 +363,36 @@ const handleAddHouse = () => {
   margin-top: 60rpx;
   
   :deep(.t-button) {
-    border-radius: @radius-large;
+    border-radius: 48rpx;
     height: 100rpx;
     border-style: dashed;
-    background: transparent;
+    border-width: 2rpx;
+    background: #FFFFFF;
+    color: @primary-blue;
+    font-weight: 700;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.02);
+
+    &:active {
+      background: #EFF6FF;
+      transform: translateY(2rpx);
+    }
   }
 }
 
 .tips-section {
-  margin-top: 40rpx;
+  margin-top: 48rpx;
   display: flex;
-  gap: 12rpx;
-  padding: 0 8rpx;
+  gap: 16rpx;
+  padding: 32rpx;
+  background: #F8FAFC;
+  border-radius: 20rpx;
+  border: 1px solid #F1F5F9;
 
   .tip-text {
     font-size: 24rpx;
     color: #94A3B8;
     line-height: 1.6;
+    flex: 1;
   }
 }
 </style>

@@ -3,14 +3,25 @@
     <t-navbar
       title="安全日志"
       left-arrow
-      :delta="0"
       @go-back="handleBack"
-      :fixed="true"
+      :fixed="false"
       class="custom-navbar"
-    />
+    >
+      <template #left-icon>
+        <t-icon name="chevron-left" size="48rpx" color="#1E293B" />
+      </template>
+    </t-navbar>
+
+    <!-- Header Background -->
+    <view class="header-bg"></view>
 
     <view class="filter-tabs">
-      <t-tabs :value="activeTab" @click="handleTabChange" :bottom-line="true">
+      <t-tabs 
+        :value="activeTab" 
+        @click="handleTabChange" 
+        :bottom-line="true"
+        class="custom-tabs"
+      >
         <t-tab-panel label="全部" value="all" />
         <t-tab-panel label="登录" value="login" />
         <t-tab-panel label="绑定" value="bind" />
@@ -27,29 +38,37 @@
         >
           <view class="log-header">
             <view class="log-type-tag" :class="log.type">
-              <t-icon :name="getIcon(log.type)" size="32rpx" color="#FFFFFF" />
+              <view class="icon-box">
+                <t-icon :name="getIcon(log.type)" size="32rpx" color="#FFFFFF" />
+              </view>
               <text>{{ getTypeText(log.type) }}</text>
             </view>
             <text class="log-time">{{ log.time }}</text>
           </view>
           
           <view class="log-body">
-            <view class="log-title">{{ log.title }}</view>
-            <view class="log-details">
-              <view class="detail-item">
-                <text class="label">操作状态：</text>
-                <text class="status" :class="log.status">{{ log.statusText }}</text>
+            <view class="log-title-row">
+              <view class="title-indicator"></view>
+              <text class="log-title">{{ log.title }}</text>
+              <view class="status-badge" :class="log.status">
+                {{ log.statusText }}
               </view>
+            </view>
+            
+            <view class="log-details">
               <view class="detail-item" v-if="log.ip">
-                <text class="label">IP地址：</text>
+                <t-icon name="location" size="28rpx" color="#94A3B8" />
+                <text class="label">IP地址</text>
                 <text class="value">{{ log.ip }}</text>
               </view>
               <view class="detail-item" v-if="log.device">
-                <text class="label">设备终端：</text>
+                <t-icon name="mobile" size="28rpx" color="#94A3B8" />
+                <text class="label">设备终端</text>
                 <text class="value">{{ log.device }}</text>
               </view>
               <view class="detail-item" v-if="log.location">
-                <text class="label">地理位置：</text>
+                <t-icon name="map-location" size="28rpx" color="#94A3B8" />
+                <text class="label">地理位置</text>
                 <text class="value">{{ log.location }}</text>
               </view>
             </view>
@@ -197,22 +216,42 @@ const getTypeText = (type: string) => {
   background-color: #F8FAFC;
   display: flex;
   flex-direction: column;
-  padding-top: 100rpx;
 }
 
 .custom-navbar {
   --td-navbar-bg-color: #FFFFFF;
+  --td-navbar-color: #1E293B;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 280rpx;
+  background: @header-gradient;
+  z-index: 0;
 }
 
 .filter-tabs {
   background: #FFFFFF;
   position: sticky;
-  top: 100rpx;
+  top: 0;
   z-index: 10;
+  
+  .custom-tabs {
+    --td-tab-item-active-color: @primary-blue;
+    --td-tab-track-color: @primary-blue;
+    --td-tab-font-size: 28rpx;
+    --td-tab-active-font-size: 30rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
+  }
 }
 
 .log-scroll {
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .log-list {
@@ -221,31 +260,48 @@ const getTypeText = (type: string) => {
 
 .log-card {
   background: #FFFFFF;
-  border-radius: @radius-large;
-  padding: 24rpx 30rpx;
+  border-radius: 24rpx;
+  padding: 32rpx;
   margin-bottom: 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.02);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.03);
+  border: 1rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active {
+    transform: scale(0.99);
+    background: #FAFAFA;
+  }
 
   .log-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20rpx;
+    margin-bottom: 28rpx;
 
     .log-type-tag {
       display: flex;
       align-items: center;
-      gap: 8rpx;
-      padding: 4rpx 16rpx;
-      border-radius: 20rpx;
+      gap: 12rpx;
+      padding: 6rpx 20rpx 6rpx 8rpx;
+      border-radius: 30rpx;
       
+      .icon-box {
+        width: 44rpx;
+        height: 44rpx;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       text {
         font-size: 22rpx;
         color: #FFFFFF;
-        font-weight: 500;
+        font-weight: 600;
       }
 
-      &.login { background: #3B82F6; }
+      &.login { background: @primary-blue; }
       &.bind { background: #8B5CF6; }
       &.vote { background: #10B981; }
     }
@@ -253,41 +309,66 @@ const getTypeText = (type: string) => {
     .log-time {
       font-size: 24rpx;
       color: #94A3B8;
+      font-weight: 500;
     }
   }
 
   .log-body {
-    .log-title {
-      font-size: 30rpx;
-      font-weight: 600;
-      color: #1E293B;
-      margin-bottom: 16rpx;
+    .log-title-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24rpx;
+      gap: 12rpx;
+
+      .title-indicator {
+        width: 8rpx;
+        height: 28rpx;
+        background: @primary-blue;
+        border-radius: 4rpx;
+      }
+
+      .log-title {
+        flex: 1;
+        font-size: 30rpx;
+        font-weight: 600;
+        color: #1E293B;
+      }
+
+      .status-badge {
+        font-size: 22rpx;
+        padding: 4rpx 16rpx;
+        border-radius: 8rpx;
+        font-weight: 600;
+
+        &.success { background: #F0FDF4; color: #10B981; }
+        &.fail { background: #FEF2F2; color: #EF4444; }
+      }
     }
 
     .log-details {
       background: #F8FAFC;
-      border-radius: 12rpx;
-      padding: 16rpx 20rpx;
+      border-radius: 16rpx;
+      padding: 24rpx;
+      display: flex;
+      flex-direction: column;
+      gap: 16rpx;
 
       .detail-item {
         display: flex;
+        align-items: center;
         font-size: 24rpx;
-        line-height: 1.8;
+        gap: 12rpx;
 
         .label {
-          color: #64748B;
-          width: 130rpx;
+          color: #94A3B8;
+          width: 120rpx;
+          font-weight: 500;
         }
 
         .value {
-          color: #1E293B;
+          color: #475569;
           flex: 1;
-        }
-
-        .status {
           font-weight: 500;
-          &.success { color: #10B981; }
-          &.fail { color: #EF4444; }
         }
       }
     }
@@ -297,20 +378,22 @@ const getTypeText = (type: string) => {
 .load-more {
   text-align: center;
   font-size: 24rpx;
-  color: #CBD5E1;
+  color: #94A3B8;
   padding: 20rpx 0 40rpx;
+  font-weight: 500;
 }
 
 .empty-state {
-  padding-top: 200rpx;
+  padding-top: 240rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
 
   .empty-text {
-    margin-top: 24rpx;
+    margin-top: 32rpx;
     font-size: 28rpx;
     color: #94A3B8;
+    font-weight: 500;
   }
 }
 </style>

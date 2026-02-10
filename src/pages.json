@@ -212,6 +212,12 @@
 			}
 		},
 		{
+			"path": "pages/notice/notice-detail",
+			"style": {
+				"navigationStyle": "custom"
+			}
+		},
+		{
 			"path": "pages/repair/repair",
 			"style": {
 				"navigationStyle": "custom"
