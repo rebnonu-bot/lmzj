@@ -31,23 +31,7 @@
 - **设计智能**: 集成了 `ui-ux-pro-max` 技能库，提供专业级 UI/UX 设计支持。
 
 
-## 📁 项目结构
-
-```text
-├── .trae/               # Trae 配置文件及技能库
-│   └── skills/          # ui-ux-pro-max 设计技能库
-├── src/
-│   ├── components/      # 公共组件 (AppFooter, AppTabBar)
-│   ├── pages/           # 页面目录 (首页、政策、我的)
-│   ├── styles/          # 全局样式及变量
-│   ├── App.vue          # 应用入口
-│   ├── main.ts          # 脚本入口
-│   └── pages.json       # 页面路由配置
-├── package.json         # 依赖及脚本配置
-└── vite.config.ts       # Vite 配置文件
-```
-
-## 📝 更新日志
+##  更新日志
 
 ### v2.2.0 (2026-02-10)
 - **个人中心深度优化**: 
